@@ -328,6 +328,11 @@
           <button class="nav-btn" data-section="videoaulas">Videoaulas <small>biblioteca</small></button>
           <button class="nav-btn" data-section="financeiro">Financeiro <small>pagamentos</small></button>
         </nav>
+
+        <button class="nav-btn" onclick="window.location.href='trocar_senha.html'">
+          Trocar senha <small>segurança</small>
+        </button>
+
         <button class="nav-logout" id="logoutBtn">Sair da conta</button>
       </div>
     </aside>
@@ -488,7 +493,7 @@
 const SB_URL = "https://pgdanuifukzisyyummpz.supabase.co";
 const SB_ANON = "sb_publishable_81NM6F08rsXXSCgjWl4iSg_v99cdVpo";
 let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[];
-const MONTHLY_CHECKLIST_URL = "COLE_AQUI_O_LINK_DO_CHECKLIST_HTML";
+const MONTHLY_CHECKLIST_URL = "https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html";
 let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth();
 
@@ -940,7 +945,7 @@ function openMonthlyChecklist(){
     showToast("Checklist ainda não conectado.");
     return;
   }
-  openLink(MONTHLY_CHECKLIST_URL);
+  window.location.href = MONTHLY_CHECKLIST_URL;
 }
 
 function toggleChecklistEmbed(){
