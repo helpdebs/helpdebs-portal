@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Criar conta | help.debs</title>
+  <style>
+    :root {
+      --bg: #f6f4ff;
+      --bg-soft: #fcfbff;
+      --panel: rgba(255, 255, 255, 0.92);
+      --text: #1d1630;
+      --muted: #746b92;
+      --line: rgba(119, 92, 255, 0.12);
+      --primary: #7a5cff;
+      --primary-2: #ab96ff;
+      --success: #1f8f53;
+      --danger: #c73434;
+      --shadow: 0 18px 44px rgba(63, 37, 128, 0.12);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(122, 92, 255, 0.12), transparent 22%),
+        radial-gradient(circle at top right, rgba(219, 255, 102, 0.18), transparent 18%),
+        linear-gradient(180deg, var(--bg) 0%, #f8f7ff 48%, var(--bg-soft) 100%);
+      padding: 24px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .build {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .field {
+      margin-bottom: 12px;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.9);
+      color: var(--text);
+      padding: 14px;
+      border-radius: 14px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      border: none;
+      padding: 14px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .15s ease, opacity .15s ease;
+      margin-bottom: 12px;
+    }
+
+    button:hover { transform: translateY(-1px); }
+
+    button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.9);
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: white;
+      box-shadow: 0 14px 28px rgba(122, 92, 255, 0.22);
+    }
+
+    .status {
+      display: none;
+      margin-top: 8px;
+      padding: 14px;
+      border-radius: 14px;
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.88);
+    }
+
+    .status.show { display: block; }
+    .status.info {
+      color: var(--text);
+      background: #fafaff;
+    }
+    .status.success {
+      color: var(--success);
+      background: #f3fff7;
+      border-color: #c8ebd7;
+    }
+    .status.error {
+      color: var(--danger);
+      background: #fff5f5;
+      border-color: #f0c7c7;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Criar conta</h1>
+    <div class="build">build: AUTO-LOGIN-01</div>
+
+    <div class="field">
+      <input id="name" type="text" placeholder="Nome completo" autocomplete="name" />
+    </div>
+
+    <div class="field">
+      <input id="email" type="email" placeholder="Email novo" autocomplete="email" />
+    </div>
+
+    <div class="field">
+      <input id="password" type="password" placeholder="Senha" autocomplete="new-password" />
+    </div>
+
+    <button id="test-btn" class="btn-secondary" type="button">Testar conexão</button>
+    <button id="signup-btn" class="btn-primary" type="button">Criar conta</button>
+
+    <div id="status" class="status"></div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://pgdanuifukzisyyummpz.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_81NM6F08rsXXSCgjWl4iSg_v99cdVpo";
+
+    const statusBox = document.getElementById("status");
+    const testBtn = document.getElementById("test-btn");
+    const signupBtn = document.getElementById("signup-btn");
+
+    function setStatus(message, type = "info") {
+      statusBox.textContent = message;
+      statusBox.className = `status show ${type}`;
+      console.log("[STATUS]", type, message);
+    }
+
+    function setLoading(button, isLoading, loadingLabel, defaultLabel) {
+      button.disabled = isLoading;
+      button.textContent = isLoading ? loadingLabel : defaultLabel;
+    }
+
+    function getFormValues() {
+      return {
+        fullName: document.getElementById("name").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        password: document.getElementById("password").value
+      };
+    }
+
+    async function testConnection() {
+      setLoading(testBtn, true, "Testando...", "Testar conexão");
+      setStatus("Testando conexão com o Supabase...", "info");
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}/auth/v1/settings`, {
+          method: "GET",
+          headers: { apikey: SUPABASE_KEY }
+        });
+
+        const text = await res.text();
+
+        if (!res.ok) {
+          setStatus(`Conexão respondeu com erro ${res.status}.\n\n${text}`, "error");
+          return;
+        }
+
+        setStatus("Conexão com Supabase OK.", "success");
+      } catch (err) {
+        setStatus("Falha ao testar conexão.\n\n" + err.message, "error");
+        console.error(err);
+      } finally {
+        setLoading(testBtn, false, "Testando...", "Testar conexão");
+      }
+    }
+
+    async function createUser(email, password, fullName) {
+      const res = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: SUPABASE_KEY
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          data: {
+            full_name: fullName
+          }
+        })
+      });
+
+      const data = await res.json();
+      return { res, data };
+    }
+
+    async function loginUser(email, password) {
+      const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: SUPABASE_KEY
+        },
+        body: JSON.stringify({
+          email,
+          password
+        })
+      });
+
+      const data = await res.json();
+      return { res, data };
+    }
+
+    async function saveProfile(accessToken, userId, fullName, email) {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/profiles`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${accessToken}`,
+          Prefer: "resolution=merge-duplicates,return=representation"
+        },
+        body: JSON.stringify({
+          id: userId,
+          full_name: fullName,
+          email: email
+        })
+      });
+
+      return res;
+    }
+
+    async function signup() {
+      setLoading(signupBtn, true, "Criando...", "Criar conta");
+
+      try {
+        const { fullName, email, password } = getFormValues();
+
+        if (!fullName || !email || !password) {
+          setStatus("Preencha nome, email e senha.", "error");
+          return;
+        }
+
+        setStatus("Criando conta...", "info");
+
+        const { res: signUpRes, data: signUpData } = await createUser(email, password, fullName);
+
+        if (!signUpRes.ok) {
+          setStatus(
+            "Erro no signUp:\n" +
+            (signUpData.msg || signUpData.error_description || signUpData.error || "Erro desconhecido"),
+            "error"
+          );
+          console.error(signUpData);
+          return;
+        }
+
+        setStatus("Conta criada. Entrando automaticamente...", "info");
+
+        const { res: loginRes, data: loginData } = await loginUser(email, password);
+
+        if (!loginRes.ok) {
+          setStatus(
+            "Conta criada, mas o login automático falhou.\n\n" +
+            (loginData.error_description || loginData.error || "Erro desconhecido"),
+            "error"
+          );
+          console.error(loginData);
+          return;
+        }
+
+        const accessToken = loginData.access_token;
+        const user = loginData.user;
+
+        if (!accessToken || !user?.id) {
+          setStatus("Login respondeu sem access_token ou sem user.", "error");
+          console.error(loginData);
+          return;
+        }
+
+        const profileRes = await saveProfile(accessToken, user.id, fullName, email);
+
+        if (!profileRes.ok) {
+          const profileText = await profileRes.text();
+          setStatus("Entrou, mas falhou ao salvar profile.\n\n" + profileText, "error");
+          console.error(profileText);
+          return;
+        }
+
+        localStorage.setItem("helpdebs_access_token", accessToken);
+        localStorage.setItem("helpdebs_user_email", email);
+        localStorage.setItem("helpdebs_user_name", fullName);
+
+        setStatus("Conta criada e login feito. Indo para o portal...", "success");
+
+        setTimeout(() => {
+          window.location.href = "portal.html";
+        }, 900);
+      } catch (err) {
+        setStatus("Erro inesperado:\n" + err.message, "error");
+        console.error(err);
+      } finally {
+        setLoading(signupBtn, false, "Criando...", "Criar conta");
+      }
+    }
+
+    testBtn.addEventListener("click", testConnection);
+    signupBtn.addEventListener("click", signup);
+  </script>
+</body>
+</html>
