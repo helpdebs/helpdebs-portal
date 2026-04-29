@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Professional Communication | Vocabulary Checklist</title>
+
+  <meta name="description" content="Interactive vocabulary checklist for professional communication in English." />
+  <meta property="og:title" content="Professional Communication | Vocabulary Checklist" />
+  <meta property="og:description" content="Practice useful chunks for clearer and more analytical professional communication." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="cover.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=League+Spartan:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #f7f1ff;
+      --panel: rgba(255, 255, 255, 0.88);
+      --panel-strong: #ffffff;
+      --text: #1d1630;
+      --muted: #746b92;
+      --purple: #8f6bff;
+      --purple-dark: #6c4bf4;
+      --blue: #bde9ff;
+      --yellow: #fff27a;
+      --pink: #ff9be6;
+      --green: #b8ffd9;
+      --line: rgba(29, 22, 48, 0.14);
+      --shadow: 0 22px 60px rgba(80, 55, 160, 0.18);
+      --radius: 28px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Poppins", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(189, 233, 255, 0.85), transparent 32%),
+        radial-gradient(circle at 80% 10%, rgba(255, 155, 230, 0.55), transparent 28%),
+        radial-gradient(circle at 50% 90%, rgba(255, 242, 122, 0.45), transparent 30%),
+        var(--bg);
+      padding: 22px;
+    }
+
+    .page {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+    }
+
+    .window-bar {
+      border: 2px solid #111;
+      background: rgba(255, 255, 255, 0.78);
+      box-shadow: 8px 8px 0 #111;
+      border-radius: 18px 18px 10px 10px;
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 18px;
+      border-bottom: 2px solid #111;
+      background: linear-gradient(90deg, #dcd1ff, #bde9ff);
+    }
+
+    .brand {
+      font-family: "League Spartan", sans-serif;
+      font-size: clamp(1.1rem, 2vw, 1.45rem);
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .window-buttons {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .window-buttons span {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border: 2px solid #111;
+      background: var(--pink);
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .hero {
+      padding: clamp(30px, 6vw, 72px) clamp(20px, 5vw, 64px);
+      background: rgba(255,255,255,0.64);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 2px solid #111;
+      background: var(--yellow);
+      box-shadow: 4px 4px 0 #111;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      font-family: "League Spartan", sans-serif;
+      margin: 0;
+      max-width: 850px;
+      font-size: clamp(3rem, 8vw, 6.7rem);
+      line-height: 0.86;
+      letter-spacing: -0.045em;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      max-width: 670px;
+      margin: 24px 0 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.18rem);
+      line-height: 1.65;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .btn {
+      border: 2px solid #111;
+      box-shadow: 5px 5px 0 #111;
+      background: var(--panel-strong);
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 800;
+      border-radius: 16px;
+      padding: 13px 18px;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+
+    .btn.primary { background: var(--purple); color: white; }
+    .btn.secondary { background: var(--blue); }
+
+    .btn:hover, .btn:focus-visible {
+      transform: translate(2px, 2px);
+      box-shadow: 3px 3px 0 #111;
+      outline: none;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: center;
+      margin: 34px 0 20px;
+    }
+
+    .search {
+      width: 100%;
+      border: 2px solid #111;
+      border-radius: 18px;
+      padding: 15px 18px;
+      font: inherit;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: 5px 5px 0 #111;
+    }
+
+    .progress-card {
+      border: 2px solid #111;
+      background: var(--panel);
+      border-radius: 18px;
+      padding: 14px 18px;
+      box-shadow: 5px 5px 0 #111;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 40px;
+    }
+
+    .category {
+      border: 2px solid #111;
+      background: var(--panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      min-height: 100%;
+    }
+
+    .category-header {
+      width: 100%;
+      border: 0;
+      border-bottom: 2px solid #111;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 20px;
+      background: var(--panel-strong);
+      cursor: pointer;
+      text-align: left;
+      font-family: inherit;
+      color: inherit;
+    }
+
+    .category:nth-child(4n+1) .category-header { background: #efe7ff; }
+    .category:nth-child(4n+2) .category-header { background: #e5f7ff; }
+    .category:nth-child(4n+3) .category-header { background: #fff8a8; }
+    .category:nth-child(4n+4) .category-header { background: #ffe2f6; }
+
+    .category-title {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .category-title strong {
+      font-family: "League Spartan", sans-serif;
+      font-size: 1.45rem;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+    }
+
+    .category-title span {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .toggle {
+      width: 36px;
+      height: 36px;
+      border: 2px solid #111;
+      background: white;
+      display: grid;
+      place-items: center;
+      font-size: 1.4rem;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+
+    .category-body {
+      display: none;
+      padding: 18px 20px 20px;
+    }
+
+    .category.open .category-body { display: block; }
+    .category.open .toggle { background: var(--green); }
+
+    .items {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 10px;
+      border: 1.5px solid var(--line);
+      background: rgba(255,255,255,0.72);
+      border-radius: 16px;
+      padding: 12px;
+      transition: 0.18s ease;
+    }
+
+    .item.done {
+      background: rgba(184, 255, 217, 0.55);
+      border-color: rgba(17,17,17,0.28);
+    }
+
+    .item input {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--purple-dark);
+      cursor: pointer;
+    }
+
+    .chunk {
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .copy {
+      border: 1.5px solid #111;
+      background: #fff;
+      border-radius: 10px;
+      padding: 7px 9px;
+      font-weight: 800;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    .example-box {
+      margin-top: 16px;
+      border: 2px dashed rgba(17,17,17,0.45);
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255,255,255,0.52);
+    }
+
+    .example-box strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+    }
+
+    .example-box p {
+      margin: 8px 0;
+      color: #3a3155;
+      line-height: 1.45;
+    }
+
+    .footer {
+      border: 2px solid #111;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.72);
+      box-shadow: 7px 7px 0 #111;
+      padding: 22px;
+      margin-bottom: 24px;
+    }
+
+    .footer h2 {
+      font-family: "League Spartan", sans-serif;
+      text-transform: uppercase;
+      font-size: 2rem;
+      margin: 0 0 10px;
+    }
+
+    .footer ol {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--muted);
+      font-weight: 600;
+      line-height: 1.8;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%) translateY(120px);
+      background: #111;
+      color: white;
+      padding: 12px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      transition: transform 0.25s ease;
+      z-index: 50;
+    }
+
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    mark {
+      background: var(--yellow);
+      padding: 0 3px;
+      border-radius: 4px;
+    }
+
+    @media (max-width: 780px) {
+      body { padding: 14px; }
+      .window-bar { box-shadow: 5px 5px 0 #111; }
+      .topbar { padding: 12px; }
+      .window-buttons span { width: 26px; height: 26px; }
+      .hero { padding: 30px 18px; }
+      .toolbar { grid-template-columns: 1fr; }
+      .progress-card { white-space: normal; }
+      .grid { grid-template-columns: 1fr; }
+      .category-header { padding: 16px; }
+      .category-title strong { font-size: 1.25rem; }
+      .item { grid-template-columns: auto 1fr; }
+      .copy { grid-column: 2; justify-self: start; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="window-bar">
+      <div class="topbar">
+        <div class="brand">Teacher Debs’ Classes</div>
+        <div class="window-buttons" aria-hidden="true">
+          <span>–</span><span>□</span><span>×</span>
+        </div>
+      </div>
+
+      <div class="hero">
+        <div class="eyebrow">Vocabulary Checklist</div>
+        <h1>Professional Communication</h1>
+        <p class="subtitle">Useful chunks to sound clearer, more structured, and more analytical in professional situations.</p>
+        <div class="actions">
+          <a class="btn primary" href="checklist_vocabulary.pdf" target="_blank" rel="noopener">Open PDF</a>
+          <button class="btn secondary" id="resetBtn" type="button">Reset checklist</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="toolbar" aria-label="Checklist tools">
+      <input class="search" id="searchInput" type="search" placeholder="Search a chunk: lack, pressure, expectation..." />
+      <div class="progress-card"><span id="checkedCount">0</span>/<span id="totalCount">0</span> checked</div>
+    </section>
+
+    <section class="grid" id="checklistGrid"></section>
+
+    <section class="footer">
+      <h2>How to use</h2>
+      <ol>
+        <li>Open the categories.</li>
+        <li>Check the chunks you want to practice.</li>
+        <li>Copy useful expressions and use them in speaking or writing practice.</li>
+        <li>Use the PDF as support when practicing with AI.</li>
+      </ol>
+    </section>
+  </main>
+
+  <div class="toast" id="toast">Copied!</div>
+
+  <script>
+    const categories = [
+      {
+        title: "Core Problem Framing",
+        subtitle: "Identifying problems professionally",
+        items: [
+          "there is a lack of…",
+          "there is a growing…",
+          "there are communication issues",
+          "there is an overreliance on…",
+          "there is a failure to…",
+          "there is a gap in…"
+        ],
+        examples: [
+          "There is a lack of clarity in communication.",
+          "There is an overreliance on technology.",
+          "There is a growing pressure to deliver results."
+        ]
+      },
+      {
+        title: "Identifying Causes",
+        subtitle: "Explaining why something happens",
+        items: [
+          "the main issue is…",
+          "the key problem is…",
+          "one of the main reasons is…",
+          "this tends to happen because…",
+          "this is usually the result of…",
+          "this comes from…"
+        ],
+        examples: [
+          "The main issue is the lack of structure.",
+          "One of the main reasons is poor communication.",
+          "This is usually the result of unclear expectations."
+        ]
+      },
+      {
+        title: "Nominalization",
+        subtitle: "Turning actions into concepts",
+        items: [
+          "the expectation of…",
+          "the pressure of…",
+          "the responsibility of…",
+          "the tendency to…",
+          "the assumption that…",
+          "the inability to…",
+          "lack of communication",
+          "overestimation of…",
+          "fear of…"
+        ],
+        examples: [
+          "The expectation of constant performance creates pressure.",
+          "The inability to disconnect affects productivity.",
+          "The assumption that results are always correct is dangerous."
+        ]
+      },
+      {
+        title: "Structuring Ideas",
+        subtitle: "Connecting ideas with flow",
+        items: [
+          "this creates…",
+          "this leads to…",
+          "this results in…",
+          "which means that…",
+          "over time, this…",
+          "as a result…"
+        ],
+        examples: [
+          "This creates confusion in teams.",
+          "This leads to poor decision-making.",
+          "Over time, this results in burnout."
+        ]
+      },
+      {
+        title: "Professional Opinion",
+        subtitle: "Giving opinions with more weight",
+        items: [
+          "from my perspective…",
+          "what I’ve noticed is…",
+          "one common issue is…",
+          "what concerns me is…",
+          "I tend to think that…",
+          "in most cases…"
+        ],
+        examples: [
+          "What concerns me is the lack of evaluation.",
+          "One common issue is the expectation of perfection.",
+          "From my perspective, this creates unrealistic standards."
+        ]
+      },
+      {
+        title: "Real Work Scenarios",
+        subtitle: "Vocabulary for practical situations",
+        items: [
+          "miss deadlines",
+          "make rushed decisions",
+          "ignore feedback",
+          "feel overwhelmed",
+          "lack of growth",
+          "unclear expectations",
+          "poor communication",
+          "high pressure environment"
+        ],
+        examples: [
+          "The team missed the deadline because expectations were unclear.",
+          "Rushed decisions can create long-term problems.",
+          "Poor communication often leads to duplicated work."
+        ]
+      }
+    ];
+
+    const grid = document.getElementById("checklistGrid");
+    const searchInput = document.getElementById("searchInput");
+    const checkedCount = document.getElementById("checkedCount");
+    const totalCount = document.getElementById("totalCount");
+    const resetBtn = document.getElementById("resetBtn");
+    const toast = document.getElementById("toast");
+
+    const storageKey = "helpdebs-professional-communication-checklist";
+    let checked = JSON.parse(localStorage.getItem(storageKey) || "{}");
+
+    function save() {
+      localStorage.setItem(storageKey, JSON.stringify(checked));
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function highlight(text, query) {
+      if (!query) return escapeHtml(text);
+      const escaped = escapeHtml(text);
+      const safeQuery = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return escaped.replace(new RegExp(safeQuery, "gi"), match => `<mark>${match}</mark>`);
+    }
+
+    function render() {
+      const query = searchInput.value.trim().toLowerCase();
+      grid.innerHTML = "";
+
+      categories.forEach((category, categoryIndex) => {
+        const filteredItems = category.items
+          .map((item, itemIndex) => ({ item, itemIndex }))
+          .filter(({ item }) => item.toLowerCase().includes(query) || category.title.toLowerCase().includes(query));
+
+        if (query && filteredItems.length === 0) return;
+
+        const article = document.createElement("article");
+        article.className = "category open";
+
+        article.innerHTML = `
+          <button class="category-header" type="button" aria-expanded="true">
+            <span class="category-title">
+              <strong>${escapeHtml(category.title)}</strong>
+              <span>${escapeHtml(category.subtitle)}</span>
+            </span>
+            <span class="toggle">−</span>
+          </button>
+          <div class="category-body">
+            <ul class="items">
+              ${filteredItems.map(({ item, itemIndex }) => {
+                const id = `${categoryIndex}-${itemIndex}`;
+                const isChecked = Boolean(checked[id]);
+                return `
+                  <li class="item ${isChecked ? "done" : ""}" data-id="${id}" data-text="${escapeHtml(item)}">
+                    <input type="checkbox" ${isChecked ? "checked" : ""} aria-label="Check ${escapeHtml(item)}" />
+                    <span class="chunk">${highlight(item, query)}</span>
+                    <button class="copy" type="button">Copy</button>
+                  </li>
+                `;
+              }).join("")}
+            </ul>
+            <div class="example-box">
+              <strong>Examples</strong>
+              ${category.examples.map(example => `<p>${highlight(example, query)}</p>`).join("")}
+            </div>
+          </div>
+        `;
+
+        grid.appendChild(article);
+      });
+
+      attachEvents();
+      updateProgress();
+    }
+
+    function attachEvents() {
+      document.querySelectorAll(".category-header").forEach(button => {
+        button.addEventListener("click", () => {
+          const category = button.closest(".category");
+          const isOpen = category.classList.toggle("open");
+          button.setAttribute("aria-expanded", String(isOpen));
+          button.querySelector(".toggle").textContent = isOpen ? "−" : "+";
+        });
+      });
+
+      document.querySelectorAll(".item input").forEach(input => {
+        input.addEventListener("change", () => {
+          const item = input.closest(".item");
+          checked[item.dataset.id] = input.checked;
+          item.classList.toggle("done", input.checked);
+          save();
+          updateProgress();
+        });
+      });
+
+      document.querySelectorAll(".copy").forEach(button => {
+        button.addEventListener("click", async () => {
+          const item = button.closest(".item").dataset.text;
+          try {
+            await navigator.clipboard.writeText(item);
+            showToast("Copied!");
+          } catch {
+            showToast("Copy unavailable");
+          }
+        });
+      });
+    }
+
+    function updateProgress() {
+      const total = categories.reduce((sum, category) => sum + category.items.length, 0);
+      const done = Object.values(checked).filter(Boolean).length;
+      totalCount.textContent = total;
+      checkedCount.textContent = done;
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 1400);
+    }
+
+    searchInput.addEventListener("input", render);
+
+    resetBtn.addEventListener("click", () => {
+      checked = {};
+      save();
+      render();
+      showToast("Checklist reset");
+    });
+
+    render();
+  </script>
+</body>
+</html>
