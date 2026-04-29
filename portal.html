@@ -241,7 +241,7 @@
       justify-content:flex-end;
       align-items:center;
     }
-    .checklist-btn{
+    .checklist-btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;
       border:none;
       border-radius:16px;
       padding:13px 16px;
@@ -917,8 +917,6 @@ function renderFeaturedChecklist(){
   const area = $("featuredChecklistArea");
   if(!area) return;
 
-  const url = MONTHLY_CHECKLIST_URL;
-
   area.innerHTML = `
     <div class="featured-checklist">
       <div>
@@ -928,22 +926,33 @@ function renderFeaturedChecklist(){
       </div>
 
       <div class="checklist-actions">
-        <button class="checklist-btn" onclick="openMonthlyChecklist()">Abrir checklist</button>
-        <button class="checklist-btn secondary" onclick="toggleChecklistEmbed()">Ver dentro do portal</button>
+        <a class="checklist-btn"
+           href="https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html"
+           target="_blank"
+           rel="noopener noreferrer"
+           onclick="event.preventDefault(); event.stopPropagation(); window.open('https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html', '_blank', 'noopener,noreferrer'); return false;">
+          Abrir checklist
+        </a>
+
+        <button type="button"
+                class="checklist-btn secondary"
+                onclick="event.preventDefault(); event.stopPropagation(); toggleChecklistEmbed(); return false;">
+          Ver dentro do portal
+        </button>
       </div>
     </div>
   `;
 }
 
 function openMonthlyChecklist(){
-  window.open(MONTHLY_CHECKLIST_URL, "_blank");
+  window.open(MONTHLY_CHECKLIST_URL, "_blank", "noopener,noreferrer");
 }
 
 function toggleChecklistEmbed(){
   const box = $("checklistEmbedArea");
   if(!box) return;
 
-  const url = "https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html";
+  const url = MONTHLY_CHECKLIST_URL;
   const isOpen = box.classList.contains("show");
 
   if(isOpen){
