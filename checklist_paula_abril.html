@@ -3,694 +3,1223 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Professional Communication | Vocabulary Checklist</title>
-
-  <meta name="description" content="Interactive vocabulary checklist for professional communication in English." />
-  <meta property="og:title" content="Professional Communication | Vocabulary Checklist" />
-  <meta property="og:description" content="Practice useful chunks for clearer and more analytical professional communication." />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="cover.png" />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=League+Spartan:wght@600;700;800&display=swap" rel="stylesheet">
-
+  <title>Portal da Aluna | help.debs</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
-      --bg: #f7f1ff;
-      --panel: rgba(255, 255, 255, 0.88);
-      --panel-strong: #ffffff;
-      --text: #1d1630;
-      --muted: #746b92;
-      --purple: #8f6bff;
-      --purple-dark: #6c4bf4;
-      --blue: #bde9ff;
-      --yellow: #fff27a;
-      --pink: #ff9be6;
-      --green: #b8ffd9;
-      --line: rgba(29, 22, 48, 0.14);
-      --shadow: 0 22px 60px rgba(80, 55, 160, 0.18);
-      --radius: 28px;
+      --bg:#f6f4ff; --bg-soft:#fcfbff; --panel:rgba(255,255,255,.86); --panel-strong:#fff;
+      --text:#1d1630; --muted:#746b92; --line:rgba(119,92,255,.14);
+      --primary:#7a5cff; --primary-2:#ab96ff; --accent:#dbff66; --danger:#ff7896;
+      --success:#5f9f36; --shadow:0 18px 44px rgba(63,37,128,.12);
+      --radius-xl:28px; --radius-lg:22px; --radius-md:16px; --max:1440px;
     }
+    *{box-sizing:border-box} html{scroll-behavior:smooth}
+    body{
+      margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);background:radial-gradient(circle at top left,rgba(122,92,255,.12),transparent 22%),
+      radial-gradient(circle at top right,rgba(219,255,102,.18),transparent 18%),
+      linear-gradient(180deg,var(--bg) 0%,#f8f7ff 48%,var(--bg-soft) 100%);min-height:100vh;
+    }
+    a{color:inherit;text-decoration:none} button{font:inherit}
+    .login-screen{min-height:100vh;display:grid;place-items:center;padding:24px}
+    .login-card{width:100%;max-width:430px;background:var(--panel);border:1px solid var(--line);border-radius:28px;padding:32px;box-shadow:var(--shadow)}
+    .logo,.brand-logo{display:grid;place-items:center;background:linear-gradient(135deg,var(--primary),var(--primary-2));color:white;font-weight:900;box-shadow:0 14px 28px rgba(122,92,255,.24)}
+    .logo{width:52px;height:52px;border-radius:17px;margin-bottom:20px}.login-card h1{margin:0 0 8px;font-size:1.7rem;letter-spacing:-.05em}
+    .login-card p{margin:0 0 20px;color:var(--muted);line-height:1.55}
+    input{width:100%;border:1px solid var(--line);background:white;color:var(--text);border-radius:16px;padding:14px 15px;font-size:.95rem;outline:none;margin-bottom:10px}
+    input:focus{border-color:var(--primary)}
+    .btn{border:none;cursor:pointer;border-radius:16px;font-weight:900;padding:14px 18px;transition:.18s ease}
+    .btn:hover{transform:translateY(-1px)} .btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:white;box-shadow:0 14px 28px rgba(122,92,255,.22)}
+    .btn-soft{background:rgba(255,255,255,.88);color:var(--text);border:1px solid var(--line)}
+    .btn-danger{background:rgba(255,120,150,.10);color:#b44b67;border:1px solid rgba(255,120,150,.16)}
+    .msg{display:none;margin-top:12px;padding:12px 14px;border-radius:14px;font-size:.87rem;font-weight:800}.msg.show{display:block}
+    .error{background:rgba(255,120,150,.12);color:#b44b67;border:1px solid rgba(255,120,150,.20)}
+    .info{background:rgba(122,92,255,.10);color:var(--primary);border:1px solid rgba(122,92,255,.14)}
+    .app{display:none;min-height:100vh;grid-template-columns:284px 1fr}
+    .sidebar{position:sticky;top:0;height:100vh;padding:18px;background:rgba(255,255,255,.42);backdrop-filter:blur(16px);border-right:1px solid rgba(119,92,255,.08)}
+    .sidebar-shell{height:100%;border-radius:var(--radius-xl);padding:16px;background:rgba(255,255,255,.28);border:1px solid rgba(255,255,255,.52);display:flex;flex-direction:column;gap:18px}
+    .brand{display:flex;align-items:center;gap:12px;padding:8px 8px 10px}.brand-logo{width:46px;height:46px;border-radius:16px;flex:0 0 auto}
+    .brand strong{display:block;font-size:1rem;letter-spacing:-.03em}.brand span{display:block;margin-top:4px;color:var(--muted);font-size:.86rem}
+    .student-card,.panel{border-radius:var(--radius-lg);background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow)}
+    .student-card{padding:16px;display:grid;gap:12px}.student-top{display:flex;align-items:center;gap:12px}.student-avatar{width:50px;height:50px;border-radius:16px;display:grid;place-items:center;font-size:1.2rem;background:linear-gradient(135deg,rgba(122,92,255,.16),rgba(219,255,102,.35));border:1px solid rgba(122,92,255,.08);flex:0 0 auto}
+    .student-name{font-size:.98rem;font-weight:900;letter-spacing:-.03em}.student-level{margin-top:4px;color:var(--muted);font-size:.86rem}
+    .student-badges{display:flex;flex-wrap:wrap;gap:8px}.badge,.mini-badge,.eyebrow{width:fit-content;border-radius:999px;font-size:.76rem;font-weight:900}
+    .badge{padding:8px 10px;color:var(--primary);background:rgba(122,92,255,.08);border:1px solid rgba(122,92,255,.10)}
+    .nav{display:grid;gap:8px}.nav-label{padding:0 10px;font-size:.76rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:900}
+    .nav-btn{width:100%;border:none;background:transparent;text-align:left;padding:14px;border-radius:16px;display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--text);font-size:.93rem;font-weight:800;cursor:pointer;transition:.18s ease}
+    .nav-btn:hover{background:rgba(122,92,255,.06);transform:translateX(2px)}.nav-btn.active{background:linear-gradient(135deg,rgba(122,92,255,.12),rgba(171,150,255,.18));color:var(--primary);border:1px solid rgba(122,92,255,.10)}
+    .nav-btn small{color:var(--muted);font-size:.76rem;font-weight:800;white-space:nowrap}.nav-logout{margin-top:auto;width:100%;border:none;background:rgba(255,120,150,.08);color:#b44b67;text-align:left;padding:12px 14px;border-radius:16px;font-size:.88rem;font-weight:800;cursor:pointer;border:1px solid rgba(255,120,150,.12)}
+    .main{padding:20px}.shell{max-width:var(--max);margin:0 auto;display:grid;gap:18px}.topbar{min-height:84px;padding:8px 6px;display:flex;justify-content:space-between;align-items:center;gap:18px}
+    .headline h1{margin:0;font-size:clamp(2rem,2.9vw,3.2rem);line-height:.95;letter-spacing:-.065em;font-weight:900}.top-actions{display:flex;flex-wrap:wrap;gap:10px}
+    .portal-section{display:none}.portal-section.active{display:block;animation:fadeIn .24s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .dashboard-grid{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(330px,.82fr);gap:18px;align-items:stretch}
+    .hero-card,.quick-card,.calendar-card,.materials-card,.diagnostic-card,.tips-card,.videos-card,.live-card{padding:26px}
+    .hero-card{min-height:360px;display:grid;gap:22px;align-content:space-between;background:radial-gradient(circle at top right,rgba(219,255,102,.18),transparent 24%),radial-gradient(circle at bottom left,rgba(122,92,255,.10),transparent 28%),linear-gradient(180deg,rgba(255,255,255,.92),rgba(248,245,255,.96))}
+    .eyebrow{padding:9px 12px;background:rgba(122,92,255,.08);color:var(--primary);border:1px solid rgba(122,92,255,.10)}
+    .hero-card h2,.section-title h3{margin:0;letter-spacing:-.05em;font-weight:900}.hero-card h2{font-size:clamp(1.8rem,2.4vw,2.8rem);line-height:.98;max-width:16ch}
+    .quick-link p,.material-item p,.diag-item p,.tip-item p,.video-item p,.live-box p,.payment-item p{margin:0;color:var(--muted);line-height:1.6;font-size:.93rem}
+    .hero-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .stat,.quick-link,.material-item,.diag-item,.tip-item,.video-item,.live-box,.payment-item{border-radius:20px;background:rgba(255,255,255,.82);border:1px solid rgba(122,92,255,.10)}
+    .stat{padding:16px;display:grid;gap:6px;min-height:112px;align-content:start}.stat strong{font-size:1.34rem;letter-spacing:-.05em}.stat span{color:var(--muted);font-size:.85rem;line-height:1.45}
+    .quick-card{min-height:360px;display:grid;gap:16px;align-content:start;background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(252,250,255,.98))}
+    .section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.section-title h3{font-size:1.14rem}
+    .quick-links,.materials-list,.diag-list,.tips-list,.videos-list,.payments-list{display:grid;gap:12px}.quick-link,.material-item,.diag-item,.tip-item,.video-item,.live-box,.payment-item{padding:16px}
+    .quick-link{display:flex;justify-content:space-between;align-items:center;gap:14px}.quick-link strong,.material-item strong,.diag-item strong,.tip-item strong,.video-item strong,.live-box strong,.payment-item strong{display:block;font-size:.95rem;letter-spacing:-.02em;margin-bottom:5px}
+    .quick-link a{color:var(--primary);font-size:.82rem;font-weight:900;white-space:nowrap}.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .calendar-header,.item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}.calendar-header strong{font-size:1.04rem;letter-spacing:-.03em}.calendar-month{color:var(--muted);font-size:.86rem;font-weight:900}
+    .calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}.day-name,.calendar-day{border-radius:16px;padding:10px}
+    .day-name{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.75rem;font-weight:900;text-transform:uppercase;letter-spacing:.06em}
+    .calendar-day{min-height:84px;display:grid;align-content:space-between;gap:8px;background:rgba(255,255,255,.82);border:1px solid rgba(122,92,255,.08)}.calendar-day.muted{opacity:.40}.calendar-day.has-class{background:linear-gradient(180deg,rgba(122,92,255,.10),rgba(255,255,255,.90));border-color:rgba(122,92,255,.18)}.calendar-day.today{outline:2px solid rgba(219,255,102,.9);outline-offset:-2px}
+    .day-number{font-size:.88rem;font-weight:900}.mini-class{border-radius:12px;padding:8px;background:rgba(122,92,255,.10);color:var(--primary);font-size:.72rem;line-height:1.35;font-weight:900}
+    .mini-badge{padding:6px 9px;color:var(--primary);background:rgba(122,92,255,.08);border:1px solid rgba(122,92,255,.08)}.status-done{color:#53710d;background:rgba(219,255,102,.50);border-color:rgba(219,255,102,.56)}.status-pending{color:#b44b67;background:rgba(255,120,150,.12);border-color:rgba(255,120,150,.12)}.status-paid{color:#53710d;background:rgba(219,255,102,.50)}.status-overdue{color:#b44b67;background:rgba(255,120,150,.12)}
+    .item-actions{display:flex;flex-wrap:wrap;gap:8px;padding-top:8px}.mini-btn{border:none;cursor:pointer;padding:10px 12px;border-radius:12px;font-size:.79rem;font-weight:900;background:rgba(122,92,255,.08);color:var(--primary)}.mini-btn.secondary{background:rgba(255,255,255,.90);color:var(--text);border:1px solid rgba(122,92,255,.10)}
+    .empty{padding:20px;border-radius:18px;background:rgba(255,255,255,.65);border:1px solid var(--line);color:var(--muted);line-height:1.55}
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(12px);background:white;border:1px solid var(--line);border-radius:16px;padding:14px 20px;box-shadow:var(--shadow);font-size:.9rem;font-weight:800;opacity:0;transition:all .4s ease;pointer-events:none;z-index:999;white-space:nowrap}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    @media(max-width:1180px){.app{grid-template-columns:1fr}.sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid rgba(122,92,255,.08)}.dashboard-grid,.grid-2{grid-template-columns:1fr}}
+    @media(max-width:760px){.main{padding:14px}.topbar{flex-direction:column;align-items:flex-start}.hero-stats{grid-template-columns:1fr}.quick-link,.item-top{flex-direction:column;align-items:flex-start}.calendar-day{min-height:72px;padding:8px}.calendar-grid{gap:6px}}
+  
+    .payment-item{position:relative;transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease}
+    .payment-item.clickable-payment{cursor:pointer}
+    .payment-item.clickable-payment:hover{transform:translateY(-2px);border-color:rgba(122,92,255,.28);box-shadow:0 18px 44px rgba(63,37,128,.16)}
+    .payment-item.clickable-payment::after{content:"Clique para copiar o Pix";position:absolute;right:16px;bottom:12px;font-size:.72rem;font-weight:900;color:var(--primary);opacity:.7}
+    .payment-item.no-payment-action::after{content:"Pagamento ainda não configurado";color:#b44b67}
+    .pay-actions{display:flex;flex-wrap:wrap;gap:8px;padding-top:12px}
+    .qr-preview{margin:12px 0}
+    .qr-preview img{max-width:180px;border-radius:16px;border:1px solid var(--line);background:white;padding:8px;box-shadow:var(--shadow)}
 
-    * { box-sizing: border-box; }
+  
+    .badge.diagnosis-red{background:rgba(239,68,68,.12);color:#ef4444;border-color:rgba(239,68,68,.22)}
+    .badge.diagnosis-orange{background:rgba(245,158,11,.15);color:#d97706;border-color:rgba(245,158,11,.24)}
+    .badge.diagnosis-green{background:rgba(34,197,94,.14);color:#16a34a;border-color:rgba(34,197,94,.24)}
 
-    html { scroll-behavior: smooth; }
+  
+    .diag-item.locked{opacity:.86}
+    .diag-icon{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:rgba(122,92,255,.09);border:1px solid rgba(122,92,255,.12);font-size:1.2rem;flex:0 0 auto}
+    .diag-head{display:flex;gap:12px;align-items:flex-start}
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: "Poppins", sans-serif;
-      color: var(--text);
+  
+    .dashboard-v2{display:grid;gap:22px;min-height:calc(100vh - 150px)}
+    .dashboard-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;align-items:stretch}
+    .dashboard-row-2{display:grid;grid-template-columns:1.05fr .95fr;gap:20px;align-items:stretch}
+    .dash-card{padding:26px;min-height:260px;display:flex;flex-direction:column}
+    .dash-card.compact{min-height:285px}
+    .dash-card h3{margin:0 0 16px;font-size:1.14rem;letter-spacing:-.04em}
+    .dash-muted{color:var(--muted);font-size:.92rem;line-height:1.55;margin:0}
+    .mini-stats{display:grid;grid-template-columns:1fr;gap:12px;margin-top:4px}
+    .mini-stat{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px;border-radius:18px;background:rgba(255,255,255,.74);border:1px solid rgba(122,92,255,.10)}
+    .mini-stat strong{font-size:1.12rem;letter-spacing:-.03em}
+    .mini-stat span{font-size:.82rem;color:var(--muted);font-weight:900}
+    .quick-links{display:grid;gap:12px}
+    .quick-link{min-height:74px}
+    .feedback-box{padding:18px;border-radius:20px;background:linear-gradient(180deg,rgba(122,92,255,.08),rgba(255,255,255,.72));border:1px solid rgba(122,92,255,.12);display:grid;gap:10px;flex:1}
+    .feedback-box strong{display:block}
+    .feedback-note{font-size:.9rem;color:var(--muted);line-height:1.55}
+    .feedback-focus{padding:12px 14px;border-radius:16px;background:rgba(219,255,102,.22);border:1px solid rgba(219,255,102,.34);font-size:.86rem;font-weight:900;color:#5b6f10}
+    .progress-card-body{display:flex;flex-direction:column;justify-content:space-between;gap:18px;flex:1}
+    .progress-bar{width:100%;height:16px;border-radius:999px;background:rgba(122,92,255,.10);overflow:hidden;border:1px solid rgba(122,92,255,.10);margin:14px 0 10px}
+    .progress-fill{height:100%;border-radius:999px;background:linear-gradient(135deg,var(--primary),var(--primary-2));transition:width .35s ease}
+    .progress-meta{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:12px;flex-wrap:wrap}
+    .progress-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+    .progress-step{padding:12px;border-radius:16px;background:rgba(255,255,255,.70);border:1px solid rgba(122,92,255,.10);font-size:.8rem;font-weight:900;color:var(--muted)}
+    .progress-step.done{color:#53710d;background:rgba(219,255,102,.38);border-color:rgba(219,255,102,.48)}
+    .progress-step.current{color:var(--primary);background:rgba(122,92,255,.10);border-color:rgba(122,92,255,.18)}
+    .finance-status{display:grid;gap:14px;flex:1}
+    .finance-amount{font-size:1.75rem;font-weight:900;letter-spacing:-.05em}
+    .finance-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 0;border-top:1px solid rgba(122,92,255,.10)}
+    .finance-row span{color:var(--muted);font-size:.86rem;font-weight:900}
+    .finance-row strong{font-size:.95rem}
+    .finance-pill{width:fit-content;padding:7px 10px;border-radius:999px;font-size:.75rem;font-weight:900}
+    .finance-pill.pending{color:#b44b67;background:rgba(255,120,150,.12);border:1px solid rgba(255,120,150,.16)}
+    .finance-pill.paid{color:#53710d;background:rgba(219,255,102,.52);border:1px solid rgba(219,255,102,.58)}
+    .finance-pill.empty{color:var(--primary);background:rgba(122,92,255,.09);border:1px solid rgba(122,92,255,.12)}
+    @media(max-width:1180px){.dashboard-row-3,.dashboard-row-2{grid-template-columns:1fr}.dash-card,.dash-card.compact{min-height:auto}}
+
+  
+    .dashboard-v2{gap:16px;min-height:auto}
+    .dashboard-row-3,.dashboard-row-2{gap:16px}
+    .dash-card{padding:22px;min-height:230px}
+    .dash-card.compact{min-height:245px}
+    .mini-stat{padding:13px 14px}
+    .quick-link{min-height:66px;padding:14px 16px}
+    .feedback-box{padding:16px}
+    .feedback-note{font-size:.86rem;line-height:1.5}
+    .feedback-focus{padding:10px 12px;font-size:.82rem}
+    .progress-steps{gap:8px;margin-top:12px}
+    .progress-step{padding:10px}
+    .finance-amount{font-size:1.55rem}
+    .finance-row{padding:12px 0}
+
+  
+    .student-calendar-shell{display:grid;gap:16px}
+    .student-calendar-list{display:grid;gap:10px;margin-top:18px}
+    .student-class-card{padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.78);border:1px solid rgba(122,92,255,.10)}
+    .student-class-card strong{display:block;margin-bottom:5px}
+    .student-class-card p{margin:0;color:var(--muted);line-height:1.5;font-size:.9rem}
+
+  
+    .section-card-content{display:grid;gap:12px;margin-top:14px}
+    .live-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .live-link-box{display:grid;gap:10px}
+    .live-url{word-break:break-all;color:var(--muted);font-size:.9rem}
+    @media(max-width:900px){.live-grid{grid-template-columns:1fr}}
+
+  
+    .lesson-list{display:grid;gap:16px}
+    .lesson-card{padding:18px;border-radius:22px;background:rgba(255,255,255,.84);border:1px solid rgba(122,92,255,.12);display:grid;gap:14px}
+    .lesson-head{display:flex;align-items:center;justify-content:space-between;gap:14px}
+    .lesson-title{display:grid;gap:4px}
+    .lesson-title strong{font-size:1rem;letter-spacing:-.03em}
+    .lesson-title span{font-size:.82rem;color:var(--muted);font-weight:800}
+    .lesson-body{display:grid;grid-template-columns:140px 1fr 1fr;gap:14px;align-items:start}
+    .pdf-thumb{height:120px;border-radius:18px;background:linear-gradient(135deg,rgba(122,92,255,.14),rgba(219,255,102,.28));border:1px solid rgba(122,92,255,.12);display:grid;place-items:center;text-align:center;padding:12px;color:var(--primary);font-weight:900;font-size:.82rem;overflow:hidden}
+    .pdf-thumb img{width:100%;height:100%;object-fit:cover;border-radius:14px}
+    .lesson-block{padding:14px;border-radius:18px;background:rgba(255,255,255,.78);border:1px solid rgba(122,92,255,.08)}
+    .lesson-block h4{margin:0 0 8px;font-size:.84rem;text-transform:uppercase;letter-spacing:.08em;color:var(--primary)}
+    .lesson-block p{margin:0;color:var(--muted);line-height:1.6;font-size:.9rem;white-space:pre-line}
+    @media(max-width:980px){.lesson-body{grid-template-columns:1fr}.pdf-thumb{height:auto;min-height:90px}}
+
+  
+    .featured-checklist{
+      position:relative;
+      overflow:hidden;
+      border-radius:28px;
+      padding:24px;
+      margin-bottom:18px;
+      border:1px solid rgba(122,92,255,.18);
       background:
-        radial-gradient(circle at top left, rgba(189, 233, 255, 0.85), transparent 32%),
-        radial-gradient(circle at 80% 10%, rgba(255, 155, 230, 0.55), transparent 28%),
-        radial-gradient(circle at 50% 90%, rgba(255, 242, 122, 0.45), transparent 30%),
-        var(--bg);
-      padding: 22px;
+        radial-gradient(circle at 92% 18%, rgba(219,255,102,.48), transparent 28%),
+        radial-gradient(circle at 8% 0%, rgba(122,92,255,.22), transparent 32%),
+        linear-gradient(135deg, rgba(255,255,255,.96), rgba(247,244,255,.92));
+      box-shadow:0 24px 70px rgba(63,37,128,.16);
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:18px;
+      align-items:center;
+    }
+    .featured-checklist::before{
+      content:"";
+      position:absolute;
+      inset:-80px auto auto 55%;
+      width:280px;
+      height:280px;
+      border-radius:999px;
+      background:rgba(122,92,255,.12);
+      filter:blur(4px);
+    }
+    .featured-checklist > *{position:relative;z-index:1}
+    .checklist-kicker{
+      display:inline-flex;
+      width:fit-content;
+      align-items:center;
+      gap:8px;
+      padding:8px 11px;
+      border-radius:999px;
+      font-size:.76rem;
+      font-weight:900;
+      color:var(--primary);
+      background:rgba(122,92,255,.09);
+      border:1px solid rgba(122,92,255,.12);
+      margin-bottom:12px;
+    }
+    .featured-checklist h3{
+      margin:0 0 8px;
+      font-size:clamp(1.25rem,2vw,1.8rem);
+      letter-spacing:-.055em;
+      line-height:1;
+    }
+    .featured-checklist p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.55;
+      max-width:62ch;
+      font-size:.95rem;
+    }
+    .checklist-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:flex-end;
+      align-items:center;
+    }
+    .checklist-btn{
+      border:none;
+      border-radius:16px;
+      padding:13px 16px;
+      cursor:pointer;
+      font-size:.88rem;
+      font-weight:900;
+      background:linear-gradient(135deg,var(--primary),var(--primary-2));
+      color:white;
+      box-shadow:0 16px 32px rgba(122,92,255,.25);
+      white-space:nowrap;
+    }
+    .checklist-btn.secondary{
+      color:var(--text);
+      background:rgba(255,255,255,.78);
+      border:1px solid rgba(122,92,255,.12);
+      box-shadow:none;
+    }
+    .checklist-embed{
+      display:none;
+      margin:18px 0;
+      border-radius:28px;
+      overflow:hidden;
+      border:1px solid rgba(122,92,255,.14);
+      background:white;
+      box-shadow:0 24px 70px rgba(63,37,128,.14);
+    }
+    .checklist-embed.show{display:block}
+    .checklist-embed iframe{
+      display:block;
+      width:100%;
+      height:78vh;
+      border:none;
+      background:white;
+    }
+    @media(max-width:850px){
+      .featured-checklist{grid-template-columns:1fr}
+      .checklist-actions{justify-content:flex-start}
+      .checklist-embed iframe{height:72vh}
     }
 
-    .page {
-      width: min(1120px, 100%);
-      margin: 0 auto;
-    }
-
-    .window-bar {
-      border: 2px solid #111;
-      background: rgba(255, 255, 255, 0.78);
-      box-shadow: 8px 8px 0 #111;
-      border-radius: 18px 18px 10px 10px;
-      overflow: hidden;
-      margin-bottom: 28px;
-    }
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 16px 18px;
-      border-bottom: 2px solid #111;
-      background: linear-gradient(90deg, #dcd1ff, #bde9ff);
-    }
-
-    .brand {
-      font-family: "League Spartan", sans-serif;
-      font-size: clamp(1.1rem, 2vw, 1.45rem);
-      font-weight: 800;
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
-    }
-
-    .window-buttons {
-      display: flex;
-      gap: 8px;
-      flex-shrink: 0;
-    }
-
-    .window-buttons span {
-      display: grid;
-      place-items: center;
-      width: 32px;
-      height: 32px;
-      border: 2px solid #111;
-      background: var(--pink);
-      font-weight: 800;
-      line-height: 1;
-    }
-
-    .hero {
-      padding: clamp(30px, 6vw, 72px) clamp(20px, 5vw, 64px);
-      background: rgba(255,255,255,0.64);
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      border: 2px solid #111;
-      background: var(--yellow);
-      box-shadow: 4px 4px 0 #111;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      margin-bottom: 22px;
-    }
-
-    h1 {
-      font-family: "League Spartan", sans-serif;
-      margin: 0;
-      max-width: 850px;
-      font-size: clamp(3rem, 8vw, 6.7rem);
-      line-height: 0.86;
-      letter-spacing: -0.045em;
-      text-transform: uppercase;
-    }
-
-    .subtitle {
-      max-width: 670px;
-      margin: 24px 0 0;
-      color: var(--muted);
-      font-size: clamp(1rem, 2vw, 1.18rem);
-      line-height: 1.65;
-    }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 30px;
-    }
-
-    .btn {
-      border: 2px solid #111;
-      box-shadow: 5px 5px 0 #111;
-      background: var(--panel-strong);
-      color: var(--text);
-      text-decoration: none;
-      font-weight: 800;
-      border-radius: 16px;
-      padding: 13px 18px;
-      cursor: pointer;
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
-      font-family: inherit;
-      font-size: 0.95rem;
-    }
-
-    .btn.primary { background: var(--purple); color: white; }
-    .btn.secondary { background: var(--blue); }
-
-    .btn:hover, .btn:focus-visible {
-      transform: translate(2px, 2px);
-      box-shadow: 3px 3px 0 #111;
-      outline: none;
-    }
-
-    .toolbar {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 14px;
-      align-items: center;
-      margin: 34px 0 20px;
-    }
-
-    .search {
-      width: 100%;
-      border: 2px solid #111;
-      border-radius: 18px;
-      padding: 15px 18px;
-      font: inherit;
-      font-weight: 600;
-      background: rgba(255, 255, 255, 0.86);
-      box-shadow: 5px 5px 0 #111;
-    }
-
-    .progress-card {
-      border: 2px solid #111;
-      background: var(--panel);
-      border-radius: 18px;
-      padding: 14px 18px;
-      box-shadow: 5px 5px 0 #111;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px;
-      margin-bottom: 40px;
-    }
-
-    .category {
-      border: 2px solid #111;
-      background: var(--panel);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      min-height: 100%;
-    }
-
-    .category-header {
-      width: 100%;
-      border: 0;
-      border-bottom: 2px solid #111;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      padding: 20px;
-      background: var(--panel-strong);
-      cursor: pointer;
-      text-align: left;
-      font-family: inherit;
-      color: inherit;
-    }
-
-    .category:nth-child(4n+1) .category-header { background: #efe7ff; }
-    .category:nth-child(4n+2) .category-header { background: #e5f7ff; }
-    .category:nth-child(4n+3) .category-header { background: #fff8a8; }
-    .category:nth-child(4n+4) .category-header { background: #ffe2f6; }
-
-    .category-title {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .category-title strong {
-      font-family: "League Spartan", sans-serif;
-      font-size: 1.45rem;
-      text-transform: uppercase;
-      letter-spacing: -0.02em;
-    }
-
-    .category-title span {
-      color: var(--muted);
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-
-    .toggle {
-      width: 36px;
-      height: 36px;
-      border: 2px solid #111;
-      background: white;
-      display: grid;
-      place-items: center;
-      font-size: 1.4rem;
-      font-weight: 900;
-      flex-shrink: 0;
-    }
-
-    .category-body {
-      display: none;
-      padding: 18px 20px 20px;
-    }
-
-    .category.open .category-body { display: block; }
-    .category.open .toggle { background: var(--green); }
-
-    .items {
-      display: grid;
-      gap: 10px;
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-
-    .item {
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      align-items: center;
-      gap: 10px;
-      border: 1.5px solid var(--line);
-      background: rgba(255,255,255,0.72);
-      border-radius: 16px;
-      padding: 12px;
-      transition: 0.18s ease;
-    }
-
-    .item.done {
-      background: rgba(184, 255, 217, 0.55);
-      border-color: rgba(17,17,17,0.28);
-    }
-
-    .item input {
-      width: 20px;
-      height: 20px;
-      accent-color: var(--purple-dark);
-      cursor: pointer;
-    }
-
-    .chunk {
-      font-weight: 700;
-      line-height: 1.35;
-    }
-
-    .copy {
-      border: 1.5px solid #111;
-      background: #fff;
-      border-radius: 10px;
-      padding: 7px 9px;
-      font-weight: 800;
-      cursor: pointer;
-      font-size: 0.8rem;
-    }
-
-    .example-box {
-      margin-top: 16px;
-      border: 2px dashed rgba(17,17,17,0.45);
-      border-radius: 18px;
-      padding: 14px;
-      background: rgba(255,255,255,0.52);
-    }
-
-    .example-box strong {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-    }
-
-    .example-box p {
-      margin: 8px 0;
-      color: #3a3155;
-      line-height: 1.45;
-    }
-
-    .footer {
-      border: 2px solid #111;
-      border-radius: 24px;
-      background: rgba(255,255,255,0.72);
-      box-shadow: 7px 7px 0 #111;
-      padding: 22px;
-      margin-bottom: 24px;
-    }
-
-    .footer h2 {
-      font-family: "League Spartan", sans-serif;
-      text-transform: uppercase;
-      font-size: 2rem;
-      margin: 0 0 10px;
-    }
-
-    .footer ol {
-      margin: 0;
-      padding-left: 20px;
-      color: var(--muted);
-      font-weight: 600;
-      line-height: 1.8;
-    }
-
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 20px;
-      transform: translateX(-50%) translateY(120px);
-      background: #111;
-      color: white;
-      padding: 12px 16px;
-      border-radius: 999px;
-      font-weight: 700;
-      transition: transform 0.25s ease;
-      z-index: 50;
-    }
-
-    .toast.show { transform: translateX(-50%) translateY(0); }
-
-    mark {
-      background: var(--yellow);
-      padding: 0 3px;
-      border-radius: 4px;
-    }
-
-    @media (max-width: 780px) {
-      body { padding: 14px; }
-      .window-bar { box-shadow: 5px 5px 0 #111; }
-      .topbar { padding: 12px; }
-      .window-buttons span { width: 26px; height: 26px; }
-      .hero { padding: 30px 18px; }
-      .toolbar { grid-template-columns: 1fr; }
-      .progress-card { white-space: normal; }
-      .grid { grid-template-columns: 1fr; }
-      .category-header { padding: 16px; }
-      .category-title strong { font-size: 1.25rem; }
-      .item { grid-template-columns: auto 1fr; }
-      .copy { grid-column: 2; justify-self: start; }
-    }
   </style>
 </head>
 <body>
-  <main class="page">
-    <section class="window-bar">
-      <div class="topbar">
-        <div class="brand">Teacher Debs’ Classes</div>
-        <div class="window-buttons" aria-hidden="true">
-          <span>–</span><span>□</span><span>×</span>
+  <section class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <div class="logo">hd</div>
+      <h1>Portal da aluna</h1>
+      <p>Entre com o e-mail e senha cadastrados para ver seus materiais, aulas e próximos passos.</p>
+      <input id="loginEmail" type="email" placeholder="Email" autocomplete="email" />
+      <input id="loginPassword" type="password" placeholder="Senha" autocomplete="current-password" />
+      <button class="btn btn-primary" id="loginBtn" style="width:100%">Entrar</button>
+      <div class="msg" id="loginMsg"></div>
+    </div>
+  </section>
+
+  <div class="layout app" id="app">
+    <aside class="sidebar">
+      <div class="sidebar-shell">
+        <div class="brand">
+          <div class="brand-logo">hd</div>
+          <div><strong>help.debs portal</strong><span>área da aluna</span></div>
         </div>
-      </div>
-
-      <div class="hero">
-        <div class="eyebrow">Vocabulary Checklist</div>
-        <h1>Professional Communication</h1>
-        <p class="subtitle">Useful chunks to sound clearer, more structured, and more analytical in professional situations.</p>
-        <div class="actions">
-          <a class="btn primary" href="checklist_vocabulary.pdf" target="_blank" rel="noopener">Open PDF</a>
-          <button class="btn secondary" id="resetBtn" type="button">Reset checklist</button>
-        </div>
-      </div>
-    </section>
-
-    <section class="toolbar" aria-label="Checklist tools">
-      <input class="search" id="searchInput" type="search" placeholder="Search a chunk: lack, pressure, expectation..." />
-      <div class="progress-card"><span id="checkedCount">0</span>/<span id="totalCount">0</span> checked</div>
-    </section>
-
-    <section class="grid" id="checklistGrid"></section>
-
-    <section class="footer">
-      <h2>How to use</h2>
-      <ol>
-        <li>Open the categories.</li>
-        <li>Check the chunks you want to practice.</li>
-        <li>Copy useful expressions and use them in speaking or writing practice.</li>
-        <li>Use the PDF as support when practicing with AI.</li>
-      </ol>
-    </section>
-  </main>
-
-  <div class="toast" id="toast">Copied!</div>
-
-  <script>
-    const categories = [
-      {
-        title: "Core Problem Framing",
-        subtitle: "Identifying problems professionally",
-        items: [
-          "there is a lack of…",
-          "there is a growing…",
-          "there are communication issues",
-          "there is an overreliance on…",
-          "there is a failure to…",
-          "there is a gap in…"
-        ],
-        examples: [
-          "There is a lack of clarity in communication.",
-          "There is an overreliance on technology.",
-          "There is a growing pressure to deliver results."
-        ]
-      },
-      {
-        title: "Identifying Causes",
-        subtitle: "Explaining why something happens",
-        items: [
-          "the main issue is…",
-          "the key problem is…",
-          "one of the main reasons is…",
-          "this tends to happen because…",
-          "this is usually the result of…",
-          "this comes from…"
-        ],
-        examples: [
-          "The main issue is the lack of structure.",
-          "One of the main reasons is poor communication.",
-          "This is usually the result of unclear expectations."
-        ]
-      },
-      {
-        title: "Nominalization",
-        subtitle: "Turning actions into concepts",
-        items: [
-          "the expectation of…",
-          "the pressure of…",
-          "the responsibility of…",
-          "the tendency to…",
-          "the assumption that…",
-          "the inability to…",
-          "lack of communication",
-          "overestimation of…",
-          "fear of…"
-        ],
-        examples: [
-          "The expectation of constant performance creates pressure.",
-          "The inability to disconnect affects productivity.",
-          "The assumption that results are always correct is dangerous."
-        ]
-      },
-      {
-        title: "Structuring Ideas",
-        subtitle: "Connecting ideas with flow",
-        items: [
-          "this creates…",
-          "this leads to…",
-          "this results in…",
-          "which means that…",
-          "over time, this…",
-          "as a result…"
-        ],
-        examples: [
-          "This creates confusion in teams.",
-          "This leads to poor decision-making.",
-          "Over time, this results in burnout."
-        ]
-      },
-      {
-        title: "Professional Opinion",
-        subtitle: "Giving opinions with more weight",
-        items: [
-          "from my perspective…",
-          "what I’ve noticed is…",
-          "one common issue is…",
-          "what concerns me is…",
-          "I tend to think that…",
-          "in most cases…"
-        ],
-        examples: [
-          "What concerns me is the lack of evaluation.",
-          "One common issue is the expectation of perfection.",
-          "From my perspective, this creates unrealistic standards."
-        ]
-      },
-      {
-        title: "Real Work Scenarios",
-        subtitle: "Vocabulary for practical situations",
-        items: [
-          "miss deadlines",
-          "make rushed decisions",
-          "ignore feedback",
-          "feel overwhelmed",
-          "lack of growth",
-          "unclear expectations",
-          "poor communication",
-          "high pressure environment"
-        ],
-        examples: [
-          "The team missed the deadline because expectations were unclear.",
-          "Rushed decisions can create long-term problems.",
-          "Poor communication often leads to duplicated work."
-        ]
-      }
-    ];
-
-    const grid = document.getElementById("checklistGrid");
-    const searchInput = document.getElementById("searchInput");
-    const checkedCount = document.getElementById("checkedCount");
-    const totalCount = document.getElementById("totalCount");
-    const resetBtn = document.getElementById("resetBtn");
-    const toast = document.getElementById("toast");
-
-    const storageKey = "helpdebs-professional-communication-checklist";
-    let checked = JSON.parse(localStorage.getItem(storageKey) || "{}");
-
-    function save() {
-      localStorage.setItem(storageKey, JSON.stringify(checked));
-    }
-
-    function escapeHtml(text) {
-      return text
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    function highlight(text, query) {
-      if (!query) return escapeHtml(text);
-      const escaped = escapeHtml(text);
-      const safeQuery = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      return escaped.replace(new RegExp(safeQuery, "gi"), match => `<mark>${match}</mark>`);
-    }
-
-    function render() {
-      const query = searchInput.value.trim().toLowerCase();
-      grid.innerHTML = "";
-
-      categories.forEach((category, categoryIndex) => {
-        const filteredItems = category.items
-          .map((item, itemIndex) => ({ item, itemIndex }))
-          .filter(({ item }) => item.toLowerCase().includes(query) || category.title.toLowerCase().includes(query));
-
-        if (query && filteredItems.length === 0) return;
-
-        const article = document.createElement("article");
-        article.className = "category open";
-
-        article.innerHTML = `
-          <button class="category-header" type="button" aria-expanded="true">
-            <span class="category-title">
-              <strong>${escapeHtml(category.title)}</strong>
-              <span>${escapeHtml(category.subtitle)}</span>
-            </span>
-            <span class="toggle">−</span>
-          </button>
-          <div class="category-body">
-            <ul class="items">
-              ${filteredItems.map(({ item, itemIndex }) => {
-                const id = `${categoryIndex}-${itemIndex}`;
-                const isChecked = Boolean(checked[id]);
-                return `
-                  <li class="item ${isChecked ? "done" : ""}" data-id="${id}" data-text="${escapeHtml(item)}">
-                    <input type="checkbox" ${isChecked ? "checked" : ""} aria-label="Check ${escapeHtml(item)}" />
-                    <span class="chunk">${highlight(item, query)}</span>
-                    <button class="copy" type="button">Copy</button>
-                  </li>
-                `;
-              }).join("")}
-            </ul>
-            <div class="example-box">
-              <strong>Examples</strong>
-              ${category.examples.map(example => `<p>${highlight(example, query)}</p>`).join("")}
+        <div class="student-card">
+          <div class="student-top">
+            <div class="student-avatar">💜</div>
+            <div>
+              <div class="student-name" id="studentName">Carregando...</div>
+              <div class="student-level" id="studentLevel">Aulas individuais</div>
             </div>
           </div>
-        `;
+          <div class="student-badges">
+            <span class="badge" id="studentFocus">trilha ativa</span>
+            <span class="badge" id="diagBadge">diagnóstico</span>
+          </div>
+        </div>
+        <nav class="nav" id="portalNav">
+          <div class="nav-label">menu</div>
+          <button class="nav-btn active" data-section="inicio">Início <small>dashboard</small></button>
+          <button class="nav-btn" data-section="diagnostico">Diagnóstico <small>perfil e nível</small></button>
+          <button class="nav-btn" data-section="materiais">Materiais <small>PDFs e resumos</small></button>
+          <button class="nav-btn" data-section="calendario">Calendário <small>aulas marcadas</small></button>
+          <button class="nav-btn" data-section="ao-vivo">Aula ao vivo <small>link do Elos</small></button>
+          <button class="nav-btn" data-section="dicas">Dicas <small>conteúdo rápido</small></button>
+          <button class="nav-btn" data-section="videoaulas">Videoaulas <small>biblioteca</small></button>
+          <button class="nav-btn" data-section="financeiro">Financeiro <small>pagamentos</small></button>
+        </nav>
+        <button class="nav-logout" id="logoutBtn">Sair da conta</button>
+      </div>
+    </aside>
 
-        grid.appendChild(article);
-      });
+    <main class="main">
+      <div class="shell">
+        <div class="topbar">
+          <div class="headline"><h1 id="pageTitle">Portal da aluna</h1></div>
+          <div class="top-actions">
+            <button class="btn btn-soft" onclick="goSection('materiais')">Ver materiais</button>
+            <button class="btn btn-primary" onclick="openElos()">Entrar na aula ao vivo</button>
+          </div>
+        </div>
 
-      attachEvents();
-      updateProgress();
+        <section class="portal-section active" id="section-inicio">
+          <div class="dashboard-v2">
+
+            <div class="dashboard-row-3">
+              <div class="panel dash-card compact">
+                <div class="section-title"><h3>Visão geral</h3></div>
+                <div class="mini-stats">
+                  <div class="mini-stat"><span>Próxima aula</span><strong id="nextClassStat">—</strong></div>
+                  <div class="mini-stat"><span>Materiais disponíveis</span><strong id="materialsStat">0</strong></div>
+                  <div class="mini-stat"><span>Diagnósticos pendentes</span><strong id="pendingDiagStat">3</strong></div>
+                </div>
+              </div>
+
+              <div class="panel dash-card compact">
+                <div class="section-title"><h3>Acesso rápido</h3></div>
+                <div class="quick-links" id="quickLinks">
+                  <div class="quick-link"><div><strong>Continuar diagnóstico</strong><p>3 pendente(s)</p></div><a href="#">acessar</a></div>
+                  <div class="quick-link"><div><strong>Material mais recente</strong><p>Checklist de vocabulário</p></div><a href="#">ver</a></div>
+                  <div class="quick-link"><div><strong>Financeiro</strong><p>Mensalidade de abril</p></div><a href="#">pagar</a></div>
+                </div>
+              </div>
+
+              <div class="panel dash-card compact">
+                <div class="section-title"><h3>Mini feedback</h3></div>
+                <div class="feedback-box" id="miniFeedbackBox">
+                  <strong>Observação da professora</strong>
+                  <p class="feedback-note">Você está ganhando mais velocidade para construir respostas. Agora vamos organizar melhor as ideias antes de falar.</p>
+                  <div class="feedback-focus">Foco da semana: clareza + vocabulário ativo</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="dashboard-row-2">
+              <div class="panel dash-card">
+                <div class="section-title"><h3>Progresso do diagnóstico</h3></div>
+                <div id="diagnosisProgressBox">
+                  <div class="progress-card-body">
+                    <div>
+                      <p class="dash-muted">0 de 3 etapas concluídas</p>
+                      <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+                      <div class="progress-meta">
+                        <span class="badge diagnosis-red">começar diagnóstico</span>
+                        <button class="mini-btn">Começar</button>
+                      </div>
+                    </div>
+                    <div class="progress-steps">
+                      <div class="progress-step current">1. Perfil</div>
+                      <div class="progress-step">2. Nível</div>
+                      <div class="progress-step">3. Interesses</div>
+                    </div>
+                    <p class="dash-muted">Próximo passo: Quem é você no grupinho do inglês?</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel dash-card">
+                <div class="section-title"><h3>Status financeiro</h3></div>
+                <div id="financeDashboardBox">
+                  <div class="finance-status">
+                    <span class="finance-pill pending">pendente</span>
+                    <div>
+                      <strong>Abril 2026</strong>
+                      <div class="finance-amount">R$ 297.00</div>
+                      <p class="dash-muted">vence hoje</p>
+                    </div>
+                    <div class="finance-row"><span>Status</span><strong>Aguardando pagamento</strong></div>
+                    <div class="finance-row"><span>Forma</span><strong>Pix</strong></div>
+                    <button class="mini-btn">Pagar agora</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <section class="portal-section" id="section-diagnostico">
+          <div class="grid-2">
+            <div class="panel diagnostic-card"><div class="section-title"><h3>Diagnóstico</h3></div><div class="diag-list" id="diagnosticsList"></div></div>
+            <div class="panel materials-card"><div class="section-title"><h3>Resultado salvo</h3></div><div class="materials-list" id="profileSummary"></div></div>
+          </div>
+        </section>
+
+        <section class="portal-section" id="section-materiais">
+          <div id="featuredChecklistArea"></div>
+          <div id="checklistEmbedArea" class="checklist-embed"></div>
+
+          <div class="panel materials-card">
+            <div class="section-title"><h3>Aulas e materiais</h3></div>
+            <div class="lesson-list" id="lessonsList"></div>
+            <div class="materials-list" id="materialsList"></div>
+            <div class="materials-list" id="summariesList" style="display:none"></div>
+          </div>
+        </section>
+
+        <section class="portal-section" id="section-calendario">
+          <div class="panel calendar-card">
+            <div class="student-calendar-shell">
+              <div class="calendar-header">
+                <strong>Calendário</strong>
+                <span class="calendar-month" id="calendarMonth">—</span>
+              </div>
+              <div class="calendar-grid" id="calendarGrid"></div>
+              <div class="student-calendar-list" id="studentClassList"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="portal-section" id="section-ao-vivo">
+          <div class="panel live-card">
+            <div class="section-title"><h3>Aula ao vivo</h3></div>
+            <div class="live-grid">
+              <div class="live-box live-link-box">
+                <strong>Link para acessar a aula ao vivo</strong>
+                <p class="live-url" id="elosText">https://elos.vc/sala/teacherdebora</p>
+                <div class="item-actions"><button class="mini-btn" onclick="openElos()">Abrir sala</button></div>
+              </div>
+              <div class="live-box">
+                <strong>Próxima aula</strong>
+                <p id="nextClassLive">—</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="portal-section" id="section-dicas">
+          <div class="grid-2"><div class="panel tips-card"><div class="section-title"><h3>Dicas</h3></div><div class="tips-list" id="tipsList"></div></div><div class="panel tips-card"><div class="section-title"><h3>Prompts e recursos</h3></div><div class="tips-list" id="promptsList"></div></div></div>
+        </section>
+
+        <section class="portal-section" id="section-videoaulas">
+          <div class="panel videos-card"><div class="section-title"><h3>Videoaulas</h3></div><div class="videos-list" id="videosList"></div></div>
+        </section>
+
+        <section class="portal-section" id="section-financeiro">
+          <div class="panel materials-card"><div class="section-title"><h3>Financeiro</h3></div><div class="payments-list" id="paymentsList"></div></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+const SB_URL = "https://pgdanuifukzisyyummpz.supabase.co";
+const SB_ANON = "sb_publishable_81NM6F08rsXXSCgjWl4iSg_v99cdVpo";
+let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[];
+const MONTHLY_CHECKLIST_URL = "https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html";
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+
+const $ = (id) => document.getElementById(id);
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+function showToast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2800); }
+function msg(id,text,type="info"){ const el=$(id); el.textContent=text; el.className=`msg show ${type}`; }
+function dateBR(d){ if(!d)return "—"; return new Date(d+"T12:00:00").toLocaleDateString("pt-BR",{weekday:"short",day:"numeric",month:"short"}); }
+function openLink(url){ if(!url){showToast("⚠️ Link ainda não configurado");return;} window.open(url,"_blank"); }
+
+function getDiagnosisProgress(){
+  const totalRequired = 3;
+  const requiredTypes = ["profile", "level", "interests"];
+  const doneCount = requiredTypes.filter(type => {
+    const item = diagnostics.find(d => d.type === type);
+    return item && item.status === "done";
+  }).length;
+
+  if(doneCount === 0){
+    return {
+      label: "começar diagnóstico",
+      className: "diagnosis-red",
+      pending: totalRequired,
+      done: 0,
+      total: totalRequired
+    };
+  }
+
+  if(doneCount < totalRequired){
+    return {
+      label: "trilha ativa",
+      className: "diagnosis-orange",
+      pending: totalRequired - doneCount,
+      done: doneCount,
+      total: totalRequired
+    };
+  }
+
+  return {
+    label: "diagnóstico ok",
+    className: "diagnosis-green",
+    pending: 0,
+    done: totalRequired,
+    total: totalRequired
+  };
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+  sb = window.supabase.createClient(SB_URL, SB_ANON);
+
+  $("loginBtn").addEventListener("click", login);
+  $("loginPassword").addEventListener("keydown", e => {
+    if(e.key === "Enter") login();
+  });
+  $("logoutBtn").addEventListener("click", logout);
+
+  document.querySelectorAll(".nav-btn").forEach(btn =>
+    btn.addEventListener("click", () => goSection(btn.dataset.section))
+  );
+
+  const { data: { session } } = await sb.auth.getSession();
+  if(session) await startPortal(session.user);
+});
+
+async function login(){
+  const email = $("loginEmail").value.trim();
+  const password = $("loginPassword").value;
+
+  if(!email || !password){
+    msg("loginMsg","Preencha email e senha.","error");
+    return;
+  }
+
+  $("loginBtn").disabled = true;
+  $("loginBtn").textContent = "Entrando...";
+
+  try{
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+
+    if(error){
+      msg("loginMsg", error.message, "error");
+      return;
     }
 
-    function attachEvents() {
-      document.querySelectorAll(".category-header").forEach(button => {
-        button.addEventListener("click", () => {
-          const category = button.closest(".category");
-          const isOpen = category.classList.toggle("open");
-          button.setAttribute("aria-expanded", String(isOpen));
-          button.querySelector(".toggle").textContent = isOpen ? "−" : "+";
-        });
-      });
+    if(!data.user){
+      msg("loginMsg","Login não retornou usuário.","error");
+      return;
+    }
 
-      document.querySelectorAll(".item input").forEach(input => {
-        input.addEventListener("change", () => {
-          const item = input.closest(".item");
-          checked[item.dataset.id] = input.checked;
-          item.classList.toggle("done", input.checked);
-          save();
-          updateProgress();
-        });
-      });
+    await startPortal(data.user);
+  }catch(e){
+    console.error(e);
+    msg("loginMsg", e.message || "Erro inesperado no login.","error");
+  }finally{
+    $("loginBtn").disabled = false;
+    $("loginBtn").textContent = "Entrar";
+  }
+}
 
-      document.querySelectorAll(".copy").forEach(button => {
-        button.addEventListener("click", async () => {
-          const item = button.closest(".item").dataset.text;
-          try {
-            await navigator.clipboard.writeText(item);
-            showToast("Copied!");
-          } catch {
-            showToast("Copy unavailable");
+async function logout(){
+  await sb.auth.signOut();
+  location.reload();
+}
+
+async function startPortal(authUser){
+  user = authUser;
+  $("loginScreen").style.display = "none";
+  $("app").style.display = "grid";
+  await loadData();
+  renderAll();
+}
+
+async function loadData(){
+  const [p, m, c, d, pay] = await Promise.all([
+    sb.from("profiles").select("*").eq("id", user.id).single(),
+    sb.from("materials").select("*").eq("student_id", user.id).order("created_at",{ascending:false}),
+    sb.from("classes").select("*").eq("student_id", user.id).order("class_date",{ascending:true}),
+    sb.from("diagnostics").select("*").eq("student_id", user.id).order("updated_at",{ascending:false}),
+    sb.from("payments").select("*").eq("student_id", user.id).order("due_date",{ascending:false})
+  ]);
+
+  if(p.error && p.error.code !== "PGRST116"){ showToast("Erro ao carregar perfil: " + p.error.message); console.error("profiles", p.error); }
+  if(m.error){ showToast("Erro ao carregar materiais: " + m.error.message); console.error("materials", m.error); }
+  if(c.error){ showToast("Erro ao carregar calendário: " + c.error.message); console.error("classes", c.error); }
+  if(d.error){ showToast("Erro ao carregar diagnóstico: " + d.error.message); console.error("diagnostics", d.error); }
+  if(pay.error){ showToast("Erro ao carregar financeiro: " + pay.error.message); console.error("payments", pay.error); }
+
+  profile = p.data || { full_name:user.email, email:user.email, level:"—", nivel:"—" };
+  if(!profile.elos_url) profile.elos_url = "https://elos.vc/sala/teacherdebora";
+
+  materials = m.data || [];
+  classes = c.data || [];
+  diagnostics = d.data || [];
+  payments = pay.data || [];
+
+  console.log("PORTAL DATA", {user:user.id, profile, materials, classes, diagnostics, payments});
+}
+
+function renderAll(){
+  renderProfile();
+  renderDashboard();
+  renderDiagnostics();
+  renderFeaturedChecklist();
+  renderMaterials();
+  renderCalendar();
+  renderTips();
+  renderVideos();
+  renderPayments();
+}
+
+function renderProfile(){
+  const name = profile.full_name || user.email || "Aluna";
+  const first = name.split(" ")[0];
+  const diag = getDiagnosisProgress();
+
+  $("studentName").textContent = first;
+  $("studentLevel").textContent = `Aulas individuais • nível ${profile.nivel || profile.level || "—"}`;
+  $("studentFocus").textContent = profile.focus || profile.objetivo || "trilha ativa";
+  $("diagBadge").textContent = diag.label;
+  $("diagBadge").className = `badge ${diag.className}`;
+
+  $("profileSummary").innerHTML = `
+    <div class="material-item"><strong>Perfil</strong><p>${esc(profile.learning_profile || "Ainda não definido")}</p></div>
+    <div class="material-item"><strong>Nível</strong><p>${esc(profile.nivel || profile.level || "Ainda não definido")}</p></div>
+    <div class="material-item"><strong>Foco atual</strong><p>${esc(profile.focus || profile.objetivo || "Ainda não definido")}</p></div>
+    <div class="material-item"><strong>Diagnóstico</strong><p>${diag.done}/${diag.total} testes concluídos</p></div>
+  `;
+}
+
+
+function getLatestFeedback(){
+  const feedbackTypes = ["feedback", "summary"];
+  const byType = materials.find(m => feedbackTypes.includes((m.type || "").toLowerCase()) && m.description);
+  if(byType) return byType.description;
+
+  const classWithNotes = [...classes].reverse().find(c => c.notes);
+  if(classWithNotes) return classWithNotes.notes;
+
+  return "Assim que sua professora registrar um resumo ou observação da aula, ele aparece aqui.";
+}
+
+function getNextPendingDiagnostic(){
+  const order = ["profile", "level", "interests"];
+  const labels = {
+    profile: "Quem é você no grupinho do inglês?",
+    level: "Teste de nivelamento",
+    interests: "Área de interesses"
+  };
+  const pendingType = order.find(type => {
+    const item = diagnostics.find(d => d.type === type);
+    return !item || item.status !== "done";
+  });
+
+  return pendingType ? labels[pendingType] : "Diagnóstico completo";
+}
+
+function getCurrentPayment(){
+  const pending = payments.find(p => p.status !== "paid");
+  if(pending) return pending;
+  return payments[0] || null;
+}
+
+function daysUntil(dateStr){
+  if(!dateStr) return null;
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const due = new Date(dateStr + "T12:00:00");
+  due.setHours(0,0,0,0);
+  return Math.ceil((due - today) / (1000 * 60 * 60 * 24));
+}
+
+function renderMiniFeedback(){
+  const text = getLatestFeedback();
+  $("miniFeedbackBox").innerHTML = `
+    <strong>Observação da professora</strong>
+    <p class="feedback-note">${esc(text)}</p>
+    <div class="feedback-focus">Foco da semana: clareza + vocabulário ativo</div>
+  `;
+}
+
+function renderDiagnosisProgress(){
+  const diag = getDiagnosisProgress();
+  const pct = Math.min(100, Math.round((diag.done / diag.total) * 100));
+  const next = getNextPendingDiagnostic();
+
+  const stepClass = (type, index) => {
+    const item = diagnostics.find(d => d.type === type);
+    if(item?.status === "done") return "done";
+    if(index === diag.done) return "current";
+    return "";
+  };
+
+  $("diagnosisProgressBox").innerHTML = `
+    <div class="progress-card-body">
+      <div>
+        <p class="dash-muted">${diag.done} de ${diag.total} etapas concluídas</p>
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+        <div class="progress-meta">
+          <span class="badge ${diag.className}">${esc(diag.label)}</span>
+          <button class="mini-btn" onclick="goSection('diagnostico')">${diag.done === diag.total ? "Ver diagnóstico" : "Continuar"}</button>
+        </div>
+      </div>
+
+      <div class="progress-steps">
+        <div class="progress-step ${stepClass("profile",0)}">1. Perfil</div>
+        <div class="progress-step ${stepClass("level",1)}">2. Nível</div>
+        <div class="progress-step ${stepClass("interests",2)}">3. Interesses</div>
+      </div>
+
+      <p class="dash-muted">Próximo passo: ${esc(next)}</p>
+    </div>
+  `;
+}
+
+function renderFinanceDashboard(){
+  const p = getCurrentPayment();
+
+  if(!p){
+    $("financeDashboardBox").innerHTML = `
+      <div class="finance-status">
+        <span class="finance-pill empty">sem cobrança ativa</span>
+        <p class="dash-muted">Nenhum pagamento cadastrado ainda.</p>
+        <div class="finance-row"><span>Status</span><strong>Sem pendências</strong></div>
+        <div class="finance-row"><span>Forma</span><strong>Pix</strong></div>
+      </div>
+    `;
+    return;
+  }
+
+  const diff = daysUntil(p.due_date);
+  let dueText = "vencimento não informado";
+  if(diff !== null){
+    if(diff > 0) dueText = `vence em ${diff} dia(s)`;
+    if(diff === 0) dueText = "vence hoje";
+    if(diff < 0) dueText = `vencido há ${Math.abs(diff)} dia(s)`;
+  }
+
+  const paid = p.status === "paid";
+  const statusText = paid ? "Pagamento registrado" : "Aguardando pagamento";
+
+  $("financeDashboardBox").innerHTML = `
+    <div class="finance-status">
+      <span class="finance-pill ${paid ? "paid" : "pending"}">${paid ? "pago" : "pendente"}</span>
+      <div>
+        <strong>${esc(p.reference || "Cobrança")}</strong>
+        <div class="finance-amount">R$ ${Number(p.amount || 0).toFixed(2)}</div>
+        <p class="dash-muted">${paid ? "Pagamento registrado." : dueText}</p>
+      </div>
+
+      <div class="finance-row"><span>Status</span><strong>${statusText}</strong></div>
+      <div class="finance-row"><span>Forma</span><strong>${p.pix_code || p.pix_qr_url ? "Pix disponível" : "Pix ainda não configurado"}</strong></div>
+
+      <button class="mini-btn" onclick="goSection('financeiro')">${paid ? "Ver histórico" : "Pagar agora"}</button>
+    </div>
+  `;
+}
+
+function renderDashboard(){
+  const today = new Date().toISOString().slice(0,10);
+  const next = classes.find(c => c.class_date >= today);
+  const diag = getDiagnosisProgress();
+  const latest = materials[0];
+  const currentPayment = getCurrentPayment();
+
+  $("nextClassStat").textContent = next ? `${dateBR(next.class_date)} • ${String(next.class_time||"").slice(0,5)}` : "—";
+  $("nextClassLive").textContent = next ? `${dateBR(next.class_date)} às ${String(next.class_time||"").slice(0,5)}${next.notes ? " • " + next.notes : ""}` : "Nenhuma aula futura cadastrada.";
+  if($("elosText")) $("elosText").textContent = profile.elos_url || "https://elos.vc/sala/teacherdebora";
+  $("materialsStat").textContent = materials.length;
+  $("pendingDiagStat").textContent = diag.pending;
+
+  $("diagBadge").textContent = diag.label;
+  $("diagBadge").className = `badge ${diag.className}`;
+
+  $("quickLinks").innerHTML = `
+    <div class="quick-link">
+      <div>
+        <strong>Continuar diagnóstico</strong>
+        <p>${diag.pending ? diag.pending+" pendente(s)" : "Tudo concluído"}</p>
+      </div>
+      <a href="#" onclick="goSection('diagnostico');return false;">acessar</a>
+    </div>
+
+    <div class="quick-link">
+      <div>
+        <strong>Material mais recente</strong>
+        <p>${latest ? esc(latest.title) : "Nenhum material ainda"}</p>
+      </div>
+      <a href="#" onclick="${latest?.url ? `openLink('${latest.url}')` : `showToast('Nenhum material com link')`};return false;">ver</a>
+    </div>
+
+    <div class="quick-link">
+      <div>
+        <strong>Financeiro</strong>
+        <p>${currentPayment ? esc(currentPayment.reference || "Cobrança ativa") : "Sem cobrança ativa"}</p>
+      </div>
+      <a href="#" onclick="goSection('financeiro');return false;">${currentPayment?.status === "paid" ? "ver" : "pagar"}</a>
+    </div>
+  `;
+
+  renderMiniFeedback();
+  renderDiagnosisProgress();
+  renderFinanceDashboard();
+}
+
+function renderDiagnostics(){
+  const el = $("diagnosticsList");
+  if(!el) return;
+
+  const baseDiagnostics = [
+    {
+      type: "profile",
+      icon: "💜",
+      title: "Quem é você no grupinho do inglês?",
+      description: "Teste de personalidade aplicado ao seu jeito de aprender inglês.",
+      actionLabel: "Fazer teste",
+      form_url: null
+    },
+    {
+      type: "level",
+      icon: "📊",
+      title: "Teste de nivelamento",
+      description: "Mapeamento do seu nível atual para ajustar melhor as aulas.",
+      actionLabel: "Fazer nivelamento",
+      form_url: null
+    },
+    {
+      type: "interests",
+      icon: "✨",
+      title: "Área de interesses",
+      description: "Perguntas sobre objetivos, rotina, gostos e contextos em que você quer usar inglês.",
+      actionLabel: "Responder interesses",
+      form_url: null
+    }
+  ];
+
+  const merged = baseDiagnostics.map(base => {
+    const db = diagnostics.find(d => d.type === base.type);
+    return {
+      ...base,
+      status: db?.status || "pending",
+      form_url: db?.form_url || base.form_url,
+      result_url: db?.result_url || null
+    };
+  });
+
+  el.innerHTML = merged.map(d => {
+    const done = d.status === "done";
+    const hasLink = !!d.form_url;
+
+    return `
+      <div class="diag-item ${hasLink ? "" : "locked"}">
+        <div class="item-top">
+          <div class="diag-head">
+            <div class="diag-icon">${d.icon}</div>
+            <div>
+              <strong>${esc(d.title)}</strong>
+              <p>${esc(d.description)}</p>
+            </div>
+          </div>
+
+          <span class="mini-badge ${done ? "status-done" : "status-pending"}">
+            ${done ? "concluído" : "pendente"}
+          </span>
+        </div>
+
+        <div class="item-actions">
+          ${
+            hasLink
+              ? `<button class="mini-btn" onclick="openLink('${esc(d.form_url)}')">${d.actionLabel}</button>`
+              : `<button class="mini-btn secondary" onclick="showToast('Teste ainda não conectado')">Em breve</button>`
           }
-        });
-      });
-    }
 
-    function updateProgress() {
-      const total = categories.reduce((sum, category) => sum + category.items.length, 0);
-      const done = Object.values(checked).filter(Boolean).length;
-      totalCount.textContent = total;
-      checkedCount.textContent = done;
-    }
+          ${
+            d.result_url
+              ? `<button class="mini-btn secondary" onclick="openLink('${esc(d.result_url)}')">Ver resultado</button>`
+              : ""
+          }
+        </div>
+      </div>
+    `;
+  }).join("");
+}
 
-    function showToast(message) {
-      toast.textContent = message;
-      toast.classList.add("show");
-      setTimeout(() => toast.classList.remove("show"), 1400);
-    }
 
-    searchInput.addEventListener("input", render);
+function renderFeaturedChecklist(){
+  const area = $("featuredChecklistArea");
+  if(!area) return;
 
-    resetBtn.addEventListener("click", () => {
-      checked = {};
-      save();
-      render();
-      showToast("Checklist reset");
-    });
+  const url = MONTHLY_CHECKLIST_URL;
 
-    render();
-  </script>
+  area.innerHTML = `
+    <div class="featured-checklist">
+      <div>
+        <span class="checklist-kicker">✨ checklist mensal</span>
+        <h3>Checklist de vocabulário da aula</h3>
+        <p>Revise as estruturas, chunks e combinações mais importantes do mês em uma página interativa feita para praticar sem ficar perdida.</p>
+      </div>
+
+      <div class="checklist-actions">
+        <button class="checklist-btn" onclick="openMonthlyChecklist()">Abrir checklist</button>
+        <button class="checklist-btn secondary" onclick="toggleChecklistEmbed()">Ver dentro do portal</button>
+      </div>
+    </div>
+  `;
+}
+
+function openMonthlyChecklist(){
+  window.open("https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html", "_blank", "noopener");
+}
+
+function toggleChecklistEmbed(){
+  const box = $("checklistEmbedArea");
+  if(!box) return;
+
+  const url = "https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html";
+  const isOpen = box.classList.contains("show");
+
+  if(isOpen){
+    box.classList.remove("show");
+    box.innerHTML = "";
+    return;
+  }
+
+  box.innerHTML = `<iframe src="${url}" title="Checklist mensal"></iframe>`;
+  box.classList.add("show");
+  box.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function renderMaterials(){
+  const el = $("lessonsList") || $("materialsList");
+  if(!el) return;
+
+  const visibleMaterials = materials.filter(m => {
+    const type = (m.type || "").toLowerCase();
+    return ["pdf","checklist","resource","vocabulary","summary","chunks"].includes(type);
+  });
+
+  if(!visibleMaterials.length){
+    el.innerHTML = `<div class="empty">Nenhum material cadastrado ainda.</div>`;
+    return;
+  }
+
+  const groups = [];
+
+  const classIdsWithMaterial = [...new Set(
+    visibleMaterials
+      .filter(m => m.class_id)
+      .map(m => m.class_id)
+  )];
+
+  classIdsWithMaterial.forEach(classId => {
+    const classItem = classes.find(c => c.id === classId) || null;
+    const related = visibleMaterials.filter(m => m.class_id === classId);
+    groups.push({ classItem, materials: related });
+  });
+
+  const looseMaterials = visibleMaterials.filter(m => !m.class_id);
+  looseMaterials.forEach(m => {
+    groups.push({ classItem: null, materials: [m] });
+  });
+
+  groups.sort((a,b) => {
+    const aDate = a.classItem?.class_date || a.materials[0]?.created_at || "";
+    const bDate = b.classItem?.class_date || b.materials[0]?.created_at || "";
+    return String(bDate).localeCompare(String(aDate));
+  });
+
+  el.innerHTML = groups.map(group => {
+    const c = group.classItem;
+    const items = group.materials || [];
+
+    const pdf = items.find(m => ["pdf","checklist","resource","vocabulary"].includes((m.type || "").toLowerCase())) || items.find(m => m.url);
+    const summary = items.find(m => (m.type || "").toLowerCase() === "summary");
+    const chunks = items.find(m => (m.type || "").toLowerCase() === "chunks");
+
+    const main = pdf || summary || chunks || items[0];
+
+    const title = main?.title || "Material da aula";
+    const date = c
+      ? `${dateBR(c.class_date)} • ${String(c.class_time || "").slice(0,5)}`
+      : (main?.month || "Material sem aula vinculada");
+
+    const thumb = pdf?.thumbnail_url
+      ? `<img src="${esc(pdf.thumbnail_url)}" alt="Miniatura do PDF">`
+      : `<div>PDF<br><small>${esc(pdf?.type || main?.type || "material")}</small></div>`;
+
+    return `
+      <div class="lesson-card">
+        <div class="lesson-head">
+          <div class="lesson-title">
+            <strong>${esc(title)}</strong>
+            <span>${esc(date)}</span>
+          </div>
+          ${pdf?.url ? `<button class="mini-btn" onclick="openLink('${esc(pdf.url)}')">Abrir material</button>` : ""}
+        </div>
+
+        <div class="lesson-body">
+          <div class="pdf-thumb">${thumb}</div>
+
+          <div class="lesson-block">
+            <h4>Resumo da aula</h4>
+            <p>${esc(summary?.description || "Resumo ainda não cadastrado.")}</p>
+          </div>
+
+          <div class="lesson-block">
+            <h4>Chunks usados</h4>
+            <p>${esc(chunks?.description || "Chunks ainda não cadastrados.")}</p>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderCalendar(){
+  const calendarGrid = $("calendarGrid");
+  const calendarMonthEl = $("calendarMonth");
+  const classListEl = $("studentClassList");
+
+  if(!calendarGrid || !calendarMonthEl) return;
+
+  const months = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+  calendarMonthEl.textContent = `${months[calMonth]} ${calYear}`;
+
+  const days = ["dom","seg","ter","qua","qui","sex","sáb"];
+  let html = days.map(d => `<div class="day-name">${d}</div>`).join("");
+
+  const first = new Date(calYear, calMonth, 1).getDay();
+  const total = new Date(calYear, calMonth + 1, 0).getDate();
+  const prevTotal = new Date(calYear, calMonth, 0).getDate();
+  const today = new Date();
+
+  for(let i=0;i<first;i++){
+    html += `<div class="calendar-day muted"><div class="day-number">${prevTotal-first+i+1}</div></div>`;
+  }
+
+  for(let d=1; d<=total; d++){
+    const date = `${calYear}-${String(calMonth+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const dayClasses = classes.filter(c => c.class_date === date);
+    const isToday = today.getFullYear()===calYear && today.getMonth()===calMonth && today.getDate()===d;
+
+    html += `
+      <div class="calendar-day ${dayClasses.length ? "has-class" : ""} ${isToday ? "today" : ""}">
+        <div class="day-number">${d}</div>
+        ${dayClasses.map(c => `
+          <div class="mini-class">
+            Aula • ${String(c.class_time || "").slice(0,5)}
+          </div>
+        `).join("")}
+      </div>
+    `;
+  }
+
+  calendarGrid.innerHTML = html;
+
+  if(classListEl){
+    const upcoming = classes
+      .filter(c => c.class_date >= new Date().toISOString().slice(0,10))
+      .slice(0,5);
+
+    classListEl.innerHTML = upcoming.length
+      ? upcoming.map(c => `
+          <div class="student-class-card">
+            <strong>${dateBR(c.class_date)} • ${String(c.class_time || "").slice(0,5)}</strong>
+            <p>${esc(c.notes || "Aula marcada")}</p>
+          </div>
+        `).join("")
+      : `<div class="empty">Nenhuma aula futura cadastrada.</div>`;
+  }
+}
+
+function renderTips(){
+  const tips = materials.filter(m => m.type === "tip");
+  $("tipsList").innerHTML = tips.length ? tips.map(materialCard).join("") : `<div class="empty">Nenhuma dica cadastrada ainda.</div>`;
+  const prompts = materials.filter(m => m.type === "prompt" || m.type === "resource");
+  $("promptsList").innerHTML = prompts.length ? prompts.map(materialCard).join("") : `<div class="empty">Nenhum prompt/recurso cadastrado ainda.</div>`;
+}
+
+function renderVideos(){
+  const videos = materials.filter(m => m.type === "video");
+  $("videosList").innerHTML = videos.length ? videos.map(materialCard).join("") : `<div class="empty">Nenhuma videoaula cadastrada ainda.</div>`;
+}
+
+async function copyPix(code){
+  try{
+    await navigator.clipboard.writeText(code);
+    showToast("Pix copiado! Abra seu banco e cole.");
+  }catch(e){
+    showToast("Não consegui copiar automaticamente.");
+  }
+}
+
+function paymentAction(id){
+  const p = payments.find(item => item.id === id);
+  if(!p){
+    showToast("Cobrança não encontrada.");
+    return;
+  }
+
+  if(p.pix_code){
+    copyPix(p.pix_code);
+    return;
+  }
+
+  if(p.pix_qr_url){
+    openLink(p.pix_qr_url);
+    return;
+  }
+
+  showToast("Forma de pagamento ainda não configurada.");
+}
+
+function renderPayments(){
+  const list = $("paymentsList");
+  if(!list) return;
+
+  if(!payments.length){
+    list.innerHTML = `<div class="empty">Nenhum pagamento cadastrado ainda.</div>`;
+    return;
+  }
+
+  list.innerHTML = payments.map(p => {
+    const pixCode = p.pix_code || "";
+    const pixQr = p.pix_qr_url || "";
+    const hasAction = pixCode || pixQr;
+
+    return `
+    <div class="payment-item ${hasAction ? "clickable-payment" : "no-payment-action"}"
+         onclick="paymentAction('${esc(p.id)}')">
+
+      <div class="item-top">
+        <div>
+          <strong>${esc(p.reference || "Cobrança")}</strong>
+          <p>R$ ${Number(p.amount || 0).toFixed(2)} • vence ${dateBR(p.due_date)}</p>
+        </div>
+
+        <span class="mini-badge ${
+          p.status === "paid"
+            ? "status-paid"
+            : p.status === "overdue"
+            ? "status-overdue"
+            : "status-pending"
+        }">${esc(p.status || "pending")}</span>
+      </div>
+
+      ${p.notes ? `<p>${esc(p.notes)}</p>` : ""}
+
+      ${pixQr ? `
+        <div class="qr-preview">
+          <img src="${esc(pixQr)}" alt="QR Code Pix">
+        </div>
+      ` : ""}
+
+      ${pixCode ? `
+        <p style="word-break:break-all;font-size:.82rem;margin-top:10px">
+          <b>Pix copia e cola:</b> ${esc(pixCode)}
+        </p>
+      ` : ""}
+
+      <div class="pay-actions" onclick="event.stopPropagation()">
+        ${pixCode ? `<button class="mini-btn" onclick="copyPix('${esc(pixCode)}')">Copiar Pix</button>` : ""}
+        ${pixQr ? `<button class="mini-btn secondary" onclick="openLink('${esc(pixQr)}')">Abrir QR Code</button>` : ""}
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function openElos(){
+  const url = profile.elos_url || "https://elos.vc/sala/teacherdebora";
+  openLink(url);
+}
+
+const sectionMeta = {inicio:"Portal da aluna",diagnostico:"Diagnóstico",materiais:"Materiais",calendario:"Calendário","ao-vivo":"Aula ao vivo",dicas:"Dicas",videoaulas:"Videoaulas",financeiro:"Financeiro"};
+function goSection(target){
+  document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.section === target));
+  document.querySelectorAll(".portal-section").forEach(section => section.classList.remove("active"));
+  $(`section-${target}`).classList.add("active");
+  $("pageTitle").textContent = sectionMeta[target] || target;
+
+  if(target === "calendario") renderCalendar();
+  if(target === "materiais"){ renderFeaturedChecklist(); renderMaterials(); }
+  if(target === "diagnostico") renderDiagnostics();
+  if(target === "financeiro") renderPayments();
+  if(target === "ao-vivo"){
+    const next = classes.find(c => c.class_date >= new Date().toISOString().slice(0,10));
+    $("nextClassLive").textContent = next
+      ? `${dateBR(next.class_date)} às ${String(next.class_time || "").slice(0,5)}${next.notes ? " • " + next.notes : ""}`
+      : "Nenhuma aula futura cadastrada.";
+    $("elosText").textContent = profile.elos_url || "https://elos.vc/sala/teacherdebora";
+  }
+}
+</script>
 </body>
 </html>
