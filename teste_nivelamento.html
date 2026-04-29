@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teste de Nivelamento</title>
+  <style>
+    :root {
+      --bg: #f5f2ff;
+      --card: rgba(255, 255, 255, 0.84);
+      --card-strong: #ffffff;
+      --text: #1f1634;
+      --muted: #71678e;
+      --line: rgba(123, 91, 255, 0.16);
+      --primary: #7b5bff;
+      --primary-2: #a58cff;
+      --accent: #dffb62;
+      --shadow: 0 18px 48px rgba(73, 38, 151, 0.12);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(223, 251, 98, 0.45), transparent 28%),
+        radial-gradient(circle at top right, rgba(165, 140, 255, 0.35), transparent 26%),
+        linear-gradient(180deg, #f7f3ff 0%, #f7f7ff 52%, #fcfcff 100%);
+      min-height: 100vh;
+    }
+
+    .app {
+      min-height: 100vh;
+      padding: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: var(--max);
+      min-height: 760px;
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.65);
+      border-radius: 36px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      border-bottom: 1px solid rgba(123, 91, 255, 0.08);
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(10px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: white;
+      box-shadow: 0 10px 24px rgba(123, 91, 255, 0.24);
+      font-size: 15px;
+    }
+
+    .step-pill {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.75);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .screen {
+      display: none;
+      padding: 34px;
+      min-height: calc(760px - 79px);
+    }
+
+    .screen.active {
+      display: block;
+      animation: fadeIn .35s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── COVER ── */
+    .hero {
+      display: grid;
+      grid-template-columns: 1.12fr 0.88fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .hero-left, .hero-right {
+      background: var(--card);
+      border: 1px solid rgba(123, 91, 255, 0.12);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 10px 30px rgba(77, 39, 149, 0.07);
+    }
+
+    .hero-left {
+      padding: 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 22px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      width: fit-content;
+      border-radius: 999px;
+      background: rgba(123, 91, 255, 0.08);
+      border: 1px solid rgba(123, 91, 255, 0.12);
+      color: var(--primary);
+      padding: 9px 14px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    h1 {
+      font-size: clamp(2.1rem, 4vw, 4rem);
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+      max-width: 14ch;
+    }
+
+    .lead {
+      font-size: 1.02rem;
+      line-height: 1.6;
+      color: var(--muted);
+      max-width: 54ch;
+    }
+
+    .bullets { display: grid; gap: 12px; }
+
+    .bullet {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 0.98rem;
+      line-height: 1.45;
+    }
+
+    .bullet-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--accent);
+      margin-top: 7px;
+      flex: 0 0 auto;
+      box-shadow: 0 0 0 5px rgba(223, 251, 98, 0.25);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
+      font-family: inherit;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: white;
+      padding: 16px 22px;
+      border-radius: 18px;
+      font-size: 0.98rem;
+      font-weight: 700;
+      box-shadow: 0 14px 26px rgba(123, 91, 255, 0.25);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.78);
+      color: var(--text);
+      padding: 14px 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(123, 91, 255, 0.12);
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .hero-right {
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .grid-label {
+      font-size: 0.88rem;
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .sections-preview { display: grid; gap: 14px; }
+
+    .section-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(245,241,255,0.9));
+      border: 1px solid rgba(123, 91, 255, 0.12);
+      border-radius: 20px;
+      padding: 16px 18px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .section-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-size: 1.2rem;
+      background: linear-gradient(135deg, rgba(123,91,255,0.16), rgba(223,251,98,0.5));
+      border: 1px solid rgba(123, 91, 255, 0.1);
+      flex: 0 0 auto;
+    }
+
+    .section-info { display: grid; gap: 3px; }
+    .section-title { font-size: 0.97rem; font-weight: 800; letter-spacing: -0.02em; }
+    .section-desc { color: var(--muted); font-size: 0.88rem; line-height: 1.4; }
+
+    /* ── QUESTIONS ── */
+    .question-layout {
+      display: grid;
+      grid-template-columns: 0.98fr 1.02fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .question-card {
+      background: var(--card);
+      border: 1px solid rgba(123, 91, 255, 0.12);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 10px 30px rgba(77, 39, 149, 0.07);
+      padding: 28px;
+    }
+
+    .progress-wrap { display: grid; gap: 14px; margin-bottom: 24px; }
+
+    .progress-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 12px;
+      background: rgba(123, 91, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      transition: width .28s ease;
+    }
+
+    .section-badge {
+      display: inline-flex;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(223, 251, 98, 0.45);
+      font-size: 0.84rem;
+      font-weight: 800;
+      width: fit-content;
+      margin-bottom: 18px;
+    }
+
+    .question-title {
+      font-size: clamp(1.3rem, 2.5vw, 2rem);
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+      margin-bottom: 16px;
+    }
+
+    .question-support {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .side-box {
+      margin-top: 26px;
+      padding: 18px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(123, 91, 255, 0.1);
+      display: grid;
+      gap: 8px;
+    }
+
+    .side-box strong { font-size: 0.95rem; letter-spacing: -0.02em; }
+    .side-box span { color: var(--muted); font-size: 0.9rem; line-height: 1.45; }
+
+    .options { display: grid; gap: 12px; }
+
+    .option {
+      width: 100%;
+      text-align: left;
+      background: rgba(255,255,255,0.88);
+      border: 1px solid rgba(123, 91, 255, 0.12);
+      border-radius: 22px;
+      padding: 16px 18px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      color: var(--text);
+    }
+
+    .option:hover {
+      border-color: rgba(123, 91, 255, 0.28);
+      box-shadow: 0 10px 24px rgba(123, 91, 255, 0.08);
+    }
+
+    .option.selected {
+      border-color: var(--primary);
+      background: rgba(123, 91, 255, 0.06);
+    }
+
+    .option-letter {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: rgba(123, 91, 255, 0.08);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 0.95rem;
+      flex: 0 0 auto;
+    }
+
+    .option-text {
+      font-size: 0.97rem;
+      line-height: 1.45;
+      letter-spacing: -0.01em;
+      padding-top: 4px;
+    }
+
+    .nav-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .muted-small { color: var(--muted); font-size: 0.88rem; }
+
+    /* ── READING ── */
+    .reading-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .reading-text-card {
+      background: var(--card);
+      border: 1px solid rgba(123, 91, 255, 0.12);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 10px 30px rgba(77, 39, 149, 0.07);
+      padding: 28px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .reading-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .reading-body {
+      color: var(--text);
+      font-size: 0.97rem;
+      line-height: 1.75;
+    }
+
+    /* ── WRITING ── */
+    .writing-layout {
+      display: grid;
+      grid-template-columns: 0.98fr 1.02fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .writing-info {
+      background: var(--card);
+      border: 1px solid rgba(123, 91, 255, 0.12);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 10px 30px rgba(77, 39, 149, 0.07);
+      padding: 28px;
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+
+    .writing-card {
+      background: var(--card);
+      border: 1px solid rgba(123, 91, 255, 0.12);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 10px 30px rgba(77, 39, 149, 0.07);
+      padding: 28px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .writing-prompt {
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+    }
+
+    .writing-tips { display: grid; gap: 10px; }
+
+    .writing-tip {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 0.93rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .tip-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--primary-2);
+      margin-top: 6px;
+      flex: 0 0 auto;
+      opacity: 0.6;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 200px;
+      border: 1px solid rgba(123, 91, 255, 0.18);
+      border-radius: 18px;
+      padding: 18px;
+      font-family: inherit;
+      font-size: 0.97rem;
+      line-height: 1.6;
+      color: var(--text);
+      background: rgba(255,255,255,0.88);
+      resize: vertical;
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    textarea:focus { border-color: var(--primary); }
+    textarea::placeholder { color: var(--muted); opacity: 0.7; }
+
+    .char-count {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    /* ── EMAIL COLLECT ── */
+    .email-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: center;
+      min-height: calc(760px - 79px - 68px);
+    }
+
+    .email-card {
+      background: var(--card);
+      border: 1px solid rgba(123, 91, 255, 0.12);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 10px 30px rgba(77, 39, 149, 0.07);
+      padding: 34px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .email-side {
+      background: var(--card);
+      border: 1px solid rgba(123, 91, 255, 0.12);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 10px 30px rgba(77, 39, 149, 0.07);
+      padding: 28px;
+      display: grid;
+      gap: 16px;
+      align-content: start;
+    }
+
+    .input-group { display: grid; gap: 8px; }
+
+    .input-label {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    input[type="text"],
+    input[type="email"] {
+      width: 100%;
+      border: 1px solid rgba(123, 91, 255, 0.18);
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-family: inherit;
+      font-size: 0.97rem;
+      color: var(--text);
+      background: rgba(255,255,255,0.88);
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    input:focus { border-color: var(--primary); }
+    input::placeholder { color: var(--muted); opacity: 0.7; }
+
+    .what-happens { display: grid; gap: 12px; }
+
+    .what-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 0.93rem;
+      line-height: 1.45;
+    }
+
+    .what-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      background: rgba(123, 91, 255, 0.1);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 0.82rem;
+      color: var(--primary);
+      flex: 0 0 auto;
+    }
+
+    /* ── CONFIRM ── */
+    .confirm-layout {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(760px - 79px - 68px);
+    }
+
+    .confirm-card {
+      background: var(--card);
+      border: 1px solid rgba(123, 91, 255, 0.12);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 10px 30px rgba(77, 39, 149, 0.07);
+      padding: 48px;
+      max-width: 560px;
+      width: 100%;
+      display: grid;
+      gap: 20px;
+      text-align: center;
+    }
+
+    .confirm-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 22px;
+      display: grid;
+      place-items: center;
+      font-size: 2rem;
+      background: linear-gradient(135deg, rgba(123,91,255,0.16), rgba(223,251,98,0.5));
+      border: 1px solid rgba(123, 91, 255, 0.1);
+      margin: 0 auto;
+    }
+
+    .confirm-title {
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      line-height: 1;
+      letter-spacing: -0.05em;
+    }
+
+    .confirm-text {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.65;
+    }
+
+    .confirm-detail {
+      background: rgba(255,255,255,0.75);
+      border: 1px solid rgba(123,91,255,0.1);
+      border-radius: 18px;
+      padding: 18px 22px;
+      font-size: 0.93rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    @media (max-width: 980px) {
+      .hero, .question-layout, .reading-layout, .writing-layout, .email-layout { grid-template-columns: 1fr; }
+      .shell { min-height: auto; }
+      .screen { min-height: auto; }
+    }
+
+    @media (max-width: 640px) {
+      .app { padding: 12px; }
+      .screen { padding: 16px; }
+      .topbar { padding: 14px 16px; }
+      .step-pill { display: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <main class="shell">
+
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-badge">hd</div>
+        <span>Nivelamento</span>
+      </div>
+      <div class="step-pill" id="stepPill">Introdução</div>
+    </div>
+
+    <!-- COVER -->
+    <section class="screen active" id="coverScreen">
+      <div class="hero">
+        <div class="hero-left">
+          <div>
+            <div class="eyebrow">descubra seu nível de inglês</div>
+            <h1>Onde você está no inglês agora?</h1>
+          </div>
+          <p class="lead">
+            Um teste rápido e funcional para mapear seu nível real de inglês — do A1 ao B2 —
+            com base em gramática, vocabulário, leitura e escrita.
+          </p>
+          <div class="bullets">
+            <div class="bullet"><span class="bullet-dot"></span><span>15 perguntas + uma atividade de escrita livre.</span></div>
+            <div class="bullet"><span class="bullet-dot"></span><span>Em até 24h você recebe seu nível e um feedback personalizado.</span></div>
+            <div class="bullet"><span class="bullet-dot"></span><span>Sem armadilha, sem tempo. Responda com calma e honestidade.</span></div>
+          </div>
+          <div class="hero-actions">
+            <button class="btn-primary" id="startBtn">Começar teste</button>
+          </div>
+        </div>
+
+        <div class="hero-right">
+          <div class="grid-label">o que o teste avalia</div>
+          <div class="sections-preview">
+            <div class="section-card">
+              <div class="section-icon">📝</div>
+              <div class="section-info">
+                <div class="section-title">Gramática & Vocabulário</div>
+                <div class="section-desc">12 questões de múltipla escolha, do básico ao avançado</div>
+              </div>
+            </div>
+            <div class="section-card">
+              <div class="section-icon">📖</div>
+              <div class="section-info">
+                <div class="section-title">Leitura</div>
+                <div class="section-desc">Um texto curto com 3 perguntas de compreensão</div>
+              </div>
+            </div>
+            <div class="section-card">
+              <div class="section-icon">✍️</div>
+              <div class="section-info">
+                <div class="section-title">Escrita livre</div>
+                <div class="section-desc">Um tema simples, você escreve à vontade, sem pressão</div>
+              </div>
+            </div>
+          </div>
+          <p style="font-size:0.86rem; color:var(--muted); line-height:1.45;">
+            O resultado é entregue em até 24h com seu nível CEFR e um comentário personalizado.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- GRAMMAR/VOCAB QUESTIONS -->
+    <section class="screen" id="questionScreen">
+      <div class="question-layout">
+        <div class="question-card">
+          <div class="progress-wrap">
+            <div class="progress-meta">
+              <span id="progressText">Pergunta 1 de 12</span>
+              <span id="progressPercent">8%</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-bar" id="progressBar"></div>
+            </div>
+          </div>
+          <div class="section-badge" id="sectionBadge">Gramática & Vocabulário</div>
+          <h2 class="question-title" id="questionTitle"></h2>
+          <p class="question-support" id="questionSupport"></p>
+          <div class="side-box">
+            <strong>Dica</strong>
+            <span>Escolha a opção que parece mais correta. Se não souber, tudo bem — esse teste é pra mapear, não pra julgar.</span>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <div class="options" id="optionsContainer"></div>
+          <div class="nav-row">
+            <button class="btn-secondary" id="backBtn" disabled>Voltar</button>
+            <span class="muted-small" id="navHint">Escolha uma opção para continuar</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- READING -->
+    <section class="screen" id="readingScreen">
+      <div class="reading-layout">
+        <div class="reading-text-card">
+          <div class="section-badge">Leitura</div>
+          <div class="reading-title" id="readingTitle"></div>
+          <div class="reading-body" id="readingBody"></div>
+        </div>
+
+        <div class="question-card">
+          <p style="font-size:0.93rem; color:var(--muted); margin-bottom:20px; line-height:1.55;">
+            Leia o texto ao lado e responda as 3 perguntas abaixo.
+          </p>
+          <div class="options" id="readingOptionsContainer"></div>
+          <div class="nav-row">
+            <span class="muted-small" id="readingProgressText">Pergunta 1 de 3</span>
+            <span class="muted-small" id="readingNavHint">Escolha uma opção para continuar</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WRITING -->
+    <section class="screen" id="writingScreen">
+      <div class="writing-layout">
+        <div class="writing-info">
+          <div class="section-badge">Escrita livre</div>
+          <div class="writing-prompt">Talk about your likes and dislikes.</div>
+          <p style="color:var(--muted); font-size:0.97rem; line-height:1.65;">
+            Escreva em inglês sobre o que você gosta e o que não gosta. Pode ser comida, música, rotina, hobbies, trabalho — qualquer coisa.
+          </p>
+          <div class="writing-tips">
+            <div class="writing-tip"><span class="tip-dot"></span><span>Não existe resposta certa ou errada aqui.</span></div>
+            <div class="writing-tip"><span class="tip-dot"></span><span>Escreva da forma mais natural que conseguir.</span></div>
+            <div class="writing-tip"><span class="tip-dot"></span><span>Não use tradutor. O objetivo é ver o seu inglês real.</span></div>
+            <div class="writing-tip"><span class="tip-dot"></span><span>Mínimo sugerido: 3 a 5 linhas.</span></div>
+          </div>
+        </div>
+
+        <div class="writing-card">
+          <textarea id="writingTextarea" placeholder="Start writing here..."></textarea>
+          <div class="char-count"><span id="charCount">0</span> palavras</div>
+          <div class="nav-row" style="margin-top:0;">
+            <span class="muted-small">Quando terminar, clique em continuar</span>
+            <button class="btn-primary" id="writingNextBtn" disabled>Continuar</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EMAIL COLLECT -->
+    <section class="screen" id="emailScreen">
+      <div class="email-layout">
+        <div class="email-card">
+          <div>
+            <div class="eyebrow" style="margin-bottom:16px;">quase lá</div>
+            <h2 style="font-size:clamp(1.8rem,3vw,2.8rem); letter-spacing:-0.05em; line-height:1.05; margin-bottom:12px;">Para onde enviamos seu resultado?</h2>
+            <p style="color:var(--muted); font-size:0.97rem; line-height:1.6;">
+              Insira seu nome e e-mail abaixo. Em até 24h você recebe seu nível CEFR e um feedback personalizado.
+            </p>
+          </div>
+
+          <div style="display:grid; gap:16px;">
+            <div class="input-group">
+              <label class="input-label">Seu nome</label>
+              <input type="text" id="nameInput" placeholder="Como você se chama?" />
+            </div>
+            <div class="input-group">
+              <label class="input-label">Seu e-mail</label>
+              <input type="email" id="emailInput" placeholder="seu@email.com" />
+            </div>
+          </div>
+
+          <button class="btn-primary" id="submitBtn" style="width:fit-content;">Enviar teste</button>
+          <p id="submitError" style="color:#e05c5c; font-size:0.88rem; display:none;">Por favor, preencha nome e e-mail antes de enviar.</p>
+        </div>
+
+        <div class="email-side">
+          <h3 style="font-size:1.1rem; letter-spacing:-0.03em;">O que acontece agora</h3>
+          <div class="what-happens">
+            <div class="what-item">
+              <div class="what-num">1</div>
+              <span>Suas respostas são registradas junto com sua escrita livre.</span>
+            </div>
+            <div class="what-item">
+              <div class="what-num">2</div>
+              <span>Em até 24h você recebe um e-mail com seu nível (A1–B2) e um comentário personalizado.</span>
+            </div>
+            <div class="what-item">
+              <div class="what-num">3</div>
+              <span>O resultado também aparece na sua área na plataforma.</span>
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,0.75); border:1px solid rgba(123,91,255,0.1); border-radius:18px; padding:18px;">
+            <p style="font-size:0.9rem; color:var(--muted); line-height:1.55;">
+              Suas respostas são confidenciais e usadas apenas para definir seu nível e personalizar seu aprendizado.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONFIRM -->
+    <section class="screen" id="confirmScreen">
+      <div class="confirm-layout">
+        <div class="confirm-card">
+          <div class="confirm-icon">✅</div>
+          <h2 class="confirm-title">Teste enviado!</h2>
+          <p class="confirm-text">
+            Recebemos suas respostas, <strong id="confirmName"></strong>. Agora é só aguardar —
+            em até 24h você recebe seu resultado no e-mail e na plataforma.
+          </p>
+          <div class="confirm-detail">
+            Seu nível CEFR (A1, A2, B1 ou B2) será determinado com base nas suas respostas e na sua escrita. O comentário vai ser personalizado de acordo com o seu desempenho.
+          </div>
+          <button class="btn-secondary" id="restartBtn" style="margin:0 auto;">Refazer teste</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // ─── DATA ───────────────────────────────────────────────────────────────────
+
+  const grammarQuestions = [
+    // A1 — 1pt each
+    {
+      level: 'A1', weight: 1,
+      title: 'Choose the correct option:',
+      support: '___ my name is Ana and ___ from Brazil.',
+      options: ["I'm / I'm", "My / I'm", "I'm / my", "My / my"],
+      correct: 0
+    },
+    {
+      level: 'A1', weight: 1,
+      title: 'What ___ she do on weekends?',
+      support: 'Choose the correct auxiliary verb.',
+      options: ['do', 'is', 'does', 'are'],
+      correct: 2
+    },
+    {
+      level: 'A1', weight: 1,
+      title: 'There ___ two cats in the garden.',
+      support: 'Choose the correct form of "to be".',
+      options: ['is', 'are', 'be', 'am'],
+      correct: 1
+    },
+    // A2 — 2pts each
+    {
+      level: 'A2', weight: 2,
+      title: 'I ___ to the gym three times last week.',
+      support: 'Choose the correct verb form.',
+      options: ['go', 'goes', 'went', 'gone'],
+      correct: 2
+    },
+    {
+      level: 'A2', weight: 2,
+      title: 'Choose the correct sentence:',
+      support: '',
+      options: ["He don't likes coffee.", "He doesn't like coffee.", "He not like coffee.", "He doesn't likes coffee."],
+      correct: 1
+    },
+    {
+      level: 'A2', weight: 2,
+      title: 'She ___ English for two years when she moved abroad.',
+      support: 'Choose the correct verb tense.',
+      options: ['studied', 'has studied', 'had been studying', 'was study'],
+      correct: 2
+    },
+    // B1 — 3pts each
+    {
+      level: 'B1', weight: 3,
+      title: 'If I ___ more time, I would travel every month.',
+      support: 'Choose the correct conditional form.',
+      options: ['have', 'had', 'would have', 'has'],
+      correct: 1
+    },
+    {
+      level: 'B1', weight: 3,
+      title: 'The report ___ by the team before the meeting started.',
+      support: 'Choose the correct passive form.',
+      options: ['was finished', 'finished', 'has finished', 'were finished'],
+      correct: 0
+    },
+    {
+      level: 'B1', weight: 3,
+      title: 'She asked me ___ I had seen her keys.',
+      support: 'Choose the correct word to introduce indirect speech.',
+      options: ['that', 'if', 'what', 'whether or not'],
+      correct: 1
+    },
+    // B2 — 4pts each
+    {
+      level: 'B2', weight: 4,
+      title: '___ having lived abroad for years, she still struggles with the local accent.',
+      support: 'Choose the correct connector.',
+      options: ['Although', 'Despite', 'Even', 'However'],
+      correct: 1
+    },
+    {
+      level: 'B2', weight: 4,
+      title: 'The new policy will have a significant impact ___ small businesses.',
+      support: 'Choose the correct preposition.',
+      options: ['at', 'for', 'on', 'over'],
+      correct: 2
+    },
+    {
+      level: 'B2', weight: 4,
+      title: 'Choose the most natural and precise sentence:',
+      support: '',
+      options: [
+        'The situation was very unique and never happened before.',
+        'The situation was unprecedented.',
+        'The situation was totally and completely unique.',
+        'The situation had never happened in any way before.'
+      ],
+      correct: 1
+    }
+  ];
+
+  const readingTexts = {
+    A: {
+      title: 'My Daily Routine',
+      body: `My name is Sarah. I am 28 years old and I live in London. Every day, I wake up at 7am and have breakfast at home. I usually eat toast and drink coffee. After breakfast, I take the bus to work. I work in a small office near the city centre.\n\nAfter work, I go to the supermarket or visit my friends. I love cooking, so I usually make dinner at home. At night, I watch TV or read a book. I go to bed at 10pm. I think my routine is simple, but I am happy with my life.`,
+      questions: [
+        {
+          title: 'Where does Sarah work?',
+          options: ['At a supermarket', 'At a school', 'In a small office', 'At home'],
+          correct: 2
+        },
+        {
+          title: 'What does Sarah usually do after work?',
+          options: ['She goes to the gym', 'She goes to the supermarket or visits friends', 'She cooks and watches TV', 'She takes the bus home'],
+          correct: 1
+        },
+        {
+          title: 'Which word best describes Sarah\'s routine?',
+          options: ['Stressful', 'Exciting', 'Simple', 'Boring'],
+          correct: 2
+        }
+      ]
+    },
+    B: {
+      title: 'The Rise of Remote Work',
+      body: `In recent years, remote work has become increasingly common around the world. Many companies that once required employees to work from the office have now adopted flexible working arrangements. For some workers, this change has been positive — they save time on commuting, spend more time with family, and often feel more productive at home.\n\nHowever, not everyone shares this view. Some employees miss the social environment of the office and find it difficult to separate work from personal life when both happen in the same space. Companies, too, face challenges: maintaining team culture and communication can be harder when people rarely meet in person.\n\nDespite these difficulties, most experts agree that remote work is here to stay — at least in some form.`,
+      questions: [
+        {
+          title: 'According to the text, what is one advantage of remote work?',
+          options: ['Higher salaries', 'Less time commuting', 'More meetings with colleagues', 'Better office equipment'],
+          correct: 1
+        },
+        {
+          title: 'What challenge do companies face with remote work?',
+          options: ['Finding new employees', 'Paying for office space', 'Maintaining team culture and communication', 'Managing international clients'],
+          correct: 2
+        },
+        {
+          title: 'What does the author suggest about the future of remote work?',
+          options: ['It will disappear soon', 'It will replace all office work', 'It is likely to continue in some form', 'It only works for large companies'],
+          correct: 2
+        }
+      ]
+    },
+    C: {
+      title: 'The Paradox of Choice',
+      body: `In contemporary consumer culture, choice is often presented as an unqualified good. The more options available, the better — or so the assumption goes. Yet psychologist Barry Schwartz has argued convincingly that an abundance of choice can, paradoxically, lead to greater dissatisfaction rather than freedom.\n\nWhen faced with too many options, people tend to experience what Schwartz calls "decision fatigue" — a state in which the mental effort required to evaluate alternatives becomes overwhelming. Moreover, after making a choice, individuals are more likely to ruminate over the options they rejected, wondering whether a different decision might have led to a better outcome. This phenomenon, known as "post-decision regret," is significantly more prevalent in environments where alternatives are plentiful.\n\nThe implications extend beyond shopping. In education, careers, and relationships, an excess of options may paradoxically reduce our sense of agency rather than enhance it.`,
+      questions: [
+        {
+          title: 'What is the central argument of the text?',
+          options: ['People should have fewer options in life', 'Too many choices can lead to less satisfaction', 'Barry Schwartz is against consumer culture', 'Decision-making is always a difficult process'],
+          correct: 1
+        },
+        {
+          title: 'What does "decision fatigue" refer to in the text?',
+          options: ['Being too tired to go shopping', 'Feeling relieved after making a decision', 'The exhaustion caused by evaluating too many options', 'The regret of making the wrong choice'],
+          correct: 2
+        },
+        {
+          title: 'What can be inferred about the author\'s perspective?',
+          options: ['The author believes choice is always positive', 'The author thinks Schwartz\'s ideas are wrong', 'The author agrees that excess choice can be problematic', 'The author argues that choice only affects shopping decisions'],
+          correct: 2
+        }
+      ]
+    }
+  };
+
+  // ─── STATE ──────────────────────────────────────────────────────────────────
+
+  let currentQ = 0;
+  let grammarAnswers = new Array(grammarQuestions.length).fill(null);
+  let grammarScore = 0;
+  let readingKey = 'A';
+  let currentReadingQ = 0;
+  let readingAnswers = [];
+  let readingScore = 0;
+  let writingText = '';
+  let userName = '';
+  let userEmail = '';
+
+  // ─── HELPERS ────────────────────────────────────────────────────────────────
+
+  const screens = {
+    cover: document.getElementById('coverScreen'),
+    question: document.getElementById('questionScreen'),
+    reading: document.getElementById('readingScreen'),
+    writing: document.getElementById('writingScreen'),
+    email: document.getElementById('emailScreen'),
+    confirm: document.getElementById('confirmScreen')
+  };
+
+  const stepPill = document.getElementById('stepPill');
+
+  function showScreen(name) {
+    Object.values(screens).forEach(s => s.classList.remove('active'));
+    screens[name].classList.add('active');
+  }
+
+  function levelLabel(score) {
+    if (score <= 8)  return 'A1';
+    if (score <= 16) return 'A2';
+    if (score <= 25) return 'B1';
+    return 'B2';
+  }
+
+  function pickReadingKey(score) {
+    if (score <= 9)  return 'A';
+    if (score <= 20) return 'B';
+    return 'C';
+  }
+
+  // ─── GRAMMAR SCREEN ─────────────────────────────────────────────────────────
+
+  function startTest() {
+    currentQ = 0;
+    grammarAnswers = new Array(grammarQuestions.length).fill(null);
+    showScreen('question');
+    stepPill.textContent = 'Parte 1 — Gramática';
+    renderGrammarQuestion();
+  }
+
+  function renderGrammarQuestion() {
+    const q = grammarQuestions[currentQ];
+    const total = grammarQuestions.length;
+    const pct = Math.round(((currentQ + 1) / total) * 100);
+
+    document.getElementById('progressText').textContent = `Pergunta ${currentQ + 1} de ${total}`;
+    document.getElementById('progressPercent').textContent = `${pct}%`;
+    document.getElementById('progressBar').style.width = `${pct}%`;
+    document.getElementById('sectionBadge').textContent = `Nível ${q.level} · ${q.weight} ${q.weight === 1 ? 'ponto' : 'pontos'}`;
+    document.getElementById('questionTitle').textContent = q.title;
+    document.getElementById('questionSupport').textContent = q.support;
+    document.getElementById('backBtn').disabled = currentQ === 0;
+    document.getElementById('navHint').textContent = grammarAnswers[currentQ] !== null ? 'Resposta marcada.' : 'Escolha uma opção para continuar';
+
+    const container = document.getElementById('optionsContainer');
+    container.innerHTML = q.options.map((opt, i) => `
+      <button class="option ${grammarAnswers[currentQ] === i ? 'selected' : ''}" data-index="${i}">
+        <span class="option-letter">${String.fromCharCode(65 + i)}</span>
+        <span class="option-text">${opt}</span>
+      </button>
+    `).join('');
+
+    container.querySelectorAll('.option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        grammarAnswers[currentQ] = parseInt(btn.dataset.index);
+        document.getElementById('navHint').textContent = 'Resposta registrada';
+        setTimeout(() => {
+          if (currentQ < grammarQuestions.length - 1) {
+            currentQ++;
+            renderGrammarQuestion();
+          } else {
+            finishGrammar();
+          }
+        }, 180);
+      });
+    });
+  }
+
+  document.getElementById('backBtn').addEventListener('click', () => {
+    if (currentQ > 0) { currentQ--; renderGrammarQuestion(); }
+  });
+
+  function finishGrammar() {
+    grammarScore = grammarQuestions.reduce((sum, q, i) => {
+      return sum + (grammarAnswers[i] === q.correct ? q.weight : 0);
+    }, 0);
+    readingKey = pickReadingKey(grammarScore);
+    startReading();
+  }
+
+  // ─── READING SCREEN ─────────────────────────────────────────────────────────
+
+  function startReading() {
+    currentReadingQ = 0;
+    readingAnswers = [];
+    const text = readingTexts[readingKey];
+    document.getElementById('readingTitle').textContent = text.title;
+    document.getElementById('readingBody').innerHTML = text.body.replace(/\n\n/g, '<br><br>');
+    stepPill.textContent = 'Parte 2 — Leitura';
+    showScreen('reading');
+    renderReadingQuestion();
+  }
+
+  function renderReadingQuestion() {
+    const q = readingTexts[readingKey].questions[currentReadingQ];
+    document.getElementById('readingProgressText').textContent = `Pergunta ${currentReadingQ + 1} de 3`;
+    document.getElementById('readingNavHint').textContent = 'Escolha uma opção para continuar';
+
+    const container = document.getElementById('readingOptionsContainer');
+    container.innerHTML = `
+      <p style="font-weight:700; font-size:1rem; letter-spacing:-0.02em; margin-bottom:14px; line-height:1.35;">${q.title}</p>
+      ${q.options.map((opt, i) => `
+        <button class="option" data-index="${i}" style="margin-bottom:10px;">
+          <span class="option-letter">${String.fromCharCode(65 + i)}</span>
+          <span class="option-text">${opt}</span>
+        </button>
+      `).join('')}
+    `;
+
+    container.querySelectorAll('.option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        readingAnswers[currentReadingQ] = parseInt(btn.dataset.index);
+        document.getElementById('readingNavHint').textContent = 'Resposta registrada';
+        setTimeout(() => {
+          if (currentReadingQ < 2) {
+            currentReadingQ++;
+            renderReadingQuestion();
+          } else {
+            finishReading();
+          }
+        }, 180);
+      });
+    });
+  }
+
+  function finishReading() {
+    readingScore = readingTexts[readingKey].questions.reduce((sum, q, i) => {
+      return sum + (readingAnswers[i] === q.correct ? 3 : 0);
+    }, 0);
+    stepPill.textContent = 'Parte 3 — Escrita';
+    showScreen('writing');
+  }
+
+  // ─── WRITING SCREEN ─────────────────────────────────────────────────────────
+
+  const writingTextarea = document.getElementById('writingTextarea');
+  const charCount = document.getElementById('charCount');
+  const writingNextBtn = document.getElementById('writingNextBtn');
+
+  writingTextarea.addEventListener('input', () => {
+    const words = writingTextarea.value.trim().split(/\s+/).filter(w => w.length > 0);
+    charCount.textContent = words.length;
+    writingNextBtn.disabled = words.length < 5;
+  });
+
+  writingNextBtn.addEventListener('click', () => {
+    writingText = writingTextarea.value.trim();
+    stepPill.textContent = 'Finalizar';
+    showScreen('email');
+  });
+
+  // ─── EMAIL SCREEN ────────────────────────────────────────────────────────────
+
+  document.getElementById('submitBtn').addEventListener('click', () => {
+    const name = document.getElementById('nameInput').value.trim();
+    const email = document.getElementById('emailInput').value.trim();
+    const error = document.getElementById('submitError');
+
+    if (!name || !email || !email.includes('@')) {
+      error.style.display = 'block';
+      return;
+    }
+
+    error.style.display = 'none';
+    userName = name;
+    userEmail = email;
+
+    const totalScore = grammarScore + readingScore;
+    const provisionalLevel = levelLabel(totalScore);
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.textContent = 'Enviando...';
+    submitBtn.disabled = true;
+
+    const payload = {
+      nome: userName,
+      email: userEmail,
+      pontuacaoGramatica: grammarScore,
+      pontuacaoReading: readingScore,
+      pontuacaoTotal: totalScore,
+      nivelProvisorio: provisionalLevel,
+      textoReading: readingKey,
+      writing: writingText
+    };
+
+    fetch('https://script.google.com/macros/s/AKfycbxgXw8TmLxA06qqsNVjwZ10OGZD80XyaflJp8P_WBKIG-3_VfUYRd8JrJN4WvjDih4k/exec', {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .finally(() => {
+      document.getElementById('confirmName').textContent = name.split(' ')[0];
+      stepPill.textContent = 'Concluído';
+      showScreen('confirm');
+    });
+  });
+
+  // ─── RESTART ────────────────────────────────────────────────────────────────
+
+  document.getElementById('restartBtn').addEventListener('click', () => {
+    writingTextarea.value = '';
+    charCount.textContent = '0';
+    writingNextBtn.disabled = true;
+    document.getElementById('nameInput').value = '';
+    document.getElementById('emailInput').value = '';
+    grammarScore = 0;
+    readingScore = 0;
+    stepPill.textContent = 'Introdução';
+    showScreen('cover');
+  });
+
+  // ─── INIT ────────────────────────────────────────────────────────────────────
+
+  document.getElementById('startBtn').addEventListener('click', startTest);
+</script>
+</body>
+</html>
