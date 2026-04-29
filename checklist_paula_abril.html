@@ -928,10 +928,7 @@ function renderFeaturedChecklist(){
       </div>
 
       <div class="checklist-actions">
-        <button class="checklist-btn"
-onclick="event.preventDefault(); event.stopPropagation(); openMonthlyChecklist(); return false;">
-Abrir checklist
-</button>
+        <button class="checklist-btn" onclick="openMonthlyChecklist()">Abrir checklist</button>
         <button class="checklist-btn secondary" onclick="toggleChecklistEmbed()">Ver dentro do portal</button>
       </div>
     </div>
@@ -939,8 +936,7 @@ Abrir checklist
 }
 
 function openMonthlyChecklist(){
-  const url = MONTHLY_CHECKLIST_URL;
-  window.open(url, "_blank", "noopener,noreferrer");
+  window.open("https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html", "_blank", "noopener");
 }
 
 function toggleChecklistEmbed(){
