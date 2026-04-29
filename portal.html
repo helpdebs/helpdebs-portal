@@ -328,11 +328,6 @@
           <button class="nav-btn" data-section="videoaulas">Videoaulas <small>biblioteca</small></button>
           <button class="nav-btn" data-section="financeiro">Financeiro <small>pagamentos</small></button>
         </nav>
-
-        <button class="nav-btn" onclick="window.location.href='trocar_senha.html'">
-          Trocar senha <small>segurança</small>
-        </button>
-
         <button class="nav-logout" id="logoutBtn">Sair da conta</button>
       </div>
     </aside>
@@ -941,22 +936,14 @@ function renderFeaturedChecklist(){
 }
 
 function openMonthlyChecklist(){
-  if(!MONTHLY_CHECKLIST_URL || MONTHLY_CHECKLIST_URL.includes("COLE_AQUI")){
-    showToast("Checklist ainda não conectado.");
-    return;
-  }
-  window.location.href = MONTHLY_CHECKLIST_URL;
+  window.open("https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html", "_blank", "noopener");
 }
 
 function toggleChecklistEmbed(){
   const box = $("checklistEmbedArea");
   if(!box) return;
 
-  if(!MONTHLY_CHECKLIST_URL || MONTHLY_CHECKLIST_URL.includes("COLE_AQUI")){
-    showToast("Checklist ainda não conectado.");
-    return;
-  }
-
+  const url = "https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html";
   const isOpen = box.classList.contains("show");
 
   if(isOpen){
@@ -965,8 +952,9 @@ function toggleChecklistEmbed(){
     return;
   }
 
-  box.innerHTML = `<iframe src="${esc(MONTHLY_CHECKLIST_URL)}" title="Checklist mensal"></iframe>`;
+  box.innerHTML = `<iframe src="${url}" title="Checklist mensal"></iframe>`;
   box.classList.add("show");
+  box.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function renderMaterials(){
