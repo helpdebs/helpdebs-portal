@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trocar senha | help.debs</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root{
+      --bg:#f7f4ff;
+      --panel:#ffffff;
+      --text:#1d1630;
+      --muted:#746b92;
+      --primary:#8b6cff;
+      --primary2:#a78bfa;
+      --line:rgba(122,92,255,.16);
+      --danger:#e34c72;
+      --success:#4c9f5f;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:Arial, Helvetica, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 88% 12%, rgba(219,255,102,.45), transparent 28%),
+        radial-gradient(circle at 10% 0%, rgba(122,92,255,.18), transparent 30%),
+        var(--bg);
+      display:grid;
+      place-items:center;
+      padding:24px;
+    }
+
+    .card{
+      width:min(460px,100%);
+      background:rgba(255,255,255,.9);
+      border:1px solid var(--line);
+      border-radius:28px;
+      padding:34px;
+      box-shadow:0 30px 80px rgba(63,37,128,.14);
+    }
+
+    .logo{
+      width:54px;
+      height:54px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      font-weight:900;
+      color:white;
+      background:linear-gradient(135deg,var(--primary),var(--primary2));
+      margin-bottom:24px;
+    }
+
+    h1{
+      margin:0 0 8px;
+      font-size:2rem;
+      letter-spacing:-.06em;
+    }
+
+    p{
+      margin:0 0 24px;
+      color:var(--muted);
+      line-height:1.55;
+      font-size:.95rem;
+    }
+
+    label{
+      display:block;
+      margin:14px 0 7px;
+      color:var(--muted);
+      font-weight:800;
+      font-size:.82rem;
+    }
+
+    input{
+      width:100%;
+      border:1px solid var(--line);
+      background:#f8f5ff;
+      color:var(--text);
+      border-radius:16px;
+      padding:14px 15px;
+      font-size:1rem;
+      outline:none;
+    }
+
+    input:focus{
+      border-color:var(--primary);
+      box-shadow:0 0 0 4px rgba(139,108,255,.12);
+    }
+
+    button{
+      width:100%;
+      margin-top:18px;
+      border:none;
+      border-radius:16px;
+      padding:15px 18px;
+      font-weight:900;
+      font-size:1rem;
+      cursor:pointer;
+      background:linear-gradient(135deg,var(--primary),var(--primary2));
+      color:white;
+      box-shadow:0 16px 34px rgba(122,92,255,.22);
+    }
+
+    button:disabled{
+      opacity:.65;
+      cursor:not-allowed;
+    }
+
+    .msg{
+      display:none;
+      margin-top:16px;
+      padding:13px 14px;
+      border-radius:16px;
+      font-weight:800;
+      font-size:.88rem;
+      line-height:1.45;
+    }
+
+    .msg.show{display:block}
+    .msg.error{
+      color:var(--danger);
+      background:rgba(227,76,114,.10);
+      border:1px solid rgba(227,76,114,.18);
+    }
+    .msg.success{
+      color:var(--success);
+      background:rgba(76,159,95,.10);
+      border:1px solid rgba(76,159,95,.18);
+    }
+
+    .back{
+      display:block;
+      margin-top:18px;
+      text-align:center;
+      color:var(--primary);
+      font-weight:900;
+      text-decoration:none;
+      font-size:.9rem;
+    }
+
+    .small{
+      margin-top:14px;
+      margin-bottom:0;
+      font-size:.82rem;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="card">
+    <div class="logo">hd</div>
+
+    <h1>Trocar senha</h1>
+    <p>Crie uma senha nova para acessar seu portal com mais segurança.</p>
+
+    <label for="newPassword">Nova senha</label>
+    <input id="newPassword" type="password" placeholder="Digite uma nova senha" autocomplete="new-password" />
+
+    <label for="confirmPassword">Confirmar nova senha</label>
+    <input id="confirmPassword" type="password" placeholder="Digite novamente" autocomplete="new-password" />
+
+    <button id="saveBtn">Salvar nova senha</button>
+
+    <div id="message" class="msg"></div>
+
+    <p class="small">Você precisa estar logada no portal para trocar a senha.</p>
+    <a class="back" href="portal.html">Voltar para o portal</a>
+  </main>
+
+  <script>
+    const SB_URL = "https://pgdanuifukzisyyummpz.supabase.co";
+    const SB_ANON = "sb_publishable_81NM6F08rsXXSCgjWl4iSg_v99cdVpo";
+
+    const sb = window.supabase.createClient(SB_URL, SB_ANON);
+
+    const $ = (id) => document.getElementById(id);
+
+    function showMessage(text, type){
+      const el = $("message");
+      el.textContent = text;
+      el.className = `msg show ${type}`;
+    }
+
+    async function checkSession(){
+      const { data } = await sb.auth.getSession();
+
+      if(!data.session){
+        showMessage("Você precisa entrar no portal antes de trocar a senha.", "error");
+        $("saveBtn").disabled = true;
+      }
+    }
+
+    async function changePassword(){
+      const password = $("newPassword").value;
+      const confirm = $("confirmPassword").value;
+
+      if(!password || !confirm){
+        showMessage("Preencha os dois campos.", "error");
+        return;
+      }
+
+      if(password.length < 6){
+        showMessage("A nova senha precisa ter pelo menos 6 caracteres.", "error");
+        return;
+      }
+
+      if(password !== confirm){
+        showMessage("As senhas não estão iguais.", "error");
+        return;
+      }
+
+      $("saveBtn").disabled = true;
+      $("saveBtn").textContent = "Salvando...";
+
+      const { error } = await sb.auth.updateUser({
+        password: password
+      });
+
+      $("saveBtn").disabled = false;
+      $("saveBtn").textContent = "Salvar nova senha";
+
+      if(error){
+        showMessage(error.message, "error");
+        return;
+      }
+
+      showMessage("Senha alterada com sucesso. Você já pode usar a nova senha no próximo login.", "success");
+
+      $("newPassword").value = "";
+      $("confirmPassword").value = "";
+    }
+
+    $("saveBtn").addEventListener("click", changePassword);
+    $("confirmPassword").addEventListener("keydown", (event) => {
+      if(event.key === "Enter") changePassword();
+    });
+
+    checkSession();
+  </script>
+</body>
+</html>
