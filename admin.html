@@ -190,8 +190,7 @@ async function refreshAll(){await Promise.all([loadStudents(),loadMaterials(),lo
   const { data, error } = await sb
     .from("notifications")
     .select("*")
-    .order("created_at", { ascending:false })
-    .limit(20);
+    .order("created_at", { ascending:false });
 
   if(error){
     console.error("Erro ao carregar notificações:", error);
