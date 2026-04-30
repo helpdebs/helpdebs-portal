@@ -499,41 +499,36 @@ function msg(id,text,type="info"){ const el=$(id); el.textContent=text; el.class
 function dateBR(d){ if(!d)return "—"; return new Date(d+"T12:00:00").toLocaleDateString("pt-BR",{weekday:"short",day:"numeric",month:"short"}); }
 function openLink(url){ if(!url){showToast("⚠️ Link ainda não configurado");return;} window.open(url,"_blank"); }
 
+function isDiagnosticCompleted(item){
+  if(!item) return false;
+  const status = String(item.status || "").toLowerCase();
+  return ["done", "submitted", "pending_review", "awaiting_evaluation", "evaluated"].includes(status) || !!item.submitted_at || !!item.result || !!item.result_url;
+}
+
+function isDiagnosticEvaluated(item){
+  if(!item) return false;
+  const status = String(item.status || "").toLowerCase();
+  return status === "evaluated" || !!item.result_url;
+}
+
+function getDiagnosisByType(type){
+  return diagnostics.find(d => String(d.type || "").toLowerCase() === type);
+}
+
 function getDiagnosisProgress(){
   const totalRequired = 3;
   const requiredTypes = ["profile", "level", "interests"];
-  const doneCount = requiredTypes.filter(type => {
-    const item = diagnostics.find(d => d.type === type);
-    return item && item.status === "done";
-  }).length;
+  const doneCount = requiredTypes.filter(type => isDiagnosticCompleted(getDiagnosisByType(type))).length;
 
   if(doneCount === 0){
-    return {
-      label: "começar diagnóstico",
-      className: "diagnosis-red",
-      pending: totalRequired,
-      done: 0,
-      total: totalRequired
-    };
+    return { label: "começar diagnóstico", className: "diagnosis-red", pending: totalRequired, done: 0, total: totalRequired };
   }
 
   if(doneCount < totalRequired){
-    return {
-      label: "trilha ativa",
-      className: "diagnosis-orange",
-      pending: totalRequired - doneCount,
-      done: doneCount,
-      total: totalRequired
-    };
+    return { label: "trilha ativa", className: "diagnosis-orange", pending: totalRequired - doneCount, done: doneCount, total: totalRequired };
   }
 
-  return {
-    label: "diagnóstico ok",
-    className: "diagnosis-green",
-    pending: 0,
-    done: totalRequired,
-    total: totalRequired
-  };
+  return { label: "diagnóstico ok", className: "diagnosis-green", pending: 0, done: totalRequired, total: totalRequired };
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -677,13 +672,10 @@ function getNextPendingDiagnostic(){
     level: "Teste de nivelamento",
     interests: "Área de interesses"
   };
-  const pendingType = order.find(type => {
-    const item = diagnostics.find(d => d.type === type);
-    return !item || item.status !== "done";
-  });
-
+  const pendingType = order.find(type => !isDiagnosticCompleted(getDiagnosisByType(type)));
   return pendingType ? labels[pendingType] : "Diagnóstico completo";
 }
+
 
 function getCurrentPayment(){
   const pending = payments.find(p => p.status !== "paid");
@@ -715,8 +707,8 @@ function renderDiagnosisProgress(){
   const next = getNextPendingDiagnostic();
 
   const stepClass = (type, index) => {
-    const item = diagnostics.find(d => d.type === type);
-    if(item?.status === "done") return "done";
+    const item = getDiagnosisByType(type);
+    if(isDiagnosticCompleted(item)) return "done";
     if(index === diag.done) return "current";
     return "";
   };
@@ -852,7 +844,7 @@ function renderDiagnostics(){
       title: "Teste de nivelamento",
       description: "Mapeamento do seu nível atual para ajustar melhor as aulas.",
       actionLabel: "Fazer nivelamento",
-      form_url: null
+      form_url: "https://helpdebs.github.io/helpdebs-portal/teste_nivelamento.html"
     },
     {
       type: "interests",
@@ -865,9 +857,15 @@ function renderDiagnostics(){
   ];
 
   const merged = baseDiagnostics.map(base => {
-    const db = diagnostics.find(d => d.type === base.type);
+    const db = getDiagnosisByType(base.type);
     return {
       ...base,
+      ...db,
+      type: base.type,
+      icon: base.icon,
+      title: base.title,
+      description: base.description,
+      actionLabel: base.actionLabel,
       status: db?.status || "pending",
       form_url: db?.form_url || base.form_url,
       result_url: db?.result_url || null
@@ -875,11 +873,33 @@ function renderDiagnostics(){
   });
 
   el.innerHTML = merged.map(d => {
-    const done = d.status === "done";
+    const completed = isDiagnosticCompleted(d);
+    const evaluated = isDiagnosticEvaluated(d);
+    const isLevel = d.type === "level";
     const hasLink = !!d.form_url;
 
+    let badgeText = completed ? "concluído" : "pendente";
+    let badgeClass = completed ? "status-done" : "status-pending";
+
+    if(isLevel && completed && !evaluated){
+      badgeText = "aguardando avaliação";
+      badgeClass = "status-pending";
+    }
+
+    let actionHtml = "";
+
+    if(evaluated && d.result_url){
+      actionHtml = `<button class="mini-btn" onclick="openLink('${esc(d.result_url)}')">Ver resultado</button>`;
+    } else if(isLevel && completed){
+      actionHtml = `<button class="mini-btn secondary" disabled>Aguardando avaliação</button>`;
+    } else if(hasLink){
+      actionHtml = `<button class="mini-btn" onclick="openLink('${esc(d.form_url)}')">${d.actionLabel}</button>`;
+    } else {
+      actionHtml = `<button class="mini-btn secondary" onclick="showToast('Teste ainda não conectado')">Em breve</button>`;
+    }
+
     return `
-      <div class="diag-item ${hasLink ? "" : "locked"}">
+      <div class="diag-item ${hasLink || completed ? "" : "locked"}">
         <div class="item-top">
           <div class="diag-head">
             <div class="diag-icon">${d.icon}</div>
@@ -889,23 +909,11 @@ function renderDiagnostics(){
             </div>
           </div>
 
-          <span class="mini-badge ${done ? "status-done" : "status-pending"}">
-            ${done ? "concluído" : "pendente"}
-          </span>
+          <span class="mini-badge ${badgeClass}">${badgeText}</span>
         </div>
 
         <div class="item-actions">
-          ${
-            hasLink
-              ? `<button class="mini-btn" onclick="openLink('${esc(d.form_url)}')">${d.actionLabel}</button>`
-              : `<button class="mini-btn secondary" onclick="showToast('Teste ainda não conectado')">Em breve</button>`
-          }
-
-          ${
-            d.result_url
-              ? `<button class="mini-btn secondary" onclick="openLink('${esc(d.result_url)}')">Ver resultado</button>`
-              : ""
-          }
+          ${actionHtml}
         </div>
       </div>
     `;
@@ -1219,7 +1227,7 @@ function goSection(target){
 
   if(target === "calendario") renderCalendar();
   if(target === "materiais"){ renderFeaturedChecklist(); renderMaterials(); }
-  if(target === "diagnostico") renderDiagnostics();
+  if(target === "diagnostico") { loadData().then(() => { renderProfile(); renderDashboard(); renderDiagnostics(); }); }
   if(target === "financeiro") renderPayments();
   if(target === "ao-vivo"){
     const next = classes.find(c => c.class_date >= new Date().toISOString().slice(0,10));
