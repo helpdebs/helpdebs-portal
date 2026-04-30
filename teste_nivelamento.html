@@ -909,7 +909,7 @@
           <div class="confirm-detail">
             Seu nível CEFR (A1, A2, B1 ou B2) será determinado com base nas suas respostas e na sua escrita. O comentário vai ser personalizado de acordo com o seu desempenho.
           </div>
-          <button class="btn-secondary" id="restartBtn" style="margin:0 auto;">Refazer teste</button>
+          <button class="btn-secondary" id="restartBtn" style="margin:0 auto;">Voltar ao portal</button>
         </div>
       </div>
     </section>
@@ -964,6 +964,17 @@
 
     authUser = session.user;
 
+    const localKey = `helpdebs_level_submitted_${authUser.id}`;
+    if (localStorage.getItem(localKey) === "yes") {
+      testBlocked = true;
+      renderStateScreen(
+        "Teste já enviado",
+        "Seu nivelamento já foi concluído. Agora é só aguardar a avaliação da professora.",
+        "Voltar ao portal"
+      );
+      return;
+    }
+
     const { data, error } = await sb
       .from("diagnostics")
       .select("*")
@@ -984,7 +995,7 @@
 
     levelDiagnostic = data || null;
 
-    if (levelDiagnostic && ["submitted", "done", "evaluated"].includes(levelDiagnostic.status)) {
+    if (levelDiagnostic && levelDiagnostic.status && levelDiagnostic.status !== "pending") {
       testBlocked = true;
       renderStateScreen(
         "Teste já enviado",
@@ -1425,6 +1436,7 @@
       await sheetRequest.catch(() => null);
 
       levelDiagnostic = dbResult.data;
+      if (authUser && authUser.id) localStorage.setItem(`helpdebs_level_submitted_${authUser.id}`, "yes");
       testBlocked = true;
 
       document.getElementById('confirmName').textContent = name.split(' ')[0];
