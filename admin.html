@@ -184,18 +184,14 @@ async function startApp(user){
   $("loginScreen").style.display = "none";
   $("app").style.display = "grid";
   await refreshAll();
-  setupNotificationRealtime();
-  setInterval(async () => {
-    await loadNotifications();
-    renderNotifications();
-  }, 5000);
 }
 
 async function refreshAll(){await Promise.all([loadStudents(),loadMaterials(),loadClasses(),loadPayments(),loadNotifications()]);fillSelects();fillClassSelects($("matStudent")?.value || "");renderAll()}async function loadStudents(){const {data,error}=await sb.from("profiles").select("*").order("created_at",{ascending:false});if(error){toast("Erro ao carregar perfis: "+error.message);STUDENTS=[];return}STUDENTS=data||[]}async function loadMaterials(){const {data}=await sb.from("materials").select("*").order("created_at",{ascending:false});MATERIALS=data||[]}async function loadClasses(){const {data}=await sb.from("classes").select("*").order("class_date",{ascending:true});CLASSES=data||[]}async function loadPayments(){const {data}=await sb.from("payments").select("*").order("due_date",{ascending:false});PAYMENTS=data||[]}async function loadNotifications(){
   const { data, error } = await sb
     .from("notifications")
-    .select("id, student_email, test_type, message, is_read, created_at")
-    .order("created_at", { ascending:false });
+    .select("*")
+    .order("created_at", { ascending:false })
+    .limit(20);
 
   if(error){
     console.error("Erro ao carregar notificações:", error);
@@ -336,9 +332,17 @@ function formatNotificationDate(value){
 }
 
 async function markNotificationRead(id){
-  const { error } = await sb.from("notifications").update({ is_read:true }).eq("id", id);
-  if(error){ toast("Erro ao marcar como lida: " + error.message); return; }
-  await loadNotifications();
+  const { error } = await sb
+    .from("notifications")
+    .update({ is_read:true })
+    .eq("id", id);
+
+  if(error){
+    toast("Erro ao marcar como lida: " + error.message);
+    return;
+  }
+
+  NOTIFICATIONS = NOTIFICATIONS.map(n => n.id === id ? {...n, is_read:true} : n);
   renderNotifications();
 }
 
@@ -346,17 +350,20 @@ function renderNotifications(){
   const el = $("notificationsList");
   if(!el) return;
 
-  if(!NOTIFICATIONS.length){
+  const ordered = [...NOTIFICATIONS].sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));
+
+  if(!ordered.length){
     el.innerHTML = `<div class="empty">Nenhuma notificação.</div>`;
     return;
   }
 
-  el.innerHTML = NOTIFICATIONS.map(n => {
+  el.innerHTML = ordered.map(n => {
     const unread = n.is_read === false;
     const typeLabel = n.test_type === "level_test" ? "Nivelamento" : (n.test_type || "Diagnóstico");
+    const message = n.message || ((n.student_name || "Aluna") + " concluiu o teste de nivelamento.");
     return `
       <div class="notification-item ${unread ? "unread" : ""}">
-        <b>${unread ? `<span class="notification-dot"></span>` : ""}${esc(n.message || "Nova notificação")}</b>
+        <b>${unread ? `<span class="notification-dot"></span>` : ""}${esc(message)}</b>
         <div class="notification-meta">
           <span>${esc(typeLabel)} • ${formatNotificationDate(n.created_at)}</span>
           ${n.student_email ? `<span>${esc(n.student_email)}</span>` : ""}
@@ -365,25 +372,6 @@ function renderNotifications(){
       </div>
     `;
   }).join("");
-}
-
-
-let notificationChannel = null;
-
-function setupNotificationRealtime(){
-  if(!sb || notificationChannel) return;
-
-  notificationChannel = sb
-    .channel("admin-notifications-live")
-    .on(
-      "postgres_changes",
-      { event: "*", schema: "public", table: "notifications" },
-      async () => {
-        await loadNotifications();
-        renderNotifications();
-      }
-    )
-    .subscribe();
 }
 
 function renderDashboard(){const today=new Date().toISOString().slice(0,10);const upcoming=CLASSES.filter(c=>c.class_date>=today).slice(0,6);$("dashUpcoming").innerHTML=upcoming.length?upcoming.map(c=>{const s=STUDENTS.find(x=>x.id===c.student_id);return`<p style="margin:8px 0"><b>${dateBR(c.class_date)} ${String(c.class_time||"").slice(0,5)}</b> — ${esc(s?.full_name||s?.email||"—")}</p>`}).join(""):`<div class="empty">Nenhuma aula futura.</div>`}
