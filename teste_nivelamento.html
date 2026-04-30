@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Teste de Nivelamento</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
       --bg: #f5f2ff;
@@ -658,6 +659,41 @@
       .topbar { padding: 14px 16px; }
       .step-pill { display: none; }
     }
+
+
+    .state-screen {
+      min-height: calc(760px - 79px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 34px;
+    }
+
+    .state-card {
+      background: var(--card);
+      border: 1px solid rgba(123, 91, 255, 0.12);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 10px 30px rgba(77, 39, 149, 0.07);
+      padding: 44px;
+      max-width: 560px;
+      width: 100%;
+      display: grid;
+      gap: 16px;
+      text-align: center;
+    }
+
+    .state-card h2 {
+      font-size: clamp(1.8rem, 3vw, 2.7rem);
+      line-height: 1;
+      letter-spacing: -0.05em;
+    }
+
+    .state-card p {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.65;
+    }
+
   </style>
 </head>
 <body>
@@ -882,6 +918,82 @@
 </div>
 
 <script>
+  const SB_URL = "https://pgdanuifukzisyyummpz.supabase.co";
+  const SB_ANON = "sb_publishable_81NM6F08rsXXSCgjWl4iSg_v99cdVpo";
+  const sb = window.supabase.createClient(SB_URL, SB_ANON);
+
+  let authUser = null;
+  let levelDiagnostic = null;
+  let testBlocked = false;
+
+  function renderStateScreen(title, text, buttonText = "Voltar ao portal") {
+    const app = document.querySelector('.app');
+    app.innerHTML = `
+      <main class="shell">
+        <div class="topbar">
+          <div class="brand">
+            <div class="brand-badge">hd</div>
+            <span>Nivelamento</span>
+          </div>
+          <div class="step-pill">Status</div>
+        </div>
+        <div class="state-screen">
+          <div class="state-card">
+            <div class="confirm-icon">✅</div>
+            <h2>${title}</h2>
+            <p>${text}</p>
+            <button class="btn-secondary" onclick="window.location.href='portal.html'">${buttonText}</button>
+          </div>
+        </div>
+      </main>
+    `;
+  }
+
+  async function initStudentAccess() {
+    const { data: { session } } = await sb.auth.getSession();
+
+    if (!session || !session.user) {
+      testBlocked = true;
+      renderStateScreen(
+        "Acesso necessário",
+        "Você precisa entrar no portal da aluna antes de responder o nivelamento.",
+        "Entrar no portal"
+      );
+      return;
+    }
+
+    authUser = session.user;
+
+    const { data, error } = await sb
+      .from("diagnostics")
+      .select("*")
+      .eq("student_id", authUser.id)
+      .eq("type", "level")
+      .maybeSingle();
+
+    if (error) {
+      console.error("Erro ao verificar diagnóstico:", error);
+      testBlocked = true;
+      renderStateScreen(
+        "Erro ao carregar",
+        "Não consegui verificar o status do seu nivelamento. Volte ao portal e tente novamente.",
+        "Voltar ao portal"
+      );
+      return;
+    }
+
+    levelDiagnostic = data || null;
+
+    if (levelDiagnostic && ["submitted", "done", "evaluated"].includes(levelDiagnostic.status)) {
+      testBlocked = true;
+      renderStateScreen(
+        "Teste já enviado",
+        "Seu nivelamento já foi concluído. Agora é só aguardar a avaliação da professora.",
+        "Voltar ao portal"
+      );
+    }
+  }
+
   // ─── DATA ───────────────────────────────────────────────────────────────────
 
   const grammarQuestions = [
@@ -1093,6 +1205,7 @@
   // ─── GRAMMAR SCREEN ─────────────────────────────────────────────────────────
 
   function startTest() {
+    if (testBlocked) return;
     currentQ = 0;
     grammarAnswers = new Array(grammarQuestions.length).fill(null);
     showScreen('question');
@@ -1223,12 +1336,19 @@
 
   // ─── EMAIL SCREEN ────────────────────────────────────────────────────────────
 
-  document.getElementById('submitBtn').addEventListener('click', () => {
+  document.getElementById('submitBtn').addEventListener('click', async () => {
     const name = document.getElementById('nameInput').value.trim();
     const email = document.getElementById('emailInput').value.trim();
     const error = document.getElementById('submitError');
 
+    if (!authUser) {
+      error.textContent = 'Você precisa estar logada no portal para enviar o teste.';
+      error.style.display = 'block';
+      return;
+    }
+
     if (!name || !email || !email.includes('@')) {
+      error.textContent = 'Por favor, preencha nome e e-mail antes de enviar.';
       error.style.display = 'block';
       return;
     }
@@ -1255,35 +1375,80 @@
       writing: writingText
     };
 
- fetch('https://script.google.com/macros/s/AKfycbxhkK_NhIIAM3C-MxyJCbOIiMAcTtSEUIoMgLFaeKU-0tA-QIAnM9Pl_OolVzrvT6wz/exec', {
-  method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-    .finally(() => {
+    const diagnosticPayload = {
+      student_id: authUser.id,
+      type: 'level',
+      status: 'submitted',
+      submitted_at: new Date().toISOString(),
+      result: {
+        nome: userName,
+        email: userEmail,
+        pontuacaoGramatica: grammarScore,
+        pontuacaoReading: readingScore,
+        pontuacaoTotal: totalScore,
+        nivelProvisorio: provisionalLevel,
+        textoReading: readingKey,
+        writing: writingText
+      }
+    };
+
+    try {
+      const sheetRequest = fetch('https://script.google.com/macros/s/AKfycbxhkK_NhIIAM3C-MxyJCbOIiMAcTtSEUIoMgLFaeKU-0tA-QIAnM9Pl_OolVzrvT6wz/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      let dbResult;
+
+      if (levelDiagnostic && levelDiagnostic.id) {
+        dbResult = await sb
+          .from('diagnostics')
+          .update(diagnosticPayload)
+          .eq('id', levelDiagnostic.id)
+          .eq('student_id', authUser.id)
+          .select()
+          .single();
+      } else {
+        dbResult = await sb
+          .from('diagnostics')
+          .insert(diagnosticPayload)
+          .select()
+          .single();
+      }
+
+      if (dbResult.error) {
+        throw dbResult.error;
+      }
+
+      await sheetRequest.catch(() => null);
+
+      levelDiagnostic = dbResult.data;
+      testBlocked = true;
+
       document.getElementById('confirmName').textContent = name.split(' ')[0];
       stepPill.textContent = 'Concluído';
       showScreen('confirm');
-    });
+    } catch (err) {
+      console.error('Erro ao salvar nivelamento:', err);
+      error.textContent = 'Erro ao enviar o teste. Tente novamente em alguns segundos.';
+      error.style.display = 'block';
+      submitBtn.textContent = 'Enviar teste';
+      submitBtn.disabled = false;
+    }
   });
 
   // ─── RESTART ────────────────────────────────────────────────────────────────
 
+  document.getElementById('restartBtn').textContent = 'Voltar ao portal';
   document.getElementById('restartBtn').addEventListener('click', () => {
-    writingTextarea.value = '';
-    charCount.textContent = '0';
-    writingNextBtn.disabled = true;
-    document.getElementById('nameInput').value = '';
-    document.getElementById('emailInput').value = '';
-    grammarScore = 0;
-    readingScore = 0;
-    stepPill.textContent = 'Introdução';
-    showScreen('cover');
+    window.location.href = 'portal.html';
   });
 
   // ─── INIT ────────────────────────────────────────────────────────────────────
 
+  initStudentAccess();
   document.getElementById('startBtn').addEventListener('click', startTest);
 </script>
 </body>
