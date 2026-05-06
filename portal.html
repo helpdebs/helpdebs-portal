@@ -382,7 +382,7 @@ const PERSONALITY_TEST_URL = "https://helpdebs.github.io/helpdebs-portal/quiz_pe
 // URL do checklist mensal
 const MONTHLY_CHECKLIST_URL = "https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html";
 
-let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[];
+let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[], diagConfig=[];
 let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth();
 
@@ -497,47 +497,50 @@ function getProfileResultValue() {
 }
 
 function getNivelValue() {
-  // Nível oficial tem prioridade
-  const oficial = profile.nivel || profile.level;
-  if (oficial && String(oficial).trim() && String(oficial).trim() !== "—") {
-    return { value: String(oficial).trim(), source: "oficial" };
-  }
-  // Nível provisório (resultado automático do teste de nivelamento)
-  const provisorio = profile.nivel_provisorio || profile.nivelProvisorio || profile.provisional_level;
-  if (provisorio && String(provisorio).trim()) {
-    return { value: String(provisorio).trim(), source: "provisorio" };
-  }
-  // Tenta pegar do diagnóstico de nível
+  // Nível SÓ vem de diagnóstico concluído — nunca de profile.nivel diretamente.
+  // Isso garante que conta nova sem teste feito nunca exibe nível.
+  //
+  // 1. Teste de nivelamento concluído (tabela diagnostics, type="level")
   const item = diagnostics.find(d => d.type === "level");
-  if (item) {
+  if (item && isDiagnosticDone(item)) {
+    // Tenta extrair nível dos campos de resultado
     const raw = item.result || item.result_text || item.level_result || item.summary || item.answer;
     if (raw) {
-      if (typeof raw === "string") return { value: raw.trim(), source: "diagnostico" };
+      if (typeof raw === "string" && raw.trim()) {
+        return { value: raw.trim(), source: "diagnostico" };
+      }
       if (typeof raw === "object") {
-        const v = raw.nivel || raw.level || raw.nivelProvisorio || raw.nivel_provisorio || raw.result;
+        const v = raw.nivel || raw.nivelProvisorio || raw.nivel_provisorio || raw.level || raw.result || raw.title;
         if (v) return { value: String(v), source: "diagnostico" };
       }
     }
+    // Teste marcado como done mas sem resultado no campo result —
+    // tenta nivel_provisorio do profile como fallback só nesse caso
+    const provisorioFallback = profile.nivel_provisorio || profile.nivelProvisorio || profile.provisional_level;
+    if (provisorioFallback && String(provisorioFallback).trim()) {
+      return { value: String(provisorioFallback).trim(), source: "provisorio" };
+    }
   }
+  // Sem teste concluído = sem nível
   return null;
 }
 
 function getFocoAtualValue() {
-  // 1. Campo direto no profile
-  const fromProfile = profile.focus || profile.objetivo || profile.current_focus;
-  if (fromProfile && String(fromProfile).trim()) return String(fromProfile).trim();
-
-  // 2. Diagnóstico de interesses
+  // Foco atual SÓ vem do questionário de interesses concluído.
+  // profile.focus/objetivo pode ter sido preenchido manualmente antes do diagnóstico
+  // e ficaria desincronizado — por isso ignoramos aqui.
   const item = diagnostics.find(d => d.type === "interests");
-  if (item) {
-    const raw = item.result || item.result_text || item.answer || item.interests_result || item.summary;
-    if (raw) {
-      if (typeof raw === "string") return raw.trim();
-      if (typeof raw === "object") {
-        const v = raw.foco || raw.focus || raw.objetivo || raw.goal || raw.summary || raw.result;
-        if (v) return String(v);
-      }
-    }
+  if (!item || !isDiagnosticDone(item)) return null;
+
+  const raw = item.result || item.result_text || item.answer || item.interests_result || item.summary;
+  if (!raw) return null;
+  if (typeof raw === "string" && raw.trim()) return raw.trim();
+  if (typeof raw === "object") {
+    const v = raw.foco || raw.focus || raw.objetivo || raw.goal || raw.summary || raw.result;
+    if (v) return String(v);
+    // Fallback: monta resumo dos campos não-vazios
+    const entries = Object.entries(raw).filter(([,v2]) => v2 && typeof v2 !== "object");
+    if (entries.length) return entries.map(([k,v2]) => v2).join(" • ");
   }
   return null;
 }
@@ -607,12 +610,15 @@ async function startPortal(authUser){
 }
 
 async function loadData(){
-  const [p, m, c, d, pay] = await Promise.all([
+  // Busca dados da aluna + configuração global dos testes em paralelo
+  const [p, m, c, d, pay, cfg] = await Promise.all([
     sb.from("profiles").select("*").eq("id", user.id).single(),
     sb.from("materials").select("*").eq("student_id", user.id).order("created_at",{ascending:false}),
     sb.from("classes").select("*").eq("student_id", user.id).order("class_date",{ascending:true}),
     sb.from("diagnostics").select("*").eq("student_id", user.id).order("updated_at",{ascending:false}),
-    sb.from("payments").select("*").eq("student_id", user.id).order("due_date",{ascending:false})
+    sb.from("payments").select("*").eq("student_id", user.id).order("due_date",{ascending:false}),
+    // Configuração global: linhas sem student_id (form_urls comuns a todas as alunas)
+    sb.from("diagnostics").select("type,form_url,result_url").is("student_id", null)
   ]);
 
   if(p.error && p.error.code !== "PGRST116"){ showToast("Erro ao carregar perfil: " + p.error.message); console.error("profiles", p.error); }
@@ -620,6 +626,7 @@ async function loadData(){
   if(c.error){ showToast("Erro ao carregar calendário: " + c.error.message); }
   if(d.error){ showToast("Erro ao carregar diagnóstico: " + d.error.message); }
   if(pay.error){ showToast("Erro ao carregar financeiro: " + pay.error.message); }
+  // cfg pode não ter linhas — não é crítico
 
   profile = p.data || { full_name: user.email, email: user.email };
   if(!profile.elos_url) profile.elos_url = "https://elos.vc/sala/teacherdebora";
@@ -628,8 +635,9 @@ async function loadData(){
   classes     = c.data   || [];
   diagnostics = d.data   || [];
   payments    = pay.data || [];
+  diagConfig  = cfg.data || [];  // form_urls globais dos testes
 
-  console.log("PORTAL DATA", {user:user.id, profile, materials, classes, diagnostics, payments});
+  console.log("PORTAL DATA", {user:user.id, profile, materials, classes, diagnostics, payments, diagConfig});
 }
 
 function renderAll(){
@@ -654,11 +662,13 @@ function renderProfile(){
   const first = name.split(" ")[0];
   const diag = getDiagnosisProgress();
   const nivelData = getNivelValue();
-  const nivelDisplay = nivelData ? nivelData.value : "—";
 
   $("studentName").textContent = first;
-  $("studentLevel").textContent = `Aulas individuais • nível ${nivelDisplay}`;
-  $("studentFocus").textContent = profile.focus || profile.objetivo || "trilha ativa";
+  // Nível só aparece na sidebar se o diagnóstico foi concluído
+  $("studentLevel").textContent = nivelData
+    ? `Aulas individuais • nível ${nivelData.value}`
+    : "Aulas individuais";
+  $("studentFocus").textContent = diag.label;
   $("diagBadge").textContent = diag.label;
   $("diagBadge").className = `badge ${diag.className}`;
 }
@@ -802,13 +812,17 @@ function renderDiagnostics(){
   ];
 
   const merged = baseDiagnostics.map(base => {
+    // db = registro desta aluna (tem status, result, etc.)
     const db = diagnostics.find(d => d.type === base.type);
+    // cfg = configuração global do teste (tem form_url comum a todas as alunas)
+    const cfg = diagConfig.find(c => c.type === base.type);
     return {
       ...base,
       db,
-      done:     isDiagnosticDone(db),
-      form_url: db?.form_url || base.defaultUrl,
-      result_url: db?.result_url || null
+      done:       isDiagnosticDone(db),
+      // form_url: prioridade → global (cfg) → registro da aluna (db) → URL hardcoded
+      form_url:   cfg?.form_url || db?.form_url || base.defaultUrl,
+      result_url: db?.result_url || cfg?.result_url || null
     };
   });
 
@@ -976,12 +990,9 @@ function renderDashboard(){
   $("materialsStat").textContent   = materials.length;
   $("pendingDiagStat").textContent = diag.pending;
 
-  // Sidebar badge
+  // Sidebar badge — renderProfile já cuida disso, só atualiza o badge aqui
   $("diagBadge").textContent = diag.label;
   $("diagBadge").className   = `badge ${diag.className}`;
-  if (nivelData) {
-    $("studentLevel").textContent = `Aulas individuais • nível ${nivelData.value}`;
-  }
 
   $("quickLinks").innerHTML = `
     <div class="quick-link">
@@ -1268,3 +1279,4 @@ function goSection(target){
 </script>
 </body>
 </html>
+
