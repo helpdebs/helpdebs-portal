@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Quem é você no grupinho do inglês?</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
       --bg: #f5f2ff;
@@ -746,6 +747,58 @@
   </div>
 
   <script>
+    const SB_URL = "https://pgdanuifukzisyyummpz.supabase.co";
+    const SB_ANON = "sb_publishable_81NM6F08rsXXSCgjWl4iSg_v99cdVpo";
+
+    let sb = null;
+    let notificationSentForCurrentRun = false;
+
+    function getSupabaseClient() {
+      if (!window.supabase) return null;
+      if (!sb) sb = window.supabase.createClient(SB_URL, SB_ANON);
+      return sb;
+    }
+
+    async function sendPersonalityNotification(winnerKey, scores) {
+      try {
+        const client = getSupabaseClient();
+        if (!client) return;
+
+        const { data: { session } } = await client.auth.getSession();
+        const authUser = session?.user;
+
+        if (!authUser) {
+          console.warn("Sem sessão ativa. A notificação não foi enviada.");
+          return;
+        }
+
+        const { data: studentProfile } = await client
+          .from("profiles")
+          .select("full_name,email")
+          .eq("id", authUser.id)
+          .maybeSingle();
+
+        const studentName = studentProfile?.full_name || authUser.email || "Aluna";
+        const studentEmail = studentProfile?.email || authUser.email || "";
+        const resultName = profiles[winnerKey]?.name || "perfil não identificado";
+
+        const { error } = await client.from("notifications").insert({
+          student_id: authUser.id,
+          student_name: studentName,
+          student_email: studentEmail,
+          test_type: "personality_test",
+          message: `${studentName} concluiu o teste de personalidade. Resultado: ${resultName}.`,
+          is_read: false
+        });
+
+        if (error) {
+          console.warn("Erro ao enviar notificação:", error.message);
+        }
+      } catch (error) {
+        console.warn("Erro inesperado ao enviar notificação:", error);
+      }
+    }
+
     const profiles = {
       protagonista: {
         name: 'A Protagonista',
@@ -999,6 +1052,7 @@
     }
 
     function startTest() {
+      notificationSentForCurrentRun = false;
       currentQuestion = 0;
       showScreen(questionScreen);
       stepPill.textContent = 'Perguntas';
@@ -1096,9 +1150,15 @@
 
       stepPill.textContent = 'Resultado';
       showScreen(resultScreen);
+
+      if (!notificationSentForCurrentRun) {
+        notificationSentForCurrentRun = true;
+        sendPersonalityNotification(winnerKey, scores);
+      }
     }
 
     function resetTest() {
+      notificationSentForCurrentRun = false;
       answers = new Array(questions.length).fill(null);
       currentQuestion = 0;
       stepPill.textContent = 'Introdução';
