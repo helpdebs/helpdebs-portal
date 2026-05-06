@@ -737,7 +737,6 @@
             </div>
 
             <div class="result-actions">
-              <button class="btn-primary" id="restartBtn">Refazer teste</button>
               <button class="btn-secondary" id="copyBtn">Copiar resultado</button>
             </div>
           </aside>
@@ -1026,7 +1025,6 @@
     const resultMotivation = document.getElementById('resultMotivation');
     const resultTeaching = document.getElementById('resultTeaching');
     const scoreList = document.getElementById('scoreList');
-    const restartBtn = document.getElementById('restartBtn');
     const copyBtn = document.getElementById('copyBtn');
 
     let currentQuestion = 0;
@@ -1157,13 +1155,6 @@
       }
     }
 
-    function resetTest() {
-      notificationSentForCurrentRun = false;
-      answers = new Array(questions.length).fill(null);
-      currentQuestion = 0;
-      stepPill.textContent = 'Introdução';
-      showScreen(coverScreen);
-    }
 
     function copyResult() {
       const scores = calculateScores();
@@ -1193,7 +1184,6 @@
         renderQuestion();
       }
     });
-    restartBtn.addEventListener('click', resetTest);
     copyBtn.addEventListener('click', copyResult);
 
     renderCharacters();
