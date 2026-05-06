@@ -87,14 +87,17 @@
     .qr-preview{margin:12px 0}
     .qr-preview img{max-width:180px;border-radius:16px;border:1px solid var(--line);background:white;padding:8px;box-shadow:var(--shadow)}
 
+  
     .badge.diagnosis-red{background:rgba(239,68,68,.12);color:#ef4444;border-color:rgba(239,68,68,.22)}
     .badge.diagnosis-orange{background:rgba(245,158,11,.15);color:#d97706;border-color:rgba(245,158,11,.24)}
     .badge.diagnosis-green{background:rgba(34,197,94,.14);color:#16a34a;border-color:rgba(34,197,94,.24)}
 
+  
     .diag-item.locked{opacity:.86}
     .diag-icon{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:rgba(122,92,255,.09);border:1px solid rgba(122,92,255,.12);font-size:1.2rem;flex:0 0 auto}
     .diag-head{display:flex;gap:12px;align-items:flex-start}
 
+  
     .dashboard-v2{display:grid;gap:22px;min-height:calc(100vh - 150px)}
     .dashboard-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;align-items:stretch}
     .dashboard-row-2{display:grid;grid-template-columns:1.05fr .95fr;gap:20px;align-items:stretch}
@@ -131,6 +134,7 @@
     .finance-pill.empty{color:var(--primary);background:rgba(122,92,255,.09);border:1px solid rgba(122,92,255,.12)}
     @media(max-width:1180px){.dashboard-row-3,.dashboard-row-2{grid-template-columns:1fr}.dash-card,.dash-card.compact{min-height:auto}}
 
+  
     .dashboard-v2{gap:16px;min-height:auto}
     .dashboard-row-3,.dashboard-row-2{gap:16px}
     .dash-card{padding:22px;min-height:230px}
@@ -145,18 +149,21 @@
     .finance-amount{font-size:1.55rem}
     .finance-row{padding:12px 0}
 
+  
     .student-calendar-shell{display:grid;gap:16px}
     .student-calendar-list{display:grid;gap:10px;margin-top:18px}
     .student-class-card{padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.78);border:1px solid rgba(122,92,255,.10)}
     .student-class-card strong{display:block;margin-bottom:5px}
     .student-class-card p{margin:0;color:var(--muted);line-height:1.5;font-size:.9rem}
 
+  
     .section-card-content{display:grid;gap:12px;margin-top:14px}
     .live-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
     .live-link-box{display:grid;gap:10px}
     .live-url{word-break:break-all;color:var(--muted);font-size:.9rem}
     @media(max-width:900px){.live-grid{grid-template-columns:1fr}}
 
+  
     .lesson-list{display:grid;gap:16px}
     .lesson-card{padding:18px;border-radius:22px;background:rgba(255,255,255,.84);border:1px solid rgba(122,92,255,.12);display:grid;gap:14px}
     .lesson-head{display:flex;align-items:center;justify-content:space-between;gap:14px}
@@ -171,41 +178,110 @@
     .lesson-block p{margin:0;color:var(--muted);line-height:1.6;font-size:.9rem;white-space:pre-line}
     @media(max-width:980px){.lesson-body{grid-template-columns:1fr}.pdf-thumb{height:auto;min-height:90px}}
 
-    .mini-btn.done-btn{
-      background:rgba(219,255,102,.35);
-      color:#53710d;
-      border:1px solid rgba(219,255,102,.55);
-      cursor:default;
-    }
-
+  
     .featured-checklist{
-      position:relative;overflow:hidden;border-radius:28px;padding:24px;margin-bottom:18px;
+      position:relative;
+      overflow:hidden;
+      border-radius:28px;
+      padding:24px;
+      margin-bottom:18px;
       border:1px solid rgba(122,92,255,.18);
-      background:radial-gradient(circle at 92% 18%,rgba(219,255,102,.48),transparent 28%),
-        radial-gradient(circle at 8% 0%,rgba(122,92,255,.22),transparent 32%),
-        linear-gradient(135deg,rgba(255,255,255,.96),rgba(247,244,255,.92));
+      background:
+        radial-gradient(circle at 92% 18%, rgba(219,255,102,.48), transparent 28%),
+        radial-gradient(circle at 8% 0%, rgba(122,92,255,.22), transparent 32%),
+        linear-gradient(135deg, rgba(255,255,255,.96), rgba(247,244,255,.92));
       box-shadow:0 24px 70px rgba(63,37,128,.16);
-      display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:18px;
+      align-items:center;
     }
-    .featured-checklist::before{content:"";position:absolute;inset:-80px auto auto 55%;width:280px;height:280px;border-radius:999px;background:rgba(122,92,255,.12);filter:blur(4px);}
+    .featured-checklist::before{
+      content:"";
+      position:absolute;
+      inset:-80px auto auto 55%;
+      width:280px;
+      height:280px;
+      border-radius:999px;
+      background:rgba(122,92,255,.12);
+      filter:blur(4px);
+    }
     .featured-checklist > *{position:relative;z-index:1}
-    .checklist-kicker{display:inline-flex;width:fit-content;align-items:center;gap:8px;padding:8px 11px;border-radius:999px;font-size:.76rem;font-weight:900;color:var(--primary);background:rgba(122,92,255,.09);border:1px solid rgba(122,92,255,.12);margin-bottom:12px;}
-    .featured-checklist h3{margin:0 0 8px;font-size:clamp(1.25rem,2vw,1.8rem);letter-spacing:-.055em;line-height:1;}
-    .featured-checklist p{margin:0;color:var(--muted);line-height:1.55;max-width:62ch;font-size:.95rem;}
-    .checklist-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end;align-items:center;}
-    .checklist-btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:none;border-radius:16px;padding:13px 16px;cursor:pointer;font-size:.88rem;font-weight:900;background:linear-gradient(135deg,var(--primary),var(--primary-2));color:white;box-shadow:0 16px 32px rgba(122,92,255,.25);white-space:nowrap;}
-    .checklist-btn.secondary{color:var(--text);background:rgba(255,255,255,.78);border:1px solid rgba(122,92,255,.12);box-shadow:none;}
-    .checklist-embed{display:none;margin:18px 0;border-radius:28px;overflow:hidden;border:1px solid rgba(122,92,255,.14);background:white;box-shadow:0 24px 70px rgba(63,37,128,.14);}
+    .checklist-kicker{
+      display:inline-flex;
+      width:fit-content;
+      align-items:center;
+      gap:8px;
+      padding:8px 11px;
+      border-radius:999px;
+      font-size:.76rem;
+      font-weight:900;
+      color:var(--primary);
+      background:rgba(122,92,255,.09);
+      border:1px solid rgba(122,92,255,.12);
+      margin-bottom:12px;
+    }
+    .featured-checklist h3{
+      margin:0 0 8px;
+      font-size:clamp(1.25rem,2vw,1.8rem);
+      letter-spacing:-.055em;
+      line-height:1;
+    }
+    .featured-checklist p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.55;
+      max-width:62ch;
+      font-size:.95rem;
+    }
+    .checklist-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:flex-end;
+      align-items:center;
+    }
+    .checklist-btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;
+      border:none;
+      border-radius:16px;
+      padding:13px 16px;
+      cursor:pointer;
+      font-size:.88rem;
+      font-weight:900;
+      background:linear-gradient(135deg,var(--primary),var(--primary-2));
+      color:white;
+      box-shadow:0 16px 32px rgba(122,92,255,.25);
+      white-space:nowrap;
+    }
+    .checklist-btn.secondary{
+      color:var(--text);
+      background:rgba(255,255,255,.78);
+      border:1px solid rgba(122,92,255,.12);
+      box-shadow:none;
+    }
+    .checklist-embed{
+      display:none;
+      margin:18px 0;
+      border-radius:28px;
+      overflow:hidden;
+      border:1px solid rgba(122,92,255,.14);
+      background:white;
+      box-shadow:0 24px 70px rgba(63,37,128,.14);
+    }
     .checklist-embed.show{display:block}
-    .checklist-embed iframe{display:block;width:100%;height:78vh;border:none;background:white;}
-    @media(max-width:850px){.featured-checklist{grid-template-columns:1fr}.checklist-actions{justify-content:flex-start}.checklist-embed iframe{height:72vh}}
+    .checklist-embed iframe{
+      display:block;
+      width:100%;
+      height:78vh;
+      border:none;
+      background:white;
+    }
+    @media(max-width:850px){
+      .featured-checklist{grid-template-columns:1fr}
+      .checklist-actions{justify-content:flex-start}
+      .checklist-embed iframe{height:72vh}
+    }
 
-    /* Resultado salvo — itens com hint */
-    .profile-result-item{border-radius:20px;background:rgba(255,255,255,.82);border:1px solid rgba(122,92,255,.10);padding:16px;display:grid;gap:6px;}
-    .profile-result-item strong{display:block;font-size:.95rem;letter-spacing:-.02em}
-    .profile-result-item .result-value{color:var(--text);font-size:.93rem;line-height:1.55;font-weight:700}
-    .profile-result-item .result-hint{color:var(--muted);font-size:.86rem;line-height:1.5;font-style:italic}
-    .profile-result-item .result-action{display:inline-flex;margin-top:6px;padding:8px 11px;border-radius:12px;font-size:.78rem;font-weight:900;background:rgba(122,92,255,.09);color:var(--primary);border:1px solid rgba(122,92,255,.12);cursor:pointer;border:none;}
   </style>
 </head>
 <body>
@@ -268,6 +344,7 @@
 
         <section class="portal-section active" id="section-inicio">
           <div class="dashboard-v2">
+
             <div class="dashboard-row-3">
               <div class="panel dash-card compact">
                 <div class="section-title"><h3>Visão geral</h3></div>
@@ -280,14 +357,19 @@
 
               <div class="panel dash-card compact">
                 <div class="section-title"><h3>Acesso rápido</h3></div>
-                <div class="quick-links" id="quickLinks"></div>
+                <div class="quick-links" id="quickLinks">
+                  <div class="quick-link"><div><strong>Continuar diagnóstico</strong><p>3 pendente(s)</p></div><a href="#">acessar</a></div>
+                  <div class="quick-link"><div><strong>Material mais recente</strong><p>Checklist de vocabulário</p></div><a href="#">ver</a></div>
+                  <div class="quick-link"><div><strong>Financeiro</strong><p>Mensalidade de abril</p></div><a href="#">pagar</a></div>
+                </div>
               </div>
 
               <div class="panel dash-card compact">
                 <div class="section-title"><h3>Mini feedback</h3></div>
                 <div class="feedback-box" id="miniFeedbackBox">
                   <strong>Observação da professora</strong>
-                  <p class="feedback-note">Carregando...</p>
+                  <p class="feedback-note">Você está ganhando mais velocidade para construir respostas. Agora vamos organizar melhor as ideias antes de falar.</p>
+                  <div class="feedback-focus">Foco da semana: clareza + vocabulário ativo</div>
                 </div>
               </div>
             </div>
@@ -295,31 +377,63 @@
             <div class="dashboard-row-2">
               <div class="panel dash-card">
                 <div class="section-title"><h3>Progresso do diagnóstico</h3></div>
-                <div id="diagnosisProgressBox"></div>
+                <div id="diagnosisProgressBox">
+                  <div class="progress-card-body">
+                    <div>
+                      <p class="dash-muted">0 de 3 etapas concluídas</p>
+                      <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+                      <div class="progress-meta">
+                        <span class="badge diagnosis-red">começar diagnóstico</span>
+                        <button class="mini-btn">Começar</button>
+                      </div>
+                    </div>
+                    <div class="progress-steps">
+                      <div class="progress-step current">1. Perfil</div>
+                      <div class="progress-step">2. Nível</div>
+                      <div class="progress-step">3. Interesses</div>
+                    </div>
+                    <p class="dash-muted">Próximo passo: Quem é você no grupinho do inglês?</p>
+                  </div>
+                </div>
               </div>
 
               <div class="panel dash-card">
                 <div class="section-title"><h3>Status financeiro</h3></div>
-                <div id="financeDashboardBox"></div>
+                <div id="financeDashboardBox">
+                  <div class="finance-status">
+                    <span class="finance-pill pending">pendente</span>
+                    <div>
+                      <strong>Abril 2026</strong>
+                      <div class="finance-amount">R$ 297.00</div>
+                      <p class="dash-muted">vence hoje</p>
+                    </div>
+                    <div class="finance-row"><span>Status</span><strong>Aguardando pagamento</strong></div>
+                    <div class="finance-row"><span>Forma</span><strong>Pix</strong></div>
+                    <button class="mini-btn">Pagar agora</button>
+                  </div>
+                </div>
               </div>
             </div>
+
           </div>
         </section>
 
         <section class="portal-section" id="section-diagnostico">
           <div class="grid-2">
             <div class="panel diagnostic-card"><div class="section-title"><h3>Diagnóstico</h3></div><div class="diag-list" id="diagnosticsList"></div></div>
-            <div class="panel materials-card"><div class="section-title"><h3>Resultado salvo</h3></div><div id="profileSummary" style="display:grid;gap:12px;"></div></div>
+            <div class="panel materials-card"><div class="section-title"><h3>Resultado salvo</h3></div><div class="materials-list" id="profileSummary"></div></div>
           </div>
         </section>
 
         <section class="portal-section" id="section-materiais">
           <div id="featuredChecklistArea"></div>
           <div id="checklistEmbedArea" class="checklist-embed"></div>
+
           <div class="panel materials-card">
             <div class="section-title"><h3>Aulas e materiais</h3></div>
             <div class="lesson-list" id="lessonsList"></div>
             <div class="materials-list" id="materialsList"></div>
+            <div class="materials-list" id="summariesList" style="display:none"></div>
           </div>
         </section>
 
@@ -354,10 +468,7 @@
         </section>
 
         <section class="portal-section" id="section-dicas">
-          <div class="grid-2">
-            <div class="panel tips-card"><div class="section-title"><h3>Dicas</h3></div><div class="tips-list" id="tipsList"></div></div>
-            <div class="panel tips-card"><div class="section-title"><h3>Prompts e recursos</h3></div><div class="tips-list" id="promptsList"></div></div>
-          </div>
+          <div class="grid-2"><div class="panel tips-card"><div class="section-title"><h3>Dicas</h3></div><div class="tips-list" id="tipsList"></div></div><div class="panel tips-card"><div class="section-title"><h3>Prompts e recursos</h3></div><div class="tips-list" id="promptsList"></div></div></div>
         </section>
 
         <section class="portal-section" id="section-videoaulas">
@@ -376,202 +487,68 @@
 <script>
 const SB_URL = "https://pgdanuifukzisyyummpz.supabase.co";
 const SB_ANON = "sb_publishable_81NM6F08rsXXSCgjWl4iSg_v99cdVpo";
-
-// URL do teste de personalidade (hosted externally)
-const PERSONALITY_TEST_URL = "https://helpdebs.github.io/helpdebs-portal/quiz_personalidade.html";
-// URL do checklist mensal
+let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[];
 const MONTHLY_CHECKLIST_URL = "https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html";
-
-let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[], diagConfig=[];
 let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth();
 
 const $ = (id) => document.getElementById(id);
 const esc = (v) => String(v ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 function showToast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2800); }
-function msgEl(id,text,type="info"){ const el=$(id); el.textContent=text; el.className=`msg show ${type}`; }
+function msg(id,text,type="info"){ const el=$(id); el.textContent=text; el.className=`msg show ${type}`; }
 function dateBR(d){ if(!d)return "—"; return new Date(d+"T12:00:00").toLocaleDateString("pt-BR",{weekday:"short",day:"numeric",month:"short"}); }
 function openLink(url){ if(!url){showToast("⚠️ Link ainda não configurado");return;} window.open(url,"_blank"); }
 
-// ─────────────────────────────────────────────
-// DIAGNÓSTICO — lógica de status
-// ─────────────────────────────────────────────
-
-/*
-  Um diagnóstico é considerado CONCLUÍDO se:
-  - status === "done" | "completed" | "concluido" | "concluído"
-  - OU tem algum campo de resultado preenchido (result, result_data, result_json, etc.)
-  - OU tem completed_at / submitted_at
-  
-  ATENÇÃO: o teste de personalidade salva notificação com o resultado,
-  mas o status na tabela diagnostics precisa ser atualizado para "done"
-  pelo trigger do banco OU pela função sendPersonalityNotification que
-  faz upsert na tabela diagnostics com status done + result.
-  
-  A lógica abaixo checa todos os campos possíveis para ser robusta.
-*/
-
-function isDiagnosticDone(item) {
-  if (!item) return false;
-  const status = String(item.status || "").toLowerCase().trim();
-  if (["done","completed","concluido","concluído"].includes(status)) return true;
-
-  // Checa qualquer campo de resultado preenchido
-  const resultFields = [
-    item.result, item.result_data, item.result_json, item.result_text,
-    item.answer, item.answers, item.summary,
-    item.profile_result, item.level_result, item.interests_result,
-    item.completed_at, item.submitted_at
-  ];
-  return resultFields.some(f => {
-    if (f === null || f === undefined || f === "") return false;
-    if (typeof f === "object" && Object.keys(f).length === 0) return false;
-    return true;
-  });
-}
-
 function getDiagnosisProgress(){
+  const totalRequired = 3;
   const requiredTypes = ["profile", "level", "interests"];
-  const totalRequired = requiredTypes.length;
-
   const doneCount = requiredTypes.filter(type => {
     const item = diagnostics.find(d => d.type === type);
-    return isDiagnosticDone(item);
+    return item && item.status === "done";
   }).length;
 
-  if (doneCount === 0) return { label:"começar diagnóstico", className:"diagnosis-red", pending:totalRequired, done:0, total:totalRequired };
-  if (doneCount < totalRequired) return { label:"trilha ativa", className:"diagnosis-orange", pending:totalRequired - doneCount, done:doneCount, total:totalRequired };
-  return { label:"diagnóstico ok", className:"diagnosis-green", pending:0, done:totalRequired, total:totalRequired };
-}
-
-// ─────────────────────────────────────────────
-// RESULTADO SALVO — lê dados reais do banco
-// ─────────────────────────────────────────────
-
-/*
-  Hierarquia de fontes por campo:
-  
-  PERFIL        → diagnostics WHERE type="profile" (result / result_text / summary / ...)
-                   → se não tiver: hint "Conclua o teste de personalidade"
-  
-  NÍVEL         → profile.nivel (nível oficial, cadastrado pela professora)
-                   → senão: profile.nivel_provisorio (resultado automático do teste)
-                   → se não tiver: hint "Conclua o teste de nivelamento"
-  
-  FOCO ATUAL    → profile.focus | profile.objetivo | profile.current_focus
-                   OU diagnostics WHERE type="interests" (result / answer / ...)
-                   → se não tiver: hint "Conclua o questionário de interesses"
-  
-  INTERESSES    → diagnostics WHERE type="interests"
-                   → se não tiver: hint vazio (interesses são opcionais no card)
-  
-  DIAGNÓSTICO   → contagem real de testes concluídos
-*/
-
-function getProfileResultValue() {
-  const item = diagnostics.find(d => d.type === "profile");
-  if (!item) return null;
-
-  // Tenta vários campos onde o resultado pode estar
-  const raw =
-    item.result || item.result_text || item.summary ||
-    item.answer || item.profile_result || item.result_data ||
-    item.result_json || item.answers;
-
-  if (!raw) return null;
-
-  if (typeof raw === "string" && raw.trim()) return raw.trim();
-
-  if (typeof raw === "object") {
-    // Procura um campo que seja o nome/tipo do perfil
-    const possible =
-      raw.result || raw.type || raw.profile || raw.main_result ||
-      raw.title || raw.label || raw.name || raw.summary || raw.description ||
-      raw.nivel || raw.level;
-    if (possible) return String(possible);
-    // Fallback: serializa o objeto de forma legível
-    const entries = Object.entries(raw).filter(([,v]) => v !== null && v !== undefined && v !== "");
-    if (entries.length) return entries.map(([k,v]) => `${k}: ${typeof v==="object" ? JSON.stringify(v) : v}`).join(" • ");
+  if(doneCount === 0){
+    return {
+      label: "começar diagnóstico",
+      className: "diagnosis-red",
+      pending: totalRequired,
+      done: 0,
+      total: totalRequired
+    };
   }
-  return null;
-}
 
-function getNivelValue() {
-  // Nível SÓ vem de diagnóstico concluído — nunca de profile.nivel diretamente.
-  // Isso garante que conta nova sem teste feito nunca exibe nível.
-  //
-  // 1. Teste de nivelamento concluído (tabela diagnostics, type="level")
-  const item = diagnostics.find(d => d.type === "level");
-  if (item && isDiagnosticDone(item)) {
-    // Tenta extrair nível dos campos de resultado
-    const raw = item.result || item.result_text || item.level_result || item.summary || item.answer;
-    if (raw) {
-      if (typeof raw === "string" && raw.trim()) {
-        return { value: raw.trim(), source: "diagnostico" };
-      }
-      if (typeof raw === "object") {
-        const v = raw.nivel || raw.nivelProvisorio || raw.nivel_provisorio || raw.level || raw.result || raw.title;
-        if (v) return { value: String(v), source: "diagnostico" };
-      }
-    }
-    // Teste marcado como done mas sem resultado no campo result —
-    // tenta nivel_provisorio do profile como fallback só nesse caso
-    const provisorioFallback = profile.nivel_provisorio || profile.nivelProvisorio || profile.provisional_level;
-    if (provisorioFallback && String(provisorioFallback).trim()) {
-      return { value: String(provisorioFallback).trim(), source: "provisorio" };
-    }
+  if(doneCount < totalRequired){
+    return {
+      label: "trilha ativa",
+      className: "diagnosis-orange",
+      pending: totalRequired - doneCount,
+      done: doneCount,
+      total: totalRequired
+    };
   }
-  // Sem teste concluído = sem nível
-  return null;
+
+  return {
+    label: "diagnóstico ok",
+    className: "diagnosis-green",
+    pending: 0,
+    done: totalRequired,
+    total: totalRequired
+  };
 }
-
-function getFocoAtualValue() {
-  // Foco atual SÓ vem do questionário de interesses concluído.
-  // profile.focus/objetivo pode ter sido preenchido manualmente antes do diagnóstico
-  // e ficaria desincronizado — por isso ignoramos aqui.
-  const item = diagnostics.find(d => d.type === "interests");
-  if (!item || !isDiagnosticDone(item)) return null;
-
-  const raw = item.result || item.result_text || item.answer || item.interests_result || item.summary;
-  if (!raw) return null;
-  if (typeof raw === "string" && raw.trim()) return raw.trim();
-  if (typeof raw === "object") {
-    const v = raw.foco || raw.focus || raw.objetivo || raw.goal || raw.summary || raw.result;
-    if (v) return String(v);
-    // Fallback: monta resumo dos campos não-vazios
-    const entries = Object.entries(raw).filter(([,v2]) => v2 && typeof v2 !== "object");
-    if (entries.length) return entries.map(([k,v2]) => v2).join(" • ");
-  }
-  return null;
-}
-
-function getInteressesValue() {
-  const item = diagnostics.find(d => d.type === "interests");
-  if (!item) return null;
-  const raw = item.result || item.result_text || item.answer || item.interests_result || item.summary;
-  if (!raw) return null;
-  if (typeof raw === "string") return raw.trim();
-  if (typeof raw === "object") {
-    const v = raw.interests || raw.interesses || raw.summary || raw.result || raw.description;
-    if (v) return String(v);
-    const entries = Object.entries(raw).filter(([,v2]) => v2);
-    if (entries.length) return entries.map(([k,v2]) => `${k}: ${v2}`).join(" • ");
-  }
-  return null;
-}
-
-// ─────────────────────────────────────────────
-// INIT
-// ─────────────────────────────────────────────
 
 document.addEventListener("DOMContentLoaded", async () => {
   sb = window.supabase.createClient(SB_URL, SB_ANON);
+
   $("loginBtn").addEventListener("click", login);
-  $("loginPassword").addEventListener("keydown", e => { if(e.key==="Enter") login(); });
+  $("loginPassword").addEventListener("keydown", e => {
+    if(e.key === "Enter") login();
+  });
   $("logoutBtn").addEventListener("click", logout);
+
   document.querySelectorAll(".nav-btn").forEach(btn =>
     btn.addEventListener("click", () => goSection(btn.dataset.section))
   );
+
   const { data: { session } } = await sb.auth.getSession();
   if(session) await startPortal(session.user);
 });
@@ -579,17 +556,32 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function login(){
   const email = $("loginEmail").value.trim();
   const password = $("loginPassword").value;
-  if(!email || !password){ msgEl("loginMsg","Preencha email e senha.","error"); return; }
+
+  if(!email || !password){
+    msg("loginMsg","Preencha email e senha.","error");
+    return;
+  }
+
   $("loginBtn").disabled = true;
   $("loginBtn").textContent = "Entrando...";
+
   try{
     const { data, error } = await sb.auth.signInWithPassword({ email, password });
-    if(error){ msgEl("loginMsg", error.message, "error"); return; }
-    if(!data.user){ msgEl("loginMsg","Login não retornou usuário.","error"); return; }
+
+    if(error){
+      msg("loginMsg", error.message, "error");
+      return;
+    }
+
+    if(!data.user){
+      msg("loginMsg","Login não retornou usuário.","error");
+      return;
+    }
+
     await startPortal(data.user);
   }catch(e){
     console.error(e);
-    msgEl("loginMsg", e.message || "Erro inesperado no login.","error");
+    msg("loginMsg", e.message || "Erro inesperado no login.","error");
   }finally{
     $("loginBtn").disabled = false;
     $("loginBtn").textContent = "Entrar";
@@ -610,41 +602,35 @@ async function startPortal(authUser){
 }
 
 async function loadData(){
-  // Busca dados da aluna + configuração global dos testes em paralelo
-  const [p, m, c, d, pay, cfg] = await Promise.all([
+  const [p, m, c, d, pay] = await Promise.all([
     sb.from("profiles").select("*").eq("id", user.id).single(),
     sb.from("materials").select("*").eq("student_id", user.id).order("created_at",{ascending:false}),
     sb.from("classes").select("*").eq("student_id", user.id).order("class_date",{ascending:true}),
     sb.from("diagnostics").select("*").eq("student_id", user.id).order("updated_at",{ascending:false}),
-    sb.from("payments").select("*").eq("student_id", user.id).order("due_date",{ascending:false}),
-    // Configuração global: linhas sem student_id (form_urls comuns a todas as alunas)
-    sb.from("diagnostics").select("type,form_url,result_url").is("student_id", null)
+    sb.from("payments").select("*").eq("student_id", user.id).order("due_date",{ascending:false})
   ]);
 
   if(p.error && p.error.code !== "PGRST116"){ showToast("Erro ao carregar perfil: " + p.error.message); console.error("profiles", p.error); }
-  if(m.error){ showToast("Erro ao carregar materiais: " + m.error.message); }
-  if(c.error){ showToast("Erro ao carregar calendário: " + c.error.message); }
-  if(d.error){ showToast("Erro ao carregar diagnóstico: " + d.error.message); }
-  if(pay.error){ showToast("Erro ao carregar financeiro: " + pay.error.message); }
-  // cfg pode não ter linhas — não é crítico
+  if(m.error){ showToast("Erro ao carregar materiais: " + m.error.message); console.error("materials", m.error); }
+  if(c.error){ showToast("Erro ao carregar calendário: " + c.error.message); console.error("classes", c.error); }
+  if(d.error){ showToast("Erro ao carregar diagnóstico: " + d.error.message); console.error("diagnostics", d.error); }
+  if(pay.error){ showToast("Erro ao carregar financeiro: " + pay.error.message); console.error("payments", pay.error); }
 
-  profile = p.data || { full_name: user.email, email: user.email };
+  profile = p.data || { full_name:user.email, email:user.email, level:"—", nivel:"—" };
   if(!profile.elos_url) profile.elos_url = "https://elos.vc/sala/teacherdebora";
 
-  materials   = m.data   || [];
-  classes     = c.data   || [];
-  diagnostics = d.data   || [];
-  payments    = pay.data || [];
-  diagConfig  = cfg.data || [];  // form_urls globais dos testes
+  materials = m.data || [];
+  classes = c.data || [];
+  diagnostics = d.data || [];
+  payments = pay.data || [];
 
-  console.log("PORTAL DATA", {user:user.id, profile, materials, classes, diagnostics, payments, diagConfig});
+  console.log("PORTAL DATA", {user:user.id, profile, materials, classes, diagnostics, payments});
 }
 
 function renderAll(){
   renderProfile();
   renderDashboard();
   renderDiagnostics();
-  renderProfileSummary();
   renderFeaturedChecklist();
   renderMaterials();
   renderCalendar();
@@ -653,267 +639,84 @@ function renderAll(){
   renderPayments();
 }
 
-// ─────────────────────────────────────────────
-// PROFILE (sidebar)
-// ─────────────────────────────────────────────
-
 function renderProfile(){
   const name = profile.full_name || user.email || "Aluna";
   const first = name.split(" ")[0];
   const diag = getDiagnosisProgress();
-  const nivelData = getNivelValue();
 
   $("studentName").textContent = first;
-  // Nível só aparece na sidebar se o diagnóstico foi concluído
-  $("studentLevel").textContent = nivelData
-    ? `Aulas individuais • nível ${nivelData.value}`
-    : "Aulas individuais";
-  $("studentFocus").textContent = diag.label;
+  $("studentLevel").textContent = `Aulas individuais • nível ${profile.nivel || profile.level || "—"}`;
+  $("studentFocus").textContent = profile.focus || profile.objetivo || "trilha ativa";
   $("diagBadge").textContent = diag.label;
   $("diagBadge").className = `badge ${diag.className}`;
+
+  $("profileSummary").innerHTML = `
+    <div class="material-item"><strong>Perfil</strong><p>${esc(profile.learning_profile || "Ainda não definido")}</p></div>
+    <div class="material-item"><strong>Nível</strong><p>${esc(profile.nivel || profile.level || "Ainda não definido")}</p></div>
+    <div class="material-item"><strong>Foco atual</strong><p>${esc(profile.focus || profile.objetivo || "Ainda não definido")}</p></div>
+    <div class="material-item"><strong>Diagnóstico</strong><p>${diag.done}/${diag.total} testes concluídos</p></div>
+  `;
 }
 
-// ─────────────────────────────────────────────
-// RESULTADO SALVO (seção diagnóstico)
-// ─────────────────────────────────────────────
-
-function renderProfileSummary(){
-  const el = $("profileSummary");
-  if (!el) return;
-
-  const diag = getDiagnosisProgress();
-
-  // — PERFIL —
-  const perfilValue = getProfileResultValue();
-  const perfilDone  = isDiagnosticDone(diagnostics.find(d => d.type === "profile"));
-
-  // — NÍVEL —
-  const nivelData = getNivelValue();
-
-  // — FOCO ATUAL —
-  const focoValue = getFocoAtualValue();
-  const interestsDone = isDiagnosticDone(diagnostics.find(d => d.type === "interests"));
-
-  // — INTERESSES —
-  const interessesValue = getInteressesValue();
-
-  function resultItem(label, value, hint, actionLabel, actionFn) {
-    if (value) {
-      return `
-        <div class="profile-result-item">
-          <strong>${esc(label)}</strong>
-          <span class="result-value">${esc(value)}</span>
-        </div>`;
-    }
-    return `
-      <div class="profile-result-item">
-        <strong>${esc(label)}</strong>
-        <span class="result-hint">${esc(hint)}</span>
-        ${actionLabel
-          ? `<button class="result-action" onclick="${actionFn}">${esc(actionLabel)}</button>`
-          : ""}
-      </div>`;
-  }
-
-  // Nível: mostra se é provisório ou oficial
-  let nivelDisplay = null;
-  let nivelHint = "Conclua o teste de nivelamento para ver seu nível.";
-  if (nivelData) {
-    nivelDisplay = nivelData.source === "provisorio"
-      ? `${nivelData.value} (provisório)`
-      : nivelData.value;
-  }
-
-  // Contagem real de diagnósticos concluídos
-  const totalTestes = 3;
-  const concluidosCount = diag.done;
-  const diagLabel = concluidosCount === 0
-    ? "Nenhum teste concluído ainda."
-    : concluidosCount === totalTestes
-    ? `${concluidosCount}/${totalTestes} testes concluídos — diagnóstico completo ✓`
-    : `${concluidosCount}/${totalTestes} testes concluídos`;
-
-  el.innerHTML = [
-    resultItem(
-      "Perfil",
-      perfilValue,
-      "Conclua o teste de personalidade para descobrir seu perfil de aprendizado.",
-      perfilDone ? null : "Fazer o teste",
-      "goSection('diagnostico')"
-    ),
-    resultItem(
-      "Nível",
-      nivelDisplay,
-      nivelHint,
-      isDiagnosticDone(diagnostics.find(d => d.type === "level")) ? null : "Fazer nivelamento",
-      "goSection('diagnostico')"
-    ),
-    resultItem(
-      "Foco atual",
-      focoValue,
-      "Conclua o questionário de interesses para definir seu foco.",
-      interestsDone ? null : "Responder interesses",
-      "goSection('diagnostico')"
-    ),
-    `<div class="profile-result-item">
-      <strong>Diagnóstico</strong>
-      <span class="${concluidosCount === totalTestes ? 'result-value' : 'result-hint'}">${esc(diagLabel)}</span>
-    </div>`
-  ].join("");
-}
-
-// ─────────────────────────────────────────────
-// DIAGNÓSTICO — lista de testes
-// ─────────────────────────────────────────────
-
-/*
-  form_url para cada diagnóstico:
-  - "profile"   → URL do quiz de personalidade (hosted no GitHub Pages ou equivalente)
-  - "level"     → URL do teste de nivelamento (cadastrado no banco via diagnostics.form_url)
-  - "interests" → URL do formulário de interesses (cadastrado no banco via diagnostics.form_url)
-  
-  Prioridade: diagnostics.form_url do banco > URL hardcoded
-  
-  NOTA: o teste de personalidade fica em PERSONALITY_TEST_URL.
-  Quando a aluna termina o teste, a função sendPersonalityNotification
-  deve fazer UPSERT em diagnostics com type="profile", status="done", result=<perfil>.
-  Isso faz o portal reconhecer como concluído automaticamente.
-*/
-
-function renderDiagnostics(){
-  const el = $("diagnosticsList");
-  if(!el) return;
-
-  const baseDiagnostics = [
-    {
-      type: "profile",
-      icon: "💜",
-      title: "Quem é você no grupinho do inglês?",
-      description: "Teste de personalidade aplicado ao seu jeito de aprender inglês.",
-      actionLabel: "Fazer teste",
-      defaultUrl: PERSONALITY_TEST_URL   // ← URL real do quiz
-    },
-    {
-      type: "level",
-      icon: "📊",
-      title: "Teste de nivelamento",
-      description: "Mapeamento do seu nível atual para ajustar melhor as aulas.",
-      actionLabel: "Fazer nivelamento",
-      defaultUrl: null                    // ← vem do banco (diagnostics.form_url)
-    },
-    {
-      type: "interests",
-      icon: "✨",
-      title: "Área de interesses",
-      description: "Objetivos, rotina, gostos e contextos em que você quer usar inglês.",
-      actionLabel: "Responder questionário",
-      defaultUrl: null                    // ← vem do banco (diagnostics.form_url)
-    }
-  ];
-
-  const merged = baseDiagnostics.map(base => {
-    // db = registro desta aluna (tem status, result, etc.)
-    const db = diagnostics.find(d => d.type === base.type);
-    // cfg = configuração global do teste (tem form_url comum a todas as alunas)
-    const cfg = diagConfig.find(c => c.type === base.type);
-    return {
-      ...base,
-      db,
-      done:       isDiagnosticDone(db),
-      // form_url: prioridade → global (cfg) → registro da aluna (db) → URL hardcoded
-      form_url:   cfg?.form_url || db?.form_url || base.defaultUrl,
-      result_url: db?.result_url || cfg?.result_url || null
-    };
-  });
-
-  el.innerHTML = merged.map(d => {
-    const hasLink = !!d.form_url;
-
-    return `
-      <div class="diag-item ${d.done || hasLink ? "" : "locked"}">
-        <div class="item-top">
-          <div class="diag-head">
-            <div class="diag-icon">${d.icon}</div>
-            <div>
-              <strong>${esc(d.title)}</strong>
-              <p>${esc(d.description)}</p>
-            </div>
-          </div>
-          <span class="mini-badge ${d.done ? "status-done" : "status-pending"}">
-            ${d.done ? "concluído" : "pendente"}
-          </span>
-        </div>
-
-        <div class="item-actions">
-          ${d.done
-            ? `<button class="mini-btn done-btn" type="button" disabled>Concluído ✓</button>`
-            : hasLink
-              ? `<button class="mini-btn" onclick="openLink('${esc(d.form_url)}')">${esc(d.actionLabel)}</button>`
-              : `<button class="mini-btn secondary" onclick="showToast('Teste ainda não disponível. Aguarde a professora liberar.')">Em breve</button>`
-          }
-          ${d.result_url
-            ? `<button class="mini-btn secondary" onclick="openLink('${esc(d.result_url)}')">Ver resultado</button>`
-            : ""
-          }
-        </div>
-      </div>
-    `;
-  }).join("");
-}
-
-// ─────────────────────────────────────────────
-// DASHBOARD
-// ─────────────────────────────────────────────
 
 function getLatestFeedback(){
-  const feedbackMat = materials.find(m => ["feedback","summary"].includes((m.type||"").toLowerCase()) && m.description);
-  if(feedbackMat) return feedbackMat.description;
+  const feedbackTypes = ["feedback", "summary"];
+  const byType = materials.find(m => feedbackTypes.includes((m.type || "").toLowerCase()) && m.description);
+  if(byType) return byType.description;
+
   const classWithNotes = [...classes].reverse().find(c => c.notes);
   if(classWithNotes) return classWithNotes.notes;
+
   return "Assim que sua professora registrar um resumo ou observação da aula, ele aparece aqui.";
 }
 
 function getNextPendingDiagnostic(){
-  const order = ["profile","level","interests"];
+  const order = ["profile", "level", "interests"];
   const labels = {
     profile: "Quem é você no grupinho do inglês?",
     level: "Teste de nivelamento",
     interests: "Área de interesses"
   };
-  const pendingType = order.find(type => !isDiagnosticDone(diagnostics.find(d => d.type === type)));
-  return pendingType ? labels[pendingType] : "Diagnóstico completo ✓";
+  const pendingType = order.find(type => {
+    const item = diagnostics.find(d => d.type === type);
+    return !item || item.status !== "done";
+  });
+
+  return pendingType ? labels[pendingType] : "Diagnóstico completo";
 }
 
 function getCurrentPayment(){
   const pending = payments.find(p => p.status !== "paid");
-  return pending || payments[0] || null;
+  if(pending) return pending;
+  return payments[0] || null;
 }
 
 function daysUntil(dateStr){
   if(!dateStr) return null;
-  const today = new Date(); today.setHours(0,0,0,0);
-  const due   = new Date(dateStr+"T12:00:00"); due.setHours(0,0,0,0);
-  return Math.ceil((due - today)/(1000*60*60*24));
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const due = new Date(dateStr + "T12:00:00");
+  due.setHours(0,0,0,0);
+  return Math.ceil((due - today) / (1000 * 60 * 60 * 24));
 }
 
 function renderMiniFeedback(){
   const text = getLatestFeedback();
-  const focoValue = getFocoAtualValue();
   $("miniFeedbackBox").innerHTML = `
     <strong>Observação da professora</strong>
     <p class="feedback-note">${esc(text)}</p>
-    ${focoValue ? `<div class="feedback-focus">Foco: ${esc(focoValue)}</div>` : ""}
+    <div class="feedback-focus">Foco da semana: clareza + vocabulário ativo</div>
   `;
 }
 
 function renderDiagnosisProgress(){
   const diag = getDiagnosisProgress();
-  const pct  = Math.min(100, Math.round((diag.done / diag.total) * 100));
+  const pct = Math.min(100, Math.round((diag.done / diag.total) * 100));
   const next = getNextPendingDiagnostic();
 
   const stepClass = (type, index) => {
     const item = diagnostics.find(d => d.type === type);
-    if(isDiagnosticDone(item)) return "done";
+    if(item?.status === "done") return "done";
     if(index === diag.done) return "current";
     return "";
   };
@@ -928,18 +731,21 @@ function renderDiagnosisProgress(){
           <button class="mini-btn" onclick="goSection('diagnostico')">${diag.done === diag.total ? "Ver diagnóstico" : "Continuar"}</button>
         </div>
       </div>
+
       <div class="progress-steps">
         <div class="progress-step ${stepClass("profile",0)}">1. Perfil</div>
         <div class="progress-step ${stepClass("level",1)}">2. Nível</div>
         <div class="progress-step ${stepClass("interests",2)}">3. Interesses</div>
       </div>
-      <p class="dash-muted">Próximo: ${esc(next)}</p>
+
+      <p class="dash-muted">Próximo passo: ${esc(next)}</p>
     </div>
   `;
 }
 
 function renderFinanceDashboard(){
   const p = getCurrentPayment();
+
   if(!p){
     $("financeDashboardBox").innerHTML = `
       <div class="finance-status">
@@ -959,18 +765,22 @@ function renderFinanceDashboard(){
     if(diff === 0) dueText = "vence hoje";
     if(diff < 0) dueText = `vencido há ${Math.abs(diff)} dia(s)`;
   }
+
   const paid = p.status === "paid";
+  const statusText = paid ? "Pagamento registrado" : "Aguardando pagamento";
 
   $("financeDashboardBox").innerHTML = `
     <div class="finance-status">
       <span class="finance-pill ${paid ? "paid" : "pending"}">${paid ? "pago" : "pendente"}</span>
       <div>
         <strong>${esc(p.reference || "Cobrança")}</strong>
-        <div class="finance-amount">R$ ${Number(p.amount||0).toFixed(2)}</div>
+        <div class="finance-amount">R$ ${Number(p.amount || 0).toFixed(2)}</div>
         <p class="dash-muted">${paid ? "Pagamento registrado." : dueText}</p>
       </div>
-      <div class="finance-row"><span>Status</span><strong>${paid ? "Pagamento registrado" : "Aguardando pagamento"}</strong></div>
+
+      <div class="finance-row"><span>Status</span><strong>${statusText}</strong></div>
       <div class="finance-row"><span>Forma</span><strong>${p.pix_code || p.pix_qr_url ? "Pix disponível" : "Pix ainda não configurado"}</strong></div>
+
       <button class="mini-btn" onclick="goSection('financeiro')">${paid ? "Ver histórico" : "Pagar agora"}</button>
     </div>
   `;
@@ -978,30 +788,29 @@ function renderFinanceDashboard(){
 
 function renderDashboard(){
   const today = new Date().toISOString().slice(0,10);
-  const next  = classes.find(c => c.class_date >= today);
-  const diag  = getDiagnosisProgress();
+  const next = classes.find(c => c.class_date >= today);
+  const diag = getDiagnosisProgress();
   const latest = materials[0];
   const currentPayment = getCurrentPayment();
-  const nivelData = getNivelValue();
 
-  $("nextClassStat").textContent   = next ? `${dateBR(next.class_date)} • ${String(next.class_time||"").slice(0,5)}` : "—";
-  $("nextClassLive").textContent   = next ? `${dateBR(next.class_date)} às ${String(next.class_time||"").slice(0,5)}${next.notes?" • "+next.notes:""}` : "Nenhuma aula futura cadastrada.";
+  $("nextClassStat").textContent = next ? `${dateBR(next.class_date)} • ${String(next.class_time||"").slice(0,5)}` : "—";
+  $("nextClassLive").textContent = next ? `${dateBR(next.class_date)} às ${String(next.class_time||"").slice(0,5)}${next.notes ? " • " + next.notes : ""}` : "Nenhuma aula futura cadastrada.";
   if($("elosText")) $("elosText").textContent = profile.elos_url || "https://elos.vc/sala/teacherdebora";
-  $("materialsStat").textContent   = materials.length;
+  $("materialsStat").textContent = materials.length;
   $("pendingDiagStat").textContent = diag.pending;
 
-  // Sidebar badge — renderProfile já cuida disso, só atualiza o badge aqui
   $("diagBadge").textContent = diag.label;
-  $("diagBadge").className   = `badge ${diag.className}`;
+  $("diagBadge").className = `badge ${diag.className}`;
 
   $("quickLinks").innerHTML = `
     <div class="quick-link">
       <div>
         <strong>Continuar diagnóstico</strong>
-        <p>${diag.pending ? diag.pending+" pendente(s)" : "Tudo concluído ✓"}</p>
+        <p>${diag.pending ? diag.pending+" pendente(s)" : "Tudo concluído"}</p>
       </div>
       <a href="#" onclick="goSection('diagnostico');return false;">acessar</a>
     </div>
+
     <div class="quick-link">
       <div>
         <strong>Material mais recente</strong>
@@ -1009,12 +818,13 @@ function renderDashboard(){
       </div>
       <a href="#" onclick="${latest?.url ? `openLink('${latest.url}')` : `showToast('Nenhum material com link')`};return false;">ver</a>
     </div>
+
     <div class="quick-link">
       <div>
         <strong>Financeiro</strong>
-        <p>${currentPayment ? esc(currentPayment.reference||"Cobrança ativa") : "Sem cobrança ativa"}</p>
+        <p>${currentPayment ? esc(currentPayment.reference || "Cobrança ativa") : "Sem cobrança ativa"}</p>
       </div>
-      <a href="#" onclick="goSection('financeiro');return false;">${currentPayment?.status==="paid" ? "ver" : "pagar"}</a>
+      <a href="#" onclick="goSection('financeiro');return false;">${currentPayment?.status === "paid" ? "ver" : "pagar"}</a>
     </div>
   `;
 
@@ -1023,31 +833,119 @@ function renderDashboard(){
   renderFinanceDashboard();
 }
 
-// ─────────────────────────────────────────────
-// MATERIAIS
-// ─────────────────────────────────────────────
+function renderDiagnostics(){
+  const el = $("diagnosticsList");
+  if(!el) return;
+
+  const baseDiagnostics = [
+    {
+      type: "profile",
+      icon: "💜",
+      title: "Quem é você no grupinho do inglês?",
+      description: "Teste de personalidade aplicado ao seu jeito de aprender inglês.",
+      actionLabel: "Fazer teste",
+      defaultUrl: PERSONALITY_TEST_URL
+    },
+    {
+      type: "level",
+      icon: "📊",
+      title: "Teste de nivelamento",
+      description: "Mapeamento do seu nível atual para ajustar melhor as aulas.",
+      actionLabel: "Fazer nivelamento",
+      defaultUrl: "https://helpdebs.github.io/helpdebs-portal/teste_nivelamento.html"
+    },
+    {
+      type: "interests",
+      icon: "✨",
+      title: "Área de interesses",
+      description: "Objetivos, rotina, gostos e contextos em que você quer usar inglês.",
+      actionLabel: "Responder interesses",
+      defaultUrl: "https://helpdebs.github.io/helpdebs-portal/interesses.html"
+    }
+  ];
+
+  const merged = baseDiagnostics.map(base => {
+    const db = diagnostics.find(d => d.type === base.type);
+    const cfg = diagConfig.find(c => c.type === base.type);
+
+    const hardcodedUrls = {
+      profile: PERSONALITY_TEST_URL,
+      level: "https://helpdebs.github.io/helpdebs-portal/teste_nivelamento.html",
+      interests: "https://helpdebs.github.io/helpdebs-portal/interesses.html"
+    };
+
+    return {
+      ...base,
+      db,
+      done: isDiagnosticDone(db),
+      form_url: db?.form_url || cfg?.form_url || base.defaultUrl || hardcodedUrls[base.type],
+      result_url: db?.result_url || cfg?.result_url || null
+    };
+  });
+
+  el.innerHTML = merged.map(d => {
+    const done = d.status === "done";
+    const hasLink = !!d.form_url;
+
+    return `
+      <div class="diag-item ${hasLink ? "" : "locked"}">
+        <div class="item-top">
+          <div class="diag-head">
+            <div class="diag-icon">${d.icon}</div>
+            <div>
+              <strong>${esc(d.title)}</strong>
+              <p>${esc(d.description)}</p>
+            </div>
+          </div>
+
+          <span class="mini-badge ${done ? "status-done" : "status-pending"}">
+            ${done ? "concluído" : "pendente"}
+          </span>
+        </div>
+
+        <div class="item-actions">
+          ${
+            hasLink
+              ? `<button class="mini-btn" onclick="openLink('${esc(d.form_url)}')">${d.actionLabel}</button>`
+              : `<button class="mini-btn secondary" onclick="showToast('Teste ainda não conectado')">Em breve</button>`
+          }
+
+          ${
+            d.result_url
+              ? `<button class="mini-btn secondary" onclick="openLink('${esc(d.result_url)}')">Ver resultado</button>`
+              : ""
+          }
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
 
 function renderFeaturedChecklist(){
   const area = $("featuredChecklistArea");
   if(!area) return;
+
   area.innerHTML = `
-    <div class="featured-checklist" onclick="event.stopPropagation();">
+    <div class="featured-checklist">
       <div>
         <span class="checklist-kicker">✨ checklist mensal</span>
         <h3>Checklist de vocabulário da aula</h3>
         <p>Revise as estruturas, chunks e combinações mais importantes do mês em uma página interativa feita para praticar sem ficar perdida.</p>
       </div>
-      <div class="checklist-actions" onclick="event.stopPropagation();">
+
+      <div class="checklist-actions">
         <a class="checklist-btn"
-           href="${MONTHLY_CHECKLIST_URL}"
+           href="https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html"
            target="_blank"
            rel="noopener noreferrer"
-           onclick="event.stopPropagation();">
+           onclick="event.preventDefault(); event.stopPropagation(); window.open('https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html', '_blank', 'noopener,noreferrer'); return false;">
           Abrir checklist
         </a>
+
         <button type="button"
                 class="checklist-btn secondary"
-                onclick="event.preventDefault();event.stopPropagation();toggleChecklistEmbed();return false;">
+                onclick="event.preventDefault(); event.stopPropagation(); toggleChecklistEmbed(); return false;">
           Ver dentro do portal
         </button>
       </div>
@@ -1055,14 +953,26 @@ function renderFeaturedChecklist(){
   `;
 }
 
+function openMonthlyChecklist(){
+  window.open(MONTHLY_CHECKLIST_URL, "_blank", "noopener,noreferrer");
+}
+
 function toggleChecklistEmbed(){
   const box = $("checklistEmbedArea");
   if(!box) return;
+
+  const url = MONTHLY_CHECKLIST_URL;
   const isOpen = box.classList.contains("show");
-  if(isOpen){ box.classList.remove("show"); box.innerHTML=""; return; }
-  box.innerHTML = `<iframe src="${MONTHLY_CHECKLIST_URL}" title="Checklist mensal"></iframe>`;
+
+  if(isOpen){
+    box.classList.remove("show");
+    box.innerHTML = "";
+    return;
+  }
+
+  box.innerHTML = `<iframe src="${url}" title="Checklist mensal"></iframe>`;
   box.classList.add("show");
-  box.scrollIntoView({behavior:"smooth",block:"start"});
+  box.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function renderMaterials(){
@@ -1070,7 +980,7 @@ function renderMaterials(){
   if(!el) return;
 
   const visibleMaterials = materials.filter(m => {
-    const type = (m.type||"").toLowerCase();
+    const type = (m.type || "").toLowerCase();
     return ["pdf","checklist","resource","vocabulary","summary","chunks"].includes(type);
   });
 
@@ -1080,12 +990,24 @@ function renderMaterials(){
   }
 
   const groups = [];
-  const classIdsWithMaterial = [...new Set(visibleMaterials.filter(m=>m.class_id).map(m=>m.class_id))];
+
+  const classIdsWithMaterial = [...new Set(
+    visibleMaterials
+      .filter(m => m.class_id)
+      .map(m => m.class_id)
+  )];
+
   classIdsWithMaterial.forEach(classId => {
-    const classItem = classes.find(c => c.id===classId) || null;
-    groups.push({ classItem, materials: visibleMaterials.filter(m=>m.class_id===classId) });
+    const classItem = classes.find(c => c.id === classId) || null;
+    const related = visibleMaterials.filter(m => m.class_id === classId);
+    groups.push({ classItem, materials: related });
   });
-  visibleMaterials.filter(m=>!m.class_id).forEach(m => groups.push({ classItem:null, materials:[m] }));
+
+  const looseMaterials = visibleMaterials.filter(m => !m.class_id);
+  looseMaterials.forEach(m => {
+    groups.push({ classItem: null, materials: [m] });
+  });
+
   groups.sort((a,b) => {
     const aDate = a.classItem?.class_date || a.materials[0]?.created_at || "";
     const bDate = b.classItem?.class_date || b.materials[0]?.created_at || "";
@@ -1095,15 +1017,22 @@ function renderMaterials(){
   el.innerHTML = groups.map(group => {
     const c = group.classItem;
     const items = group.materials || [];
-    const pdf    = items.find(m=>["pdf","checklist","resource","vocabulary"].includes((m.type||"").toLowerCase())) || items.find(m=>m.url);
-    const summary = items.find(m=>(m.type||"").toLowerCase()==="summary");
-    const chunks  = items.find(m=>(m.type||"").toLowerCase()==="chunks");
-    const main = pdf||summary||chunks||items[0];
-    const title = main?.title||"Material da aula";
-    const date  = c ? `${dateBR(c.class_date)} • ${String(c.class_time||"").slice(0,5)}` : (main?.month||"Material sem aula vinculada");
+
+    const pdf = items.find(m => ["pdf","checklist","resource","vocabulary"].includes((m.type || "").toLowerCase())) || items.find(m => m.url);
+    const summary = items.find(m => (m.type || "").toLowerCase() === "summary");
+    const chunks = items.find(m => (m.type || "").toLowerCase() === "chunks");
+
+    const main = pdf || summary || chunks || items[0];
+
+    const title = main?.title || "Material da aula";
+    const date = c
+      ? `${dateBR(c.class_date)} • ${String(c.class_time || "").slice(0,5)}`
+      : (main?.month || "Material sem aula vinculada");
+
     const thumb = pdf?.thumbnail_url
       ? `<img src="${esc(pdf.thumbnail_url)}" alt="Miniatura do PDF">`
-      : `<div>PDF<br><small>${esc(pdf?.type||main?.type||"material")}</small></div>`;
+      : `<div>PDF<br><small>${esc(pdf?.type || main?.type || "material")}</small></div>`;
+
     return `
       <div class="lesson-card">
         <div class="lesson-head">
@@ -1113,15 +1042,18 @@ function renderMaterials(){
           </div>
           ${pdf?.url ? `<button class="mini-btn" onclick="openLink('${esc(pdf.url)}')">Abrir material</button>` : ""}
         </div>
+
         <div class="lesson-body">
           <div class="pdf-thumb">${thumb}</div>
+
           <div class="lesson-block">
             <h4>Resumo da aula</h4>
-            <p>${esc(summary?.description||"Resumo ainda não cadastrado.")}</p>
+            <p>${esc(summary?.description || "Resumo ainda não cadastrado.")}</p>
           </div>
+
           <div class="lesson-block">
             <h4>Chunks usados</h4>
-            <p>${esc(chunks?.description||"Chunks ainda não cadastrados.")}</p>
+            <p>${esc(chunks?.description || "Chunks ainda não cadastrados.")}</p>
           </div>
         </div>
       </div>
@@ -1129,154 +1061,183 @@ function renderMaterials(){
   }).join("");
 }
 
-// ─────────────────────────────────────────────
-// CALENDÁRIO
-// ─────────────────────────────────────────────
-
 function renderCalendar(){
   const calendarGrid = $("calendarGrid");
   const calendarMonthEl = $("calendarMonth");
   const classListEl = $("studentClassList");
-  if(!calendarGrid||!calendarMonthEl) return;
+
+  if(!calendarGrid || !calendarMonthEl) return;
 
   const months = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
   calendarMonthEl.textContent = `${months[calMonth]} ${calYear}`;
 
   const days = ["dom","seg","ter","qua","qui","sex","sáb"];
-  let html = days.map(d=>`<div class="day-name">${d}</div>`).join("");
-  const first = new Date(calYear,calMonth,1).getDay();
-  const total = new Date(calYear,calMonth+1,0).getDate();
-  const prevTotal = new Date(calYear,calMonth,0).getDate();
+  let html = days.map(d => `<div class="day-name">${d}</div>`).join("");
+
+  const first = new Date(calYear, calMonth, 1).getDay();
+  const total = new Date(calYear, calMonth + 1, 0).getDate();
+  const prevTotal = new Date(calYear, calMonth, 0).getDate();
   const today = new Date();
 
-  for(let i=0;i<first;i++) html+=`<div class="calendar-day muted"><div class="day-number">${prevTotal-first+i+1}</div></div>`;
-  for(let d=1;d<=total;d++){
-    const date=`${calYear}-${String(calMonth+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-    const dayClasses=classes.filter(c=>c.class_date===date);
-    const isToday=today.getFullYear()===calYear&&today.getMonth()===calMonth&&today.getDate()===d;
-    html+=`
-      <div class="calendar-day ${dayClasses.length?"has-class":""} ${isToday?"today":""}">
-        <div class="day-number">${d}</div>
-        ${dayClasses.map(c=>`<div class="mini-class">Aula • ${String(c.class_time||"").slice(0,5)}</div>`).join("")}
-      </div>`;
+  for(let i=0;i<first;i++){
+    html += `<div class="calendar-day muted"><div class="day-number">${prevTotal-first+i+1}</div></div>`;
   }
+
+  for(let d=1; d<=total; d++){
+    const date = `${calYear}-${String(calMonth+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const dayClasses = classes.filter(c => c.class_date === date);
+    const isToday = today.getFullYear()===calYear && today.getMonth()===calMonth && today.getDate()===d;
+
+    html += `
+      <div class="calendar-day ${dayClasses.length ? "has-class" : ""} ${isToday ? "today" : ""}">
+        <div class="day-number">${d}</div>
+        ${dayClasses.map(c => `
+          <div class="mini-class">
+            Aula • ${String(c.class_time || "").slice(0,5)}
+          </div>
+        `).join("")}
+      </div>
+    `;
+  }
+
   calendarGrid.innerHTML = html;
 
   if(classListEl){
-    const upcoming = classes.filter(c=>c.class_date>=new Date().toISOString().slice(0,10)).slice(0,5);
+    const upcoming = classes
+      .filter(c => c.class_date >= new Date().toISOString().slice(0,10))
+      .slice(0,5);
+
     classListEl.innerHTML = upcoming.length
-      ? upcoming.map(c=>`<div class="student-class-card"><strong>${dateBR(c.class_date)} • ${String(c.class_time||"").slice(0,5)}</strong><p>${esc(c.notes||"Aula marcada")}</p></div>`).join("")
+      ? upcoming.map(c => `
+          <div class="student-class-card">
+            <strong>${dateBR(c.class_date)} • ${String(c.class_time || "").slice(0,5)}</strong>
+            <p>${esc(c.notes || "Aula marcada")}</p>
+          </div>
+        `).join("")
       : `<div class="empty">Nenhuma aula futura cadastrada.</div>`;
   }
 }
 
-// ─────────────────────────────────────────────
-// DICAS / VÍDEOS
-// ─────────────────────────────────────────────
-
-function materialCard(m){
-  return `
-    <div class="material-item">
-      <strong>${esc(m.title||"Material")}</strong>
-      <p>${esc(m.description||"")}</p>
-      ${m.url?`<div class="item-actions"><button class="mini-btn" onclick="openLink('${esc(m.url)}')">Abrir</button></div>`:""}
-    </div>`;
-}
-
 function renderTips(){
-  const tips = materials.filter(m=>m.type==="tip");
+  const tips = materials.filter(m => m.type === "tip");
   $("tipsList").innerHTML = tips.length ? tips.map(materialCard).join("") : `<div class="empty">Nenhuma dica cadastrada ainda.</div>`;
-  const prompts = materials.filter(m=>m.type==="prompt"||m.type==="resource");
+  const prompts = materials.filter(m => m.type === "prompt" || m.type === "resource");
   $("promptsList").innerHTML = prompts.length ? prompts.map(materialCard).join("") : `<div class="empty">Nenhum prompt/recurso cadastrado ainda.</div>`;
 }
 
 function renderVideos(){
-  const videos = materials.filter(m=>m.type==="video");
+  const videos = materials.filter(m => m.type === "video");
   $("videosList").innerHTML = videos.length ? videos.map(materialCard).join("") : `<div class="empty">Nenhuma videoaula cadastrada ainda.</div>`;
 }
 
-// ─────────────────────────────────────────────
-// FINANCEIRO
-// ─────────────────────────────────────────────
-
 async function copyPix(code){
-  try{ await navigator.clipboard.writeText(code); showToast("Pix copiado! Abra seu banco e cole."); }
-  catch(e){ showToast("Não consegui copiar automaticamente."); }
+  try{
+    await navigator.clipboard.writeText(code);
+    showToast("Pix copiado! Abra seu banco e cole.");
+  }catch(e){
+    showToast("Não consegui copiar automaticamente.");
+  }
 }
 
 function paymentAction(id){
-  const p = payments.find(item=>item.id===id);
-  if(!p){ showToast("Cobrança não encontrada."); return; }
-  if(p.pix_code){ copyPix(p.pix_code); return; }
-  if(p.pix_qr_url){ openLink(p.pix_qr_url); return; }
+  const p = payments.find(item => item.id === id);
+  if(!p){
+    showToast("Cobrança não encontrada.");
+    return;
+  }
+
+  if(p.pix_code){
+    copyPix(p.pix_code);
+    return;
+  }
+
+  if(p.pix_qr_url){
+    openLink(p.pix_qr_url);
+    return;
+  }
+
   showToast("Forma de pagamento ainda não configurada.");
 }
 
 function renderPayments(){
   const list = $("paymentsList");
   if(!list) return;
-  if(!payments.length){ list.innerHTML=`<div class="empty">Nenhum pagamento cadastrado ainda.</div>`; return; }
+
+  if(!payments.length){
+    list.innerHTML = `<div class="empty">Nenhum pagamento cadastrado ainda.</div>`;
+    return;
+  }
 
   list.innerHTML = payments.map(p => {
-    const pixCode = p.pix_code||"";
-    const pixQr   = p.pix_qr_url||"";
-    const hasAction = pixCode||pixQr;
+    const pixCode = p.pix_code || "";
+    const pixQr = p.pix_qr_url || "";
+    const hasAction = pixCode || pixQr;
+
     return `
-    <div class="payment-item ${hasAction?"clickable-payment":"no-payment-action"}"
+    <div class="payment-item ${hasAction ? "clickable-payment" : "no-payment-action"}"
          onclick="paymentAction('${esc(p.id)}')">
+
       <div class="item-top">
         <div>
-          <strong>${esc(p.reference||"Cobrança")}</strong>
-          <p>R$ ${Number(p.amount||0).toFixed(2)} • vence ${dateBR(p.due_date)}</p>
+          <strong>${esc(p.reference || "Cobrança")}</strong>
+          <p>R$ ${Number(p.amount || 0).toFixed(2)} • vence ${dateBR(p.due_date)}</p>
         </div>
-        <span class="mini-badge ${p.status==="paid"?"status-paid":p.status==="overdue"?"status-overdue":"status-pending"}">
-          ${esc(p.status||"pending")}
-        </span>
+
+        <span class="mini-badge ${
+          p.status === "paid"
+            ? "status-paid"
+            : p.status === "overdue"
+            ? "status-overdue"
+            : "status-pending"
+        }">${esc(p.status || "pending")}</span>
       </div>
-      ${p.notes?`<p>${esc(p.notes)}</p>`:""}
-      ${pixQr?`<div class="qr-preview"><img src="${esc(pixQr)}" alt="QR Code Pix"></div>`:""}
-      ${pixCode?`<p style="word-break:break-all;font-size:.82rem;margin-top:10px"><b>Pix copia e cola:</b> ${esc(pixCode)}</p>`:""}
+
+      ${p.notes ? `<p>${esc(p.notes)}</p>` : ""}
+
+      ${pixQr ? `
+        <div class="qr-preview">
+          <img src="${esc(pixQr)}" alt="QR Code Pix">
+        </div>
+      ` : ""}
+
+      ${pixCode ? `
+        <p style="word-break:break-all;font-size:.82rem;margin-top:10px">
+          <b>Pix copia e cola:</b> ${esc(pixCode)}
+        </p>
+      ` : ""}
+
       <div class="pay-actions" onclick="event.stopPropagation()">
-        ${pixCode?`<button class="mini-btn" onclick="copyPix('${esc(pixCode)}')">Copiar Pix</button>`:""}
-        ${pixQr?`<button class="mini-btn secondary" onclick="openLink('${esc(pixQr)}')">Abrir QR Code</button>`:""}
+        ${pixCode ? `<button class="mini-btn" onclick="copyPix('${esc(pixCode)}')">Copiar Pix</button>` : ""}
+        ${pixQr ? `<button class="mini-btn secondary" onclick="openLink('${esc(pixQr)}')">Abrir QR Code</button>` : ""}
       </div>
     </div>`;
   }).join("");
 }
 
-// ─────────────────────────────────────────────
-// NAVEGAÇÃO
-// ─────────────────────────────────────────────
-
 function openElos(){
-  openLink(profile.elos_url || "https://elos.vc/sala/teacherdebora");
+  const url = profile.elos_url || "https://elos.vc/sala/teacherdebora";
+  openLink(url);
 }
 
-const sectionMeta = {
-  inicio:"Portal da aluna", diagnostico:"Diagnóstico", materiais:"Materiais",
-  calendario:"Calendário", "ao-vivo":"Aula ao vivo",
-  dicas:"Dicas", videoaulas:"Videoaulas", financeiro:"Financeiro"
-};
-
+const sectionMeta = {inicio:"Portal da aluna",diagnostico:"Diagnóstico",materiais:"Materiais",calendario:"Calendário","ao-vivo":"Aula ao vivo",dicas:"Dicas",videoaulas:"Videoaulas",financeiro:"Financeiro"};
 function goSection(target){
-  document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.section===target));
-  document.querySelectorAll(".portal-section").forEach(s => s.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.section === target));
+  document.querySelectorAll(".portal-section").forEach(section => section.classList.remove("active"));
   $(`section-${target}`).classList.add("active");
-  $("pageTitle").textContent = sectionMeta[target]||target;
+  $("pageTitle").textContent = sectionMeta[target] || target;
 
-  if(target==="calendario")  renderCalendar();
-  if(target==="materiais"){  renderFeaturedChecklist(); renderMaterials(); }
-  if(target==="diagnostico"){ renderDiagnostics(); renderProfileSummary(); }
-  if(target==="financeiro")  renderPayments();
-  if(target==="ao-vivo"){
-    const next = classes.find(c=>c.class_date>=new Date().toISOString().slice(0,10));
+  if(target === "calendario") renderCalendar();
+  if(target === "materiais"){ renderFeaturedChecklist(); renderMaterials(); }
+  if(target === "diagnostico") renderDiagnostics();
+  if(target === "financeiro") renderPayments();
+  if(target === "ao-vivo"){
+    const next = classes.find(c => c.class_date >= new Date().toISOString().slice(0,10));
     $("nextClassLive").textContent = next
-      ? `${dateBR(next.class_date)} às ${String(next.class_time||"").slice(0,5)}${next.notes?" • "+next.notes:""}`
+      ? `${dateBR(next.class_date)} às ${String(next.class_time || "").slice(0,5)}${next.notes ? " • " + next.notes : ""}`
       : "Nenhuma aula futura cadastrada.";
-    if($("elosText")) $("elosText").textContent = profile.elos_url||"https://elos.vc/sala/teacherdebora";
+    $("elosText").textContent = profile.elos_url || "https://elos.vc/sala/teacherdebora";
   }
 }
 </script>
 </body>
 </html>
-
