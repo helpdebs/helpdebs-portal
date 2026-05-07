@@ -73,6 +73,7 @@
     .day-number{font-size:.88rem;font-weight:900}.mini-class{border-radius:12px;padding:8px;background:rgba(122,92,255,.10);color:var(--primary);font-size:.72rem;line-height:1.35;font-weight:900}
     .mini-badge{padding:6px 9px;color:var(--primary);background:rgba(122,92,255,.08);border:1px solid rgba(122,92,255,.08)}.status-done{color:#53710d;background:rgba(219,255,102,.50);border-color:rgba(219,255,102,.56)}.status-pending{color:#b44b67;background:rgba(255,120,150,.12);border-color:rgba(255,120,150,.12)}.status-paid{color:#53710d;background:rgba(219,255,102,.50)}.status-overdue{color:#b44b67;background:rgba(255,120,150,.12)}
     .item-actions{display:flex;flex-wrap:wrap;gap:8px;padding-top:8px}.mini-btn{border:none;cursor:pointer;padding:10px 12px;border-radius:12px;font-size:.79rem;font-weight:900;background:rgba(122,92,255,.08);color:var(--primary)}.mini-btn.secondary{background:rgba(255,255,255,.90);color:var(--text);border:1px solid rgba(122,92,255,.10)}
+    .mini-btn.done-btn{background:rgba(219,255,102,.35);color:#53710d;border:1px solid rgba(219,255,102,.55);cursor:default}
     .empty{padding:20px;border-radius:18px;background:rgba(255,255,255,.65);border:1px solid var(--line);color:var(--muted);line-height:1.55}
     .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(12px);background:white;border:1px solid var(--line);border-radius:16px;padding:14px 20px;box-shadow:var(--shadow);font-size:.9rem;font-weight:800;opacity:0;transition:all .4s ease;pointer-events:none;z-index:999;white-space:nowrap}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
     @media(max-width:1180px){.app{grid-template-columns:1fr}.sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid rgba(122,92,255,.08)}.dashboard-grid,.grid-2{grid-template-columns:1fr}}
@@ -487,8 +488,13 @@
 <script>
 const SB_URL = "https://pgdanuifukzisyyummpz.supabase.co";
 const SB_ANON = "sb_publishable_81NM6F08rsXXSCgjWl4iSg_v99cdVpo";
-let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[];
+
+const PERSONALITY_TEST_URL = "https://helpdebs.github.io/helpdebs-portal/quiz_personalidade.html";
+const LEVEL_TEST_URL = "https://helpdebs.github.io/helpdebs-portal/teste_nivelamento.html";
+const INTERESTS_TEST_URL = "https://helpdebs.github.io/helpdebs-portal/interesses.html";
 const MONTHLY_CHECKLIST_URL = "https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html";
+
+let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[], diagConfig=[];
 let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth();
 
@@ -499,41 +505,43 @@ function msg(id,text,type="info"){ const el=$(id); el.textContent=text; el.class
 function dateBR(d){ if(!d)return "—"; return new Date(d+"T12:00:00").toLocaleDateString("pt-BR",{weekday:"short",day:"numeric",month:"short"}); }
 function openLink(url){ if(!url){showToast("⚠️ Link ainda não configurado");return;} window.open(url,"_blank"); }
 
+function isDiagnosticDone(item){
+  if(!item) return false;
+  const status = String(item.status || "").toLowerCase().trim();
+  if(["done", "completed", "concluido", "concluído"].includes(status)) return true;
+
+  const resultFields = [
+    item.result, item.result_data, item.result_json, item.result_text,
+    item.answer, item.answers, item.summary,
+    item.profile_result, item.level_result, item.interests_result,
+    item.completed_at, item.submitted_at
+  ];
+
+  return resultFields.some(field => {
+    if(field === null || field === undefined || field === "") return false;
+    if(typeof field === "object" && Object.keys(field).length === 0) return false;
+    return true;
+  });
+}
+
 function getDiagnosisProgress(){
   const totalRequired = 3;
   const requiredTypes = ["profile", "level", "interests"];
+
   const doneCount = requiredTypes.filter(type => {
     const item = diagnostics.find(d => d.type === type);
-    return item && item.status === "done";
+    return isDiagnosticDone(item);
   }).length;
 
   if(doneCount === 0){
-    return {
-      label: "começar diagnóstico",
-      className: "diagnosis-red",
-      pending: totalRequired,
-      done: 0,
-      total: totalRequired
-    };
+    return { label: "começar diagnóstico", className: "diagnosis-red", pending: totalRequired, done: 0, total: totalRequired };
   }
 
   if(doneCount < totalRequired){
-    return {
-      label: "trilha ativa",
-      className: "diagnosis-orange",
-      pending: totalRequired - doneCount,
-      done: doneCount,
-      total: totalRequired
-    };
+    return { label: "trilha ativa", className: "diagnosis-orange", pending: totalRequired - doneCount, done: doneCount, total: totalRequired };
   }
 
-  return {
-    label: "diagnóstico ok",
-    className: "diagnosis-green",
-    pending: 0,
-    done: totalRequired,
-    total: totalRequired
-  };
+  return { label: "diagnóstico ok", className: "diagnosis-green", pending: 0, done: totalRequired, total: totalRequired };
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -602,12 +610,13 @@ async function startPortal(authUser){
 }
 
 async function loadData(){
-  const [p, m, c, d, pay] = await Promise.all([
+  const [p, m, c, d, pay, cfg] = await Promise.all([
     sb.from("profiles").select("*").eq("id", user.id).single(),
     sb.from("materials").select("*").eq("student_id", user.id).order("created_at",{ascending:false}),
     sb.from("classes").select("*").eq("student_id", user.id).order("class_date",{ascending:true}),
     sb.from("diagnostics").select("*").eq("student_id", user.id).order("updated_at",{ascending:false}),
-    sb.from("payments").select("*").eq("student_id", user.id).order("due_date",{ascending:false})
+    sb.from("payments").select("*").eq("student_id", user.id).order("due_date",{ascending:false}),
+    sb.from("diagnostics").select("type,form_url,result_url").is("student_id", null)
   ]);
 
   if(p.error && p.error.code !== "PGRST116"){ showToast("Erro ao carregar perfil: " + p.error.message); console.error("profiles", p.error); }
@@ -615,6 +624,7 @@ async function loadData(){
   if(c.error){ showToast("Erro ao carregar calendário: " + c.error.message); console.error("classes", c.error); }
   if(d.error){ showToast("Erro ao carregar diagnóstico: " + d.error.message); console.error("diagnostics", d.error); }
   if(pay.error){ showToast("Erro ao carregar financeiro: " + pay.error.message); console.error("payments", pay.error); }
+  if(cfg?.error){ console.warn("diagnostics config", cfg.error); }
 
   profile = p.data || { full_name:user.email, email:user.email, level:"—", nivel:"—" };
   if(!profile.elos_url) profile.elos_url = "https://elos.vc/sala/teacherdebora";
@@ -623,8 +633,9 @@ async function loadData(){
   classes = c.data || [];
   diagnostics = d.data || [];
   payments = pay.data || [];
+  diagConfig = cfg?.data || [];
 
-  console.log("PORTAL DATA", {user:user.id, profile, materials, classes, diagnostics, payments});
+  console.log("PORTAL DATA", {user:user.id, profile, materials, classes, diagnostics, payments, diagConfig});
 }
 
 function renderAll(){
@@ -852,7 +863,7 @@ function renderDiagnostics(){
       title: "Teste de nivelamento",
       description: "Mapeamento do seu nível atual para ajustar melhor as aulas.",
       actionLabel: "Fazer nivelamento",
-      defaultUrl: "https://helpdebs.github.io/helpdebs-portal/teste_nivelamento.html"
+      defaultUrl: LEVEL_TEST_URL
     },
     {
       type: "interests",
@@ -860,35 +871,29 @@ function renderDiagnostics(){
       title: "Área de interesses",
       description: "Objetivos, rotina, gostos e contextos em que você quer usar inglês.",
       actionLabel: "Responder interesses",
-      defaultUrl: "https://helpdebs.github.io/helpdebs-portal/interesses.html"
+      defaultUrl: INTERESTS_TEST_URL
     }
   ];
 
   const merged = baseDiagnostics.map(base => {
     const db = diagnostics.find(d => d.type === base.type);
     const cfg = diagConfig.find(c => c.type === base.type);
-
-    const hardcodedUrls = {
-      profile: PERSONALITY_TEST_URL,
-      level: "https://helpdebs.github.io/helpdebs-portal/teste_nivelamento.html",
-      interests: "https://helpdebs.github.io/helpdebs-portal/interesses.html"
-    };
+    const done = isDiagnosticDone(db);
 
     return {
       ...base,
       db,
-      done: isDiagnosticDone(db),
-      form_url: db?.form_url || cfg?.form_url || base.defaultUrl || hardcodedUrls[base.type],
+      done,
+      form_url: db?.form_url || cfg?.form_url || base.defaultUrl,
       result_url: db?.result_url || cfg?.result_url || null
     };
   });
 
   el.innerHTML = merged.map(d => {
-    const done = d.status === "done";
     const hasLink = !!d.form_url;
 
     return `
-      <div class="diag-item ${hasLink ? "" : "locked"}">
+      <div class="diag-item ${hasLink || d.done ? "" : "locked"}">
         <div class="item-top">
           <div class="diag-head">
             <div class="diag-icon">${d.icon}</div>
@@ -898,21 +903,23 @@ function renderDiagnostics(){
             </div>
           </div>
 
-          <span class="mini-badge ${done ? "status-done" : "status-pending"}">
-            ${done ? "concluído" : "pendente"}
+          <span class="mini-badge ${d.done ? "status-done" : "status-pending"}">
+            ${d.done ? "concluído" : "pendente"}
           </span>
         </div>
 
         <div class="item-actions">
           ${
-            hasLink
-              ? `<button class="mini-btn" onclick="openLink('${esc(d.form_url)}')">${d.actionLabel}</button>`
-              : `<button class="mini-btn secondary" onclick="showToast('Teste ainda não conectado')">Em breve</button>`
+            d.done
+              ? `<button class="mini-btn done-btn" type="button" disabled>Concluído ✓</button>`
+              : hasLink
+                ? `<button class="mini-btn" type="button" onclick="openLink('${esc(d.form_url)}')">${esc(d.actionLabel)}</button>`
+                : `<button class="mini-btn secondary" type="button" onclick="showToast('Teste ainda não conectado')">Em breve</button>`
           }
 
           ${
             d.result_url
-              ? `<button class="mini-btn secondary" onclick="openLink('${esc(d.result_url)}')">Ver resultado</button>`
+              ? `<button class="mini-btn secondary" type="button" onclick="openLink('${esc(d.result_url)}')">Ver resultado</button>`
               : ""
           }
         </div>
@@ -920,7 +927,6 @@ function renderDiagnostics(){
     `;
   }).join("");
 }
-
 
 function renderFeaturedChecklist(){
   const area = $("featuredChecklistArea");
@@ -1116,6 +1122,16 @@ function renderCalendar(){
         `).join("")
       : `<div class="empty">Nenhuma aula futura cadastrada.</div>`;
   }
+}
+
+function materialCard(m){
+  return `
+    <div class="material-item">
+      <strong>${esc(m.title || "Material")}</strong>
+      <p>${esc(m.description || "")}</p>
+      ${m.url ? `<div class="item-actions"><button class="mini-btn" onclick="openLink('${esc(m.url)}')">Abrir</button></div>` : ""}
+    </div>
+  `;
 }
 
 function renderTips(){
