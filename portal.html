@@ -76,9 +76,175 @@
     .mini-btn.done-btn{background:rgba(219,255,102,.35);color:#53710d;border:1px solid rgba(219,255,102,.55);cursor:default}
     .empty{padding:20px;border-radius:18px;background:rgba(255,255,255,.65);border:1px solid var(--line);color:var(--muted);line-height:1.55}
     .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(12px);background:white;border:1px solid var(--line);border-radius:16px;padding:14px 20px;box-shadow:var(--shadow);font-size:.9rem;font-weight:800;opacity:0;transition:all .4s ease;pointer-events:none;z-index:999;white-space:nowrap}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+    /* ─── DESKTOP breakpoint ─── */
     @media(max-width:1180px){.app{grid-template-columns:1fr}.sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid rgba(122,92,255,.08)}.dashboard-grid,.grid-2{grid-template-columns:1fr}}
     @media(max-width:760px){.main{padding:14px}.topbar{flex-direction:column;align-items:flex-start}.hero-stats{grid-template-columns:1fr}.quick-link,.item-top{flex-direction:column;align-items:flex-start}.calendar-day{min-height:72px;padding:8px}.calendar-grid{gap:6px}}
-  
+
+    /* ════════════════════════════════════
+       MOBILE FIXES (≤ 768px)
+    ════════════════════════════════════ */
+
+    /* 1. HAMBÚRGUER — esconde sidebar, mostra mobile header */
+    @media(max-width:768px){
+
+      /* Sidebar vira drawer oculto por padrão */
+      .app{
+        grid-template-columns:1fr;
+        display:block;
+      }
+      .sidebar{
+        position:fixed;
+        top:0; left:0;
+        width:84vw;
+        max-width:300px;
+        height:100vh;
+        z-index:200;
+        transform:translateX(-100%);
+        transition:transform .28s cubic-bezier(.4,0,.2,1);
+        padding:18px;
+        background:rgba(255,255,255,.96);
+        backdrop-filter:blur(20px);
+        border-right:1px solid rgba(119,92,255,.12);
+        box-shadow:4px 0 32px rgba(63,37,128,.14);
+      }
+      .sidebar.open{
+        transform:translateX(0);
+      }
+
+      /* Overlay escuro atrás do drawer */
+      .sidebar-overlay{
+        display:none;
+        position:fixed;
+        inset:0;
+        background:rgba(29,22,48,.38);
+        z-index:199;
+        animation:fadeOverlay .22s ease;
+      }
+      .sidebar-overlay.show{display:block;}
+      @keyframes fadeOverlay{from{opacity:0}to{opacity:1}}
+
+      /* Mobile top bar com hambúrguer */
+      .mobile-topbar{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        padding:14px 16px 10px;
+        background:rgba(246,244,255,.95);
+        backdrop-filter:blur(12px);
+        border-bottom:1px solid rgba(119,92,255,.08);
+        position:sticky;
+        top:0;
+        z-index:100;
+      }
+      .mobile-brand{
+        display:flex;
+        align-items:center;
+        gap:10px;
+      }
+      .mobile-brand-logo{
+        width:36px;height:36px;border-radius:12px;
+        background:linear-gradient(135deg,var(--primary),var(--primary-2));
+        color:white;font-weight:900;font-size:.82rem;
+        display:grid;place-items:center;
+      }
+      .mobile-brand-name{
+        font-size:.9rem;font-weight:900;letter-spacing:-.03em;
+      }
+      .hamburger-btn{
+        width:40px;height:40px;
+        border:1px solid rgba(119,92,255,.14);
+        border-radius:12px;
+        background:rgba(255,255,255,.82);
+        cursor:pointer;
+        display:flex;flex-direction:column;
+        align-items:center;justify-content:center;
+        gap:5px;
+        padding:0;
+      }
+      .hamburger-btn span{
+        display:block;width:18px;height:2px;
+        background:var(--text);border-radius:2px;
+        transition:all .22s ease;
+      }
+      .hamburger-btn.active span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+      .hamburger-btn.active span:nth-child(2){opacity:0;transform:scaleX(0);}
+      .hamburger-btn.active span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+      /* Esconde a topbar original no mobile (substituída pela mobile-topbar) */
+      .topbar{
+        display:none;
+      }
+
+      .main{
+        padding:12px 14px 24px;
+      }
+
+      /* 2. TOP-ACTIONS — menores e lado a lado */
+      .mobile-top-actions{
+        display:flex;
+        gap:8px;
+        padding:0 14px 12px;
+        background:rgba(246,244,255,.9);
+      }
+      .mobile-top-actions .btn{
+        flex:1;
+        padding:10px 12px;
+        font-size:.8rem;
+        font-weight:900;
+        border-radius:12px;
+        text-align:center;
+      }
+      .mobile-top-actions .btn-soft{
+        background:rgba(255,255,255,.88);
+        border:1px solid var(--line);
+      }
+      .mobile-top-actions .btn-primary{
+        background:linear-gradient(135deg,var(--primary),var(--primary-2));
+        color:white;
+        box-shadow:0 6px 18px rgba(122,92,255,.22);
+      }
+
+      /* 3. DIAGNÓSTICO — botão + badge na mesma linha */
+      .diag-item .item-top{
+        flex-direction:row;
+        align-items:center;
+        gap:10px;
+        margin-bottom:0;
+      }
+      .diag-item .diag-head{
+        flex:1;
+        min-width:0;
+      }
+      .diag-item .item-top .mini-badge{
+        flex-shrink:0;
+      }
+      .diag-item .item-actions{
+        padding-top:10px;
+        gap:8px;
+      }
+      /* Botão de ação + badge na mesma linha (baixo) */
+      .diag-item-row{
+        display:flex;
+        align-items:center;
+        gap:8px;
+        flex-wrap:wrap;
+        padding-top:10px;
+      }
+
+      /* Seção dicas — "Ver materiais" e "Entrar na aula ao vivo" lado a lado */
+      #section-dicas .grid-2,
+      #section-ao-vivo .live-grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+    /* Esconde mobile-topbar e mobile-top-actions no desktop */
+    .mobile-topbar,
+    .mobile-top-actions{ display:none; }
+
+    /* ─── fim mobile ─── */
+
     .payment-item{position:relative;transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease}
     .payment-item.clickable-payment{cursor:pointer}
     .payment-item.clickable-payment:hover{transform:translateY(-2px);border-color:rgba(122,92,255,.28);box-shadow:0 18px 44px rgba(63,37,128,.16)}
@@ -88,17 +254,14 @@
     .qr-preview{margin:12px 0}
     .qr-preview img{max-width:180px;border-radius:16px;border:1px solid var(--line);background:white;padding:8px;box-shadow:var(--shadow)}
 
-  
     .badge.diagnosis-red{background:rgba(239,68,68,.12);color:#ef4444;border-color:rgba(239,68,68,.22)}
     .badge.diagnosis-orange{background:rgba(245,158,11,.15);color:#d97706;border-color:rgba(245,158,11,.24)}
     .badge.diagnosis-green{background:rgba(34,197,94,.14);color:#16a34a;border-color:rgba(34,197,94,.24)}
 
-  
     .diag-item.locked{opacity:.86}
     .diag-icon{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:rgba(122,92,255,.09);border:1px solid rgba(122,92,255,.12);font-size:1.2rem;flex:0 0 auto}
     .diag-head{display:flex;gap:12px;align-items:flex-start}
 
-  
     .dashboard-v2{display:grid;gap:22px;min-height:calc(100vh - 150px)}
     .dashboard-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;align-items:stretch}
     .dashboard-row-2{display:grid;grid-template-columns:1.05fr .95fr;gap:20px;align-items:stretch}
@@ -135,7 +298,6 @@
     .finance-pill.empty{color:var(--primary);background:rgba(122,92,255,.09);border:1px solid rgba(122,92,255,.12)}
     @media(max-width:1180px){.dashboard-row-3,.dashboard-row-2{grid-template-columns:1fr}.dash-card,.dash-card.compact{min-height:auto}}
 
-  
     .dashboard-v2{gap:16px;min-height:auto}
     .dashboard-row-3,.dashboard-row-2{gap:16px}
     .dash-card{padding:22px;min-height:230px}
@@ -150,21 +312,18 @@
     .finance-amount{font-size:1.55rem}
     .finance-row{padding:12px 0}
 
-  
     .student-calendar-shell{display:grid;gap:16px}
     .student-calendar-list{display:grid;gap:10px;margin-top:18px}
     .student-class-card{padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.78);border:1px solid rgba(122,92,255,.10)}
     .student-class-card strong{display:block;margin-bottom:5px}
     .student-class-card p{margin:0;color:var(--muted);line-height:1.5;font-size:.9rem}
 
-  
     .section-card-content{display:grid;gap:12px;margin-top:14px}
     .live-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
     .live-link-box{display:grid;gap:10px}
     .live-url{word-break:break-all;color:var(--muted);font-size:.9rem}
     @media(max-width:900px){.live-grid{grid-template-columns:1fr}}
 
-  
     .lesson-list{display:grid;gap:16px}
     .lesson-card{padding:18px;border-radius:22px;background:rgba(255,255,255,.84);border:1px solid rgba(122,92,255,.12);display:grid;gap:14px}
     .lesson-head{display:flex;align-items:center;justify-content:space-between;gap:14px}
@@ -179,110 +338,24 @@
     .lesson-block p{margin:0;color:var(--muted);line-height:1.6;font-size:.9rem;white-space:pre-line}
     @media(max-width:980px){.lesson-body{grid-template-columns:1fr}.pdf-thumb{height:auto;min-height:90px}}
 
-  
     .featured-checklist{
-      position:relative;
-      overflow:hidden;
-      border-radius:28px;
-      padding:24px;
-      margin-bottom:18px;
+      position:relative;overflow:hidden;border-radius:28px;padding:24px;margin-bottom:18px;
       border:1px solid rgba(122,92,255,.18);
-      background:
-        radial-gradient(circle at 92% 18%, rgba(219,255,102,.48), transparent 28%),
-        radial-gradient(circle at 8% 0%, rgba(122,92,255,.22), transparent 32%),
-        linear-gradient(135deg, rgba(255,255,255,.96), rgba(247,244,255,.92));
-      box-shadow:0 24px 70px rgba(63,37,128,.16);
-      display:grid;
-      grid-template-columns:1fr auto;
-      gap:18px;
-      align-items:center;
+      background:radial-gradient(circle at 92% 18%, rgba(219,255,102,.48), transparent 28%),radial-gradient(circle at 8% 0%, rgba(122,92,255,.22), transparent 32%),linear-gradient(135deg, rgba(255,255,255,.96), rgba(247,244,255,.92));
+      box-shadow:0 24px 70px rgba(63,37,128,.16);display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;
     }
-    .featured-checklist::before{
-      content:"";
-      position:absolute;
-      inset:-80px auto auto 55%;
-      width:280px;
-      height:280px;
-      border-radius:999px;
-      background:rgba(122,92,255,.12);
-      filter:blur(4px);
-    }
+    .featured-checklist::before{content:"";position:absolute;inset:-80px auto auto 55%;width:280px;height:280px;border-radius:999px;background:rgba(122,92,255,.12);filter:blur(4px);}
     .featured-checklist > *{position:relative;z-index:1}
-    .checklist-kicker{
-      display:inline-flex;
-      width:fit-content;
-      align-items:center;
-      gap:8px;
-      padding:8px 11px;
-      border-radius:999px;
-      font-size:.76rem;
-      font-weight:900;
-      color:var(--primary);
-      background:rgba(122,92,255,.09);
-      border:1px solid rgba(122,92,255,.12);
-      margin-bottom:12px;
-    }
-    .featured-checklist h3{
-      margin:0 0 8px;
-      font-size:clamp(1.25rem,2vw,1.8rem);
-      letter-spacing:-.055em;
-      line-height:1;
-    }
-    .featured-checklist p{
-      margin:0;
-      color:var(--muted);
-      line-height:1.55;
-      max-width:62ch;
-      font-size:.95rem;
-    }
-    .checklist-actions{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      justify-content:flex-end;
-      align-items:center;
-    }
-    .checklist-btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;
-      border:none;
-      border-radius:16px;
-      padding:13px 16px;
-      cursor:pointer;
-      font-size:.88rem;
-      font-weight:900;
-      background:linear-gradient(135deg,var(--primary),var(--primary-2));
-      color:white;
-      box-shadow:0 16px 32px rgba(122,92,255,.25);
-      white-space:nowrap;
-    }
-    .checklist-btn.secondary{
-      color:var(--text);
-      background:rgba(255,255,255,.78);
-      border:1px solid rgba(122,92,255,.12);
-      box-shadow:none;
-    }
-    .checklist-embed{
-      display:none;
-      margin:18px 0;
-      border-radius:28px;
-      overflow:hidden;
-      border:1px solid rgba(122,92,255,.14);
-      background:white;
-      box-shadow:0 24px 70px rgba(63,37,128,.14);
-    }
+    .checklist-kicker{display:inline-flex;width:fit-content;align-items:center;gap:8px;padding:8px 11px;border-radius:999px;font-size:.76rem;font-weight:900;color:var(--primary);background:rgba(122,92,255,.09);border:1px solid rgba(122,92,255,.12);margin-bottom:12px;}
+    .featured-checklist h3{margin:0 0 8px;font-size:clamp(1.25rem,2vw,1.8rem);letter-spacing:-.055em;line-height:1;}
+    .featured-checklist p{margin:0;color:var(--muted);line-height:1.55;max-width:62ch;font-size:.95rem;}
+    .checklist-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end;align-items:center;}
+    .checklist-btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:none;border-radius:16px;padding:13px 16px;cursor:pointer;font-size:.88rem;font-weight:900;background:linear-gradient(135deg,var(--primary),var(--primary-2));color:white;box-shadow:0 16px 32px rgba(122,92,255,.25);white-space:nowrap;}
+    .checklist-btn.secondary{color:var(--text);background:rgba(255,255,255,.78);border:1px solid rgba(122,92,255,.12);box-shadow:none;}
+    .checklist-embed{display:none;margin:18px 0;border-radius:28px;overflow:hidden;border:1px solid rgba(122,92,255,.14);background:white;box-shadow:0 24px 70px rgba(63,37,128,.14);}
     .checklist-embed.show{display:block}
-    .checklist-embed iframe{
-      display:block;
-      width:100%;
-      height:78vh;
-      border:none;
-      background:white;
-    }
-    @media(max-width:850px){
-      .featured-checklist{grid-template-columns:1fr}
-      .checklist-actions{justify-content:flex-start}
-      .checklist-embed iframe{height:72vh}
-    }
-
+    .checklist-embed iframe{display:block;width:100%;height:78vh;border:none;background:white;}
+    @media(max-width:850px){.featured-checklist{grid-template-columns:1fr}.checklist-actions{justify-content:flex-start}.checklist-embed iframe{height:72vh}}
   </style>
 </head>
 <body>
@@ -298,8 +371,29 @@
     </div>
   </section>
 
+  <!-- Overlay do drawer mobile -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
   <div class="layout app" id="app">
-    <aside class="sidebar">
+
+    <!-- ── Mobile top bar ── -->
+    <div class="mobile-topbar" id="mobileTopbar">
+      <div class="mobile-brand">
+        <div class="mobile-brand-logo">hd</div>
+        <span class="mobile-brand-name" id="mobileSectionTitle">Portal da aluna</span>
+      </div>
+      <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()" aria-label="Abrir menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <!-- ── Mobile botões topo ── -->
+    <div class="mobile-top-actions" id="mobileTopActions">
+      <button class="btn btn-soft" onclick="goSection('materiais')">Ver materiais</button>
+      <button class="btn btn-primary" onclick="openElos()">Entrar na aula ao vivo</button>
+    </div>
+
+    <aside class="sidebar" id="sidebar">
       <div class="sidebar-shell">
         <div class="brand">
           <div class="brand-logo">hd</div>
@@ -335,6 +429,7 @@
 
     <main class="main">
       <div class="shell">
+        <!-- topbar desktop (oculta no mobile via CSS) -->
         <div class="topbar">
           <div class="headline"><h1 id="pageTitle">Portal da aluna</h1></div>
           <div class="top-actions">
@@ -505,6 +600,28 @@ function msg(id,text,type="info"){ const el=$(id); el.textContent=text; el.class
 function dateBR(d){ if(!d)return "—"; return new Date(d+"T12:00:00").toLocaleDateString("pt-BR",{weekday:"short",day:"numeric",month:"short"}); }
 function openLink(url){ if(!url){showToast("⚠️ Link ainda não configurado");return;} window.open(url,"_blank"); }
 
+/* ── Hambúrguer ── */
+function toggleSidebar(){
+  const sidebar = $("sidebar");
+  const overlay = $("sidebarOverlay");
+  const btn = $("hamburgerBtn");
+  const isOpen = sidebar.classList.contains("open");
+  if(isOpen){
+    closeSidebar();
+  } else {
+    sidebar.classList.add("open");
+    overlay.classList.add("show");
+    btn.classList.add("active");
+    btn.setAttribute("aria-label","Fechar menu");
+  }
+}
+function closeSidebar(){
+  $("sidebar").classList.remove("open");
+  $("sidebarOverlay").classList.remove("show");
+  $("hamburgerBtn").classList.remove("active");
+  $("hamburgerBtn").setAttribute("aria-label","Abrir menu");
+}
+
 function isDiagnosticDone(item){
   if(!item) return false;
   const status = String(item.status || "").toLowerCase().trim();
@@ -554,7 +671,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   $("logoutBtn").addEventListener("click", logout);
 
   document.querySelectorAll(".nav-btn").forEach(btn =>
-    btn.addEventListener("click", () => goSection(btn.dataset.section))
+    btn.addEventListener("click", () => {
+      goSection(btn.dataset.section);
+      closeSidebar(); /* fecha drawer ao navegar no mobile */
+    })
   );
 
   const { data: { session } } = await sb.auth.getSession();
@@ -604,7 +724,7 @@ async function logout(){
 async function startPortal(authUser){
   user = authUser;
   $("loginScreen").style.display = "none";
-  $("app").style.display = "grid";
+  $("app").style.display = "block";
   await loadData();
   renderAll();
 }
@@ -668,7 +788,6 @@ function renderProfile(){
     <div class="material-item"><strong>Diagnóstico</strong><p>${diag.done}/${diag.total} testes concluídos</p></div>
   `;
 }
-
 
 function getLatestFeedback(){
   const feedbackTypes = ["feedback", "summary"];
@@ -892,6 +1011,16 @@ function renderDiagnostics(){
   el.innerHTML = merged.map(d => {
     const hasLink = !!d.form_url;
 
+    const actionBtn = d.done
+      ? `<button class="mini-btn done-btn" type="button" disabled>Concluído ✓</button>`
+      : hasLink
+        ? `<button class="mini-btn" type="button" onclick="openLink('${esc(d.form_url)}')">${esc(d.actionLabel)}</button>`
+        : `<button class="mini-btn secondary" type="button" onclick="showToast('Teste ainda não conectado')">Em breve</button>`;
+
+    const resultBtn = d.result_url
+      ? `<button class="mini-btn secondary" type="button" onclick="openLink('${esc(d.result_url)}')">Ver resultado</button>`
+      : "";
+
     return `
       <div class="diag-item ${hasLink || d.done ? "" : "locked"}">
         <div class="item-top">
@@ -902,26 +1031,15 @@ function renderDiagnostics(){
               <p>${esc(d.description)}</p>
             </div>
           </div>
-
           <span class="mini-badge ${d.done ? "status-done" : "status-pending"}">
             ${d.done ? "concluído" : "pendente"}
           </span>
         </div>
 
-        <div class="item-actions">
-          ${
-            d.done
-              ? `<button class="mini-btn done-btn" type="button" disabled>Concluído ✓</button>`
-              : hasLink
-                ? `<button class="mini-btn" type="button" onclick="openLink('${esc(d.form_url)}')">${esc(d.actionLabel)}</button>`
-                : `<button class="mini-btn secondary" type="button" onclick="showToast('Teste ainda não conectado')">Em breve</button>`
-          }
-
-          ${
-            d.result_url
-              ? `<button class="mini-btn secondary" type="button" onclick="openLink('${esc(d.result_url)}')">Ver resultado</button>`
-              : ""
-          }
+        <!-- botão + resultado na mesma linha (linha de ação) -->
+        <div class="diag-item-row">
+          ${actionBtn}
+          ${resultBtn}
         </div>
       </div>
     `;
@@ -1236,11 +1354,15 @@ function openElos(){
 }
 
 const sectionMeta = {inicio:"Portal da aluna",diagnostico:"Diagnóstico",materiais:"Materiais",calendario:"Calendário","ao-vivo":"Aula ao vivo",dicas:"Dicas",videoaulas:"Videoaulas",financeiro:"Financeiro"};
+
 function goSection(target){
   document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.section === target));
   document.querySelectorAll(".portal-section").forEach(section => section.classList.remove("active"));
   $(`section-${target}`).classList.add("active");
   $("pageTitle").textContent = sectionMeta[target] || target;
+
+  /* Atualiza título no mobile topbar */
+  if($("mobileSectionTitle")) $("mobileSectionTitle").textContent = sectionMeta[target] || target;
 
   if(target === "calendario") renderCalendar();
   if(target === "materiais"){ renderFeaturedChecklist(); renderMaterials(); }
