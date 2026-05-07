@@ -81,6 +81,10 @@
     @media(max-width:1180px){.app{grid-template-columns:1fr}.sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid rgba(122,92,255,.08)}.dashboard-grid,.grid-2{grid-template-columns:1fr}}
     @media(max-width:760px){.main{padding:14px}.topbar{flex-direction:column;align-items:flex-start}.hero-stats{grid-template-columns:1fr}.quick-link,.item-top{flex-direction:column;align-items:flex-start}.calendar-day{min-height:72px;padding:8px}.calendar-grid{gap:6px}}
 
+    /* Esconde mobile-topbar e mobile-top-actions no desktop */
+    .mobile-topbar,
+    .mobile-top-actions{ display:none; }
+
     /* ════════════════════════════════════
        MOBILE FIXES (≤ 768px)
     ════════════════════════════════════ */
@@ -91,7 +95,6 @@
       /* Sidebar vira drawer oculto por padrão */
       .app{
         grid-template-columns:1fr;
-        display:block;
       }
       .sidebar{
         position:fixed;
@@ -238,10 +241,6 @@
         grid-template-columns:1fr;
       }
     }
-
-    /* Esconde mobile-topbar e mobile-top-actions no desktop */
-    .mobile-topbar,
-    .mobile-top-actions{ display:none; }
 
     /* ─── fim mobile ─── */
 
@@ -724,7 +723,7 @@ async function logout(){
 async function startPortal(authUser){
   user = authUser;
   $("loginScreen").style.display = "none";
-  $("app").style.display = "block";
+  $("app").style.display = "grid";
   await loadData();
   renderAll();
 }
