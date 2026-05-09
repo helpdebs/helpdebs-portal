@@ -635,7 +635,7 @@
             <div class="bullets">
               <div class="bullet"><span class="bullet-dot"></span><span>12 perguntas, uma por vez, em formato leve e direto.</span></div>
               <div class="bullet"><span class="bullet-dot"></span><span>No final, você recebe um perfil dominante com leitura prática para o seu aprendizado.</span></div>
-              <div class="bullet"><span class="bullet-dot"></span><span>Sem cara de prova. Sem precisar “acertar”. É mais descoberta do que avaliação.</span></div>
+              <div class="bullet"><span class="bullet-dot"></span><span>Sem cara de prova. Sem precisar "acertar". É mais descoberta do que avaliação.</span></div>
             </div>
 
             <div class="hero-actions">
@@ -670,7 +670,7 @@
             <div class="question-label">responda pelo que mais parece com você</div>
             <h2 class="question-title" id="questionTitle"></h2>
             <p class="question-support">
-              Não tenta responder pelo “ideal”. Marca o que parece mais real no seu jeito de lidar com o inglês.
+              Não tenta responder pelo "ideal". Marca o que parece mais real no seu jeito de lidar com o inglês.
             </p>
 
             <div class="question-side-box">
@@ -758,6 +758,13 @@
       return sb;
     }
 
+    // ─── FUNÇÃO CORRIGIDA ────────────────────────────────────────────────────
+    // Agora faz 3 coisas ao concluir o teste:
+    //   1. Insere notificação pro admin (igual antes)
+    //   2. Atualiza profiles.learning_profile com o nome do perfil vencedor
+    //   3. Insere ou atualiza diagnostics (type="profile", status="done")
+    //      incluindo pontuações completas em result_data
+    // ─────────────────────────────────────────────────────────────────────────
     async function sendPersonalityNotification(winnerKey, scores) {
       try {
         const client = getSupabaseClient();
@@ -781,7 +788,8 @@
         const studentEmail = studentProfile?.email || authUser.email || "";
         const resultName = profiles[winnerKey]?.name || "perfil não identificado";
 
-        const { error } = await client.from("notifications").insert({
+        // 1. Notificação pro admin — igual ao original
+        const { error: notifError } = await client.from("notifications").insert({
           student_id: authUser.id,
           student_name: studentName,
           student_email: studentEmail,
@@ -790,13 +798,65 @@
           is_read: false
         });
 
-        if (error) {
-          console.warn("Erro ao enviar notificação:", error.message);
+        if (notifError) {
+          console.warn("Erro ao enviar notificação:", notifError.message);
         }
+
+        // 2. Atualiza o campo learning_profile no perfil da aluna
+        const { error: profileError } = await client
+          .from("profiles")
+          .update({ learning_profile: resultName })
+          .eq("id", authUser.id);
+
+        if (profileError) {
+          console.warn("Erro ao atualizar learning_profile:", profileError.message);
+        }
+
+        // 3. Salva/atualiza o diagnóstico de perfil como concluído
+        //    Verifica se já existe um registro para não duplicar
+        const { data: existing } = await client
+          .from("diagnostics")
+          .select("id")
+          .eq("student_id", authUser.id)
+          .eq("type", "profile")
+          .maybeSingle();
+
+        const diagPayload = {
+          student_id: authUser.id,
+          type: "profile",
+          status: "done",
+          result: resultName,
+          result_data: scores,           // pontuações completas de todos os perfis
+          completed_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+
+        if (existing?.id) {
+          // Já existe — só atualiza
+          const { error: updateError } = await client
+            .from("diagnostics")
+            .update(diagPayload)
+            .eq("id", existing.id);
+
+          if (updateError) {
+            console.warn("Erro ao atualizar diagnóstico:", updateError.message);
+          }
+        } else {
+          // Não existe — cria novo
+          const { error: insertError } = await client
+            .from("diagnostics")
+            .insert(diagPayload);
+
+          if (insertError) {
+            console.warn("Erro ao inserir diagnóstico:", insertError.message);
+          }
+        }
+
       } catch (error) {
-        console.warn("Erro inesperado ao enviar notificação:", error);
+        console.warn("Erro inesperado ao salvar resultado:", error);
       }
     }
+    // ─────────────────────────────────────────────────────────────────────────
 
     const profiles = {
       protagonista: {
@@ -1155,13 +1215,12 @@
       }
     }
 
-
     function copyResult() {
       const scores = calculateScores();
       const ranking = getWinner(scores);
       const [winnerKey] = ranking[0];
       const winner = profiles[winnerKey];
-      const text = `Meu resultado no teste “Quem é você no grupinho do inglês?” foi: ${winner.name}.\n\nResumo: ${winner.summary}\n\nComo eu aprendo melhor: ${winner.learns}`;
+      const text = `Meu resultado no teste "Quem é você no grupinho do inglês?" foi: ${winner.name}.\n\nResumo: ${winner.summary}\n\nComo eu aprendo melhor: ${winner.learns}`;
 
       navigator.clipboard.writeText(text)
         .then(() => {
