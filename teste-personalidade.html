@@ -164,17 +164,8 @@
       max-width: 10ch;
     }
 
-    .lead {
-      font-size: 1.02rem;
-      line-height: 1.6;
-      color: var(--muted);
-      max-width: 54ch;
-    }
-
-    .bullets {
-      display: grid;
-      gap: 12px;
-    }
+    .lead { font-size: 1.02rem; line-height: 1.6; color: var(--muted); max-width: 54ch; }
+    .bullets { display: grid; gap: 12px; }
 
     .bullet {
       display: flex;
@@ -195,12 +186,7 @@
       box-shadow: 0 0 0 5px rgba(223, 251, 98, 0.25);
     }
 
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      align-items: center;
-    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
 
     button {
       border: none;
@@ -232,26 +218,9 @@
       font-weight: 700;
     }
 
-    .hero-right {
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      justify-content: center;
-    }
-
-    .grid-label {
-      font-size: 0.88rem;
-      color: var(--muted);
-      font-weight: 700;
-      letter-spacing: 0.02em;
-    }
-
-    .characters {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-    }
+    .hero-right { padding: 24px; display: flex; flex-direction: column; gap: 16px; justify-content: center; }
+    .grid-label { font-size: 0.88rem; color: var(--muted); font-weight: 700; letter-spacing: 0.02em; }
+    .characters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 
     .character-card {
       background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(245,241,255,0.9));
@@ -275,44 +244,19 @@
       border: 1px solid rgba(123, 91, 255, 0.1);
     }
 
-    .character-title {
-      font-size: 1rem;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-    }
+    .character-title { font-size: 1rem; font-weight: 800; letter-spacing: -0.03em; }
+    .character-mini { color: var(--muted); font-size: 0.9rem; line-height: 1.45; }
+    .footer-note { font-size: 0.86rem; color: var(--muted); line-height: 1.45; padding-top: 6px; }
 
-    .character-mini {
-      color: var(--muted);
-      font-size: 0.9rem;
-      line-height: 1.45;
-    }
-
-    .footer-note {
-      font-size: 0.86rem;
-      color: var(--muted);
-      line-height: 1.45;
-      padding-top: 6px;
-    }
-
-    .question-layout,
-    .result-layout {
+    .question-layout, .result-layout {
       display: grid;
       grid-template-columns: 0.98fr 1.02fr;
       gap: 24px;
       align-items: stretch;
     }
 
-    .question-card,
-    .result-card,
-    .result-side {
-      padding: 28px;
-    }
-
-    .progress-wrap {
-      display: grid;
-      gap: 14px;
-      margin-bottom: 24px;
-    }
+    .question-card, .result-card, .result-side { padding: 28px; }
+    .progress-wrap { display: grid; gap: 14px; margin-bottom: 24px; }
 
     .progress-meta {
       display: flex;
@@ -324,13 +268,7 @@
       font-weight: 700;
     }
 
-    .progress-track {
-      width: 100%;
-      height: 12px;
-      background: rgba(123, 91, 255, 0.08);
-      border-radius: 999px;
-      overflow: hidden;
-    }
+    .progress-track { width: 100%; height: 12px; background: rgba(123, 91, 255, 0.08); border-radius: 999px; overflow: hidden; }
 
     .progress-bar {
       height: 100%;
@@ -351,19 +289,8 @@
       margin-bottom: 18px;
     }
 
-    .question-title {
-      font-size: clamp(1.6rem, 3vw, 2.8rem);
-      line-height: 1.02;
-      letter-spacing: -0.05em;
-      margin-bottom: 16px;
-    }
-
-    .question-support {
-      color: var(--muted);
-      line-height: 1.6;
-      font-size: 0.98rem;
-      max-width: 50ch;
-    }
+    .question-title { font-size: clamp(1.6rem, 3vw, 2.8rem); line-height: 1.02; letter-spacing: -0.05em; margin-bottom: 16px; }
+    .question-support { color: var(--muted); line-height: 1.6; font-size: 0.98rem; max-width: 50ch; }
 
     .question-side-box {
       margin-top: 26px;
@@ -375,21 +302,9 @@
       gap: 10px;
     }
 
-    .question-side-box strong {
-      font-size: 0.95rem;
-      letter-spacing: -0.02em;
-    }
-
-    .question-side-box span {
-      color: var(--muted);
-      font-size: 0.92rem;
-      line-height: 1.45;
-    }
-
-    .options {
-      display: grid;
-      gap: 12px;
-    }
+    .question-side-box strong { font-size: 0.95rem; letter-spacing: -0.02em; }
+    .question-side-box span { color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
+    .options { display: grid; gap: 12px; }
 
     .option {
       width: 100%;
@@ -404,10 +319,7 @@
       color: var(--text);
     }
 
-    .option:hover {
-      border-color: rgba(123, 91, 255, 0.28);
-      box-shadow: 0 10px 24px rgba(123, 91, 255, 0.08);
-    }
+    .option:hover { border-color: rgba(123, 91, 255, 0.28); box-shadow: 0 10px 24px rgba(123, 91, 255, 0.08); }
 
     .option-letter {
       width: 34px;
@@ -421,35 +333,12 @@
       flex: 0 0 auto;
     }
 
-    .option-text {
-      font-size: 0.98rem;
-      line-height: 1.45;
-      letter-spacing: -0.01em;
-      padding-top: 2px;
-    }
+    .option-text { font-size: 0.98rem; line-height: 1.45; letter-spacing: -0.01em; padding-top: 2px; }
 
-    .nav-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 14px;
-      margin-top: 20px;
-    }
-
-    .nav-row .btn-secondary {
-      padding-inline: 16px;
-    }
-
-    .muted-small {
-      color: var(--muted);
-      font-size: 0.88rem;
-    }
-
-    .result-card {
-      display: grid;
-      gap: 18px;
-      align-content: start;
-    }
+    .nav-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-top: 20px; }
+    .nav-row .btn-secondary { padding-inline: 16px; }
+    .muted-small { color: var(--muted); font-size: 0.88rem; }
+    .result-card { display: grid; gap: 18px; align-content: start; }
 
     .result-badge {
       display: inline-flex;
@@ -463,12 +352,7 @@
       font-weight: 800;
     }
 
-    .result-head {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
+    .result-head { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
 
     .result-avatar {
       width: 84px;
@@ -481,24 +365,9 @@
       border: 1px solid rgba(123,91,255,0.12);
     }
 
-    .result-name {
-      font-size: clamp(2rem, 3vw, 3.1rem);
-      line-height: 0.96;
-      letter-spacing: -0.06em;
-    }
-
-    .result-summary {
-      color: var(--muted);
-      font-size: 1rem;
-      line-height: 1.65;
-      max-width: 62ch;
-    }
-
-    .insights {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-    }
+    .result-name { font-size: clamp(2rem, 3vw, 3.1rem); line-height: 0.96; letter-spacing: -0.06em; }
+    .result-summary { color: var(--muted); font-size: 1rem; line-height: 1.65; max-width: 62ch; }
+    .insights { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 
     .insight {
       background: rgba(255,255,255,0.74);
@@ -509,54 +378,14 @@
       gap: 10px;
     }
 
-    .insight h3 {
-      font-size: 0.98rem;
-      letter-spacing: -0.02em;
-    }
-
-    .insight p {
-      color: var(--muted);
-      font-size: 0.93rem;
-      line-height: 1.5;
-    }
-
-    .result-side {
-      display: grid;
-      gap: 18px;
-      align-content: start;
-    }
-
-    .score-list {
-      display: grid;
-      gap: 12px;
-    }
-
-    .score-item {
-      display: grid;
-      gap: 8px;
-    }
-
-    .score-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      font-size: 0.92rem;
-      font-weight: 700;
-    }
-
-    .score-track {
-      width: 100%;
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(123,91,255,0.08);
-      overflow: hidden;
-    }
-
-    .score-fill {
-      height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, rgba(123,91,255,0.9), rgba(223,251,98,0.95));
-    }
+    .insight h3 { font-size: 0.98rem; letter-spacing: -0.02em; }
+    .insight p { color: var(--muted); font-size: 0.93rem; line-height: 1.5; }
+    .result-side { display: grid; gap: 18px; align-content: start; }
+    .score-list { display: grid; gap: 12px; }
+    .score-item { display: grid; gap: 8px; }
+    .score-top { display: flex; justify-content: space-between; gap: 12px; font-size: 0.92rem; font-weight: 700; }
+    .score-track { width: 100%; height: 10px; border-radius: 999px; background: rgba(123,91,255,0.08); overflow: hidden; }
+    .score-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, rgba(123,91,255,0.9), rgba(223,251,98,0.95)); }
 
     .tip-box {
       background: rgba(255,255,255,0.75);
@@ -567,33 +396,13 @@
       gap: 10px;
     }
 
-    .tip-box p {
-      color: var(--muted);
-      font-size: 0.93rem;
-      line-height: 1.55;
-    }
-
-    .result-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 6px;
-    }
+    .tip-box p { color: var(--muted); font-size: 0.93rem; line-height: 1.55; }
+    .result-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
 
     @media (max-width: 980px) {
-      .hero,
-      .question-layout,
-      .result-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .shell {
-        min-height: auto;
-      }
-
-      .screen {
-        min-height: auto;
-      }
+      .hero, .question-layout, .result-layout { grid-template-columns: 1fr; }
+      .shell { min-height: auto; }
+      .screen { min-height: auto; }
     }
 
     @media (max-width: 640px) {
@@ -626,30 +435,21 @@
               <div class="eyebrow">mapeamento do seu perfil no inglês</div>
               <h1>Quem é você no grupinho do inglês?</h1>
             </div>
-
-            <p class="lead">
-              Uma experiência rápida para entender como você reage ao inglês, o que te motiva,
-              como você lida com erro, pressão, constância e que tipo de aprendizado tende a funcionar melhor para você.
-            </p>
-
+            <p class="lead">Uma experiência rápida para entender como você reage ao inglês, o que te motiva, como você lida com erro, pressão, constância e que tipo de aprendizado tende a funcionar melhor para você.</p>
             <div class="bullets">
               <div class="bullet"><span class="bullet-dot"></span><span>12 perguntas, uma por vez, em formato leve e direto.</span></div>
               <div class="bullet"><span class="bullet-dot"></span><span>No final, você recebe um perfil dominante com leitura prática para o seu aprendizado.</span></div>
               <div class="bullet"><span class="bullet-dot"></span><span>Sem cara de prova. Sem precisar "acertar". É mais descoberta do que avaliação.</span></div>
             </div>
-
             <div class="hero-actions">
               <button class="btn-primary" id="startBtn">Descobrir meu perfil</button>
               <button class="btn-secondary" id="seeProfilesBtn">Ver personagens</button>
             </div>
           </div>
-
           <div class="hero-right" id="charactersPanel">
             <div class="grid-label">os personagens do grupinho</div>
             <div class="characters" id="characterGrid"></div>
-            <p class="footer-note">
-              Aqui aparecem só os nomes para gerar curiosidade. A explicação completa entra no resultado.
-            </p>
+            <p class="footer-note">Aqui aparecem só os nomes para gerar curiosidade. A explicação completa entra no resultado.</p>
           </div>
         </div>
       </section>
@@ -662,23 +462,16 @@
                 <span id="progressText">Pergunta 1 de 12</span>
                 <span id="progressPercent">8%</span>
               </div>
-              <div class="progress-track">
-                <div class="progress-bar" id="progressBar"></div>
-              </div>
+              <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
             </div>
-
             <div class="question-label">responda pelo que mais parece com você</div>
             <h2 class="question-title" id="questionTitle"></h2>
-            <p class="question-support">
-              Não tenta responder pelo "ideal". Marca o que parece mais real no seu jeito de lidar com o inglês.
-            </p>
-
+            <p class="question-support">Não tenta responder pelo "ideal". Marca o que parece mais real no seu jeito de lidar com o inglês.</p>
             <div class="question-side-box">
               <strong>Como essa tela funciona</strong>
               <span>Você escolhe uma opção por pergunta. A navegação é simples e o resultado aparece no final com o perfil dominante.</span>
             </div>
           </div>
-
           <div class="question-card">
             <div class="options" id="optionsContainer"></div>
             <div class="nav-row">
@@ -701,41 +494,22 @@
               </div>
             </div>
             <p class="result-summary" id="resultSummary"></p>
-
             <div class="insights">
-              <div class="insight">
-                <h3>Como você aprende melhor</h3>
-                <p id="resultLearns"></p>
-              </div>
-              <div class="insight">
-                <h3>O que tende a te travar</h3>
-                <p id="resultBlocks"></p>
-              </div>
-              <div class="insight">
-                <h3>O que mais te move</h3>
-                <p id="resultMotivation"></p>
-              </div>
-              <div class="insight">
-                <h3>Direção pedagógica</h3>
-                <p id="resultTeaching"></p>
-              </div>
+              <div class="insight"><h3>Como você aprende melhor</h3><p id="resultLearns"></p></div>
+              <div class="insight"><h3>O que tende a te travar</h3><p id="resultBlocks"></p></div>
+              <div class="insight"><h3>O que mais te move</h3><p id="resultMotivation"></p></div>
+              <div class="insight"><h3>Direção pedagógica</h3><p id="resultTeaching"></p></div>
             </div>
           </div>
-
           <aside class="result-side">
             <div>
               <h3 style="margin-bottom:10px; letter-spacing:-0.03em; font-size:1.15rem;">Pontuação dos perfis</h3>
               <div class="score-list" id="scoreList"></div>
             </div>
-
             <div class="tip-box">
               <strong>Como usar esse resultado</strong>
-              <p>
-                Esse resultado não precisa virar rótulo fixo. Ele serve como leitura inicial para personalizar trilha,
-                ritmo, tipo de exercício e forma de acompanhamento.
-              </p>
+              <p>Esse resultado não precisa virar rótulo fixo. Ele serve como leitura inicial para personalizar trilha, ritmo, tipo de exercício e forma de acompanhamento.</p>
             </div>
-
             <div class="result-actions">
               <button class="btn-secondary" id="copyBtn">Copiar resultado</button>
             </div>
@@ -746,7 +520,7 @@
   </div>
 
   <script>
-    const SB_URL = "https://pgdanuifukzisyyummpz.supabase.co";
+    const SB_URL  = "https://pgdanuifukzisyyummpz.supabase.co";
     const SB_ANON = "sb_publishable_81NM6F08rsXXSCgjWl4iSg_v99cdVpo";
 
     let sb = null;
@@ -758,14 +532,14 @@
       return sb;
     }
 
-    // ─── FUNÇÃO CORRIGIDA ────────────────────────────────────────────────────
-    // Agora faz 3 coisas ao concluir o teste:
-    //   1. Insere notificação pro admin (igual antes)
-    //   2. Atualiza profiles.learning_profile com o nome do perfil vencedor
-    //   3. Insere ou atualiza diagnostics (type="profile", status="done")
-    //      incluindo pontuações completas em result_data
     // ─────────────────────────────────────────────────────────────────────────
-    async function sendPersonalityNotification(winnerKey, scores) {
+    // Salva tudo de uma vez ao concluir o teste:
+    //   1. personality_test_results — todas as respostas + resultado completo
+    //   2. profiles.learning_profile — perfil vencedor
+    //   3. diagnostics (type="profile") — status done + pontuações
+    //   4. notifications — aviso pro admin
+    // ─────────────────────────────────────────────────────────────────────────
+    async function saveAllResults(winnerKey, winnerName, scores, ranking, answersDetailed) {
       try {
         const client = getSupabaseClient();
         if (!client) return;
@@ -774,7 +548,7 @@
         const authUser = session?.user;
 
         if (!authUser) {
-          console.warn("Sem sessão ativa. A notificação não foi enviada.");
+          console.warn("Sem sessão ativa. Resultado não salvo.");
           return;
         }
 
@@ -784,36 +558,37 @@
           .eq("id", authUser.id)
           .maybeSingle();
 
-        const studentName = studentProfile?.full_name || authUser.email || "Aluna";
-        const studentEmail = studentProfile?.email || authUser.email || "";
-        const resultName = profiles[winnerKey]?.name || "perfil não identificado";
+        const fullName = studentProfile?.full_name || authUser.email || "Aluna";
+        const email    = studentProfile?.email    || authUser.email || "";
 
-        // 1. Notificação pro admin — igual ao original
-        const { error: notifError } = await client.from("notifications").insert({
-          student_id: authUser.id,
-          student_name: studentName,
-          student_email: studentEmail,
-          test_type: "personality_test",
-          message: `${studentName} concluiu o teste de personalidade. Resultado: ${resultName}.`,
-          is_read: false
-        });
+        // 1. Salva na tabela de resultados completos
+        //    Cada tentativa gera uma nova linha — histórico preservado
+        const { error: resultError } = await client
+          .from("personality_test_results")
+          .insert({
+            student_id:  authUser.id,
+            answers:     answersDetailed,  // array com pergunta + resposta escolhida
+            scores:      scores,           // { protagonista: 2, camaleao: 5, ... }
+            winner_key:  winnerKey,        // "camaleao"
+            winner_name: winnerName,       // "A Camaleão"
+            ranking:     ranking           // [ ["camaleao",5], ["relaxada",2], ... ]
+          });
 
-        if (notifError) {
-          console.warn("Erro ao enviar notificação:", notifError.message);
+        if (resultError) {
+          console.warn("Erro ao salvar em personality_test_results:", resultError.message);
         }
 
-        // 2. Atualiza o campo learning_profile no perfil da aluna
+        // 2. Atualiza learning_profile no perfil da aluna
         const { error: profileError } = await client
           .from("profiles")
-          .update({ learning_profile: resultName })
+          .update({ learning_profile: winnerName })
           .eq("id", authUser.id);
 
         if (profileError) {
           console.warn("Erro ao atualizar learning_profile:", profileError.message);
         }
 
-        // 3. Salva/atualiza o diagnóstico de perfil como concluído
-        //    Verifica se já existe um registro para não duplicar
+        // 3. Insere ou atualiza diagnostics (type="profile")
         const { data: existing } = await client
           .from("diagnostics")
           .select("id")
@@ -822,47 +597,45 @@
           .maybeSingle();
 
         const diagPayload = {
-          student_id: authUser.id,
-          type: "profile",
-          status: "done",
-          result: resultName,
-          result_data: scores,           // pontuações completas de todos os perfis
+          student_id:   authUser.id,
+          type:         "profile",
+          status:       "done",
+          result:       winnerName,
+          result_data:  scores,
           completed_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          updated_at:   new Date().toISOString()
         };
 
         if (existing?.id) {
-          // Já existe — só atualiza
-          const { error: updateError } = await client
-            .from("diagnostics")
-            .update(diagPayload)
-            .eq("id", existing.id);
-
-          if (updateError) {
-            console.warn("Erro ao atualizar diagnóstico:", updateError.message);
-          }
+          await client.from("diagnostics").update(diagPayload).eq("id", existing.id);
         } else {
-          // Não existe — cria novo
-          const { error: insertError } = await client
-            .from("diagnostics")
-            .insert(diagPayload);
-
-          if (insertError) {
-            console.warn("Erro ao inserir diagnóstico:", insertError.message);
-          }
+          await client.from("diagnostics").insert(diagPayload);
         }
 
-      } catch (error) {
-        console.warn("Erro inesperado ao salvar resultado:", error);
+        // 4. Notificação pro admin
+        const { error: notifError } = await client
+          .from("notifications")
+          .insert({
+            student_id:    authUser.id,
+            student_name:  fullName,
+            student_email: email,
+            test_type:     "personality_test",
+            message:       `${fullName} concluiu o teste de personalidade. Resultado: ${winnerName}.`,
+            is_read:       false
+          });
+
+        if (notifError) {
+          console.warn("Erro ao enviar notificação:", notifError.message);
+        }
+
+      } catch (err) {
+        console.warn("Erro inesperado ao salvar resultado:", err);
       }
     }
-    // ─────────────────────────────────────────────────────────────────────────
 
     const profiles = {
       protagonista: {
-        name: 'A Protagonista',
-        emoji: '🎤',
-        mini: 'fala sem travar tanto',
+        name: 'A Protagonista', emoji: '🎤', mini: 'fala sem travar tanto',
         subtitle: 'Você tende a aprender se colocando em jogo.',
         summary: 'Você reage bem ao movimento, à fala e à prática real. Costuma aprender rápido quando entra na experiência, mesmo antes de sentir que está 100% pronta. O erro não te paralisa tanto quanto a estagnação.',
         learns: 'Com conversa, improviso, tarefas orais, simulação de vida real e prática frequente. Você ganha muito quando usa o inglês cedo, em vez de esperar domínio completo.',
@@ -871,9 +644,7 @@
         teaching: 'Aulas com speaking desde cedo, correção estratégica sem interromper demais, desafios práticos e sensação de progresso em uso real.'
       },
       estudiosa: {
-        name: 'A Estudiosa',
-        emoji: '📖',
-        mini: 'quer entender bem antes',
+        name: 'A Estudiosa', emoji: '📖', mini: 'quer entender bem antes',
         subtitle: 'Você tende a buscar segurança antes de se expor.',
         summary: 'Você valoriza clareza, estrutura e precisão. Aprende melhor quando sente que entendeu a lógica e sabe o que está fazendo. Seu desafio não é falta de capacidade, e sim a cobrança interna que pode travar sua fala.',
         learns: 'Com explicações organizadas, exemplos claros, revisão, comparação entre formas e tempo para preparar respostas antes de usar.',
@@ -882,9 +653,7 @@
         teaching: 'Estrutura clara, progressão lógica, espaço para preparação e depois transição gradual para fala mais espontânea.'
       },
       camaleao: {
-        name: 'A Camaleão',
-        emoji: '🎭',
-        mini: 'se adapta ao contexto',
+        name: 'A Camaleão', emoji: '🎭', mini: 'se adapta ao contexto',
         subtitle: 'Você aprende melhor quando o inglês faz sentido para a sua vida.',
         summary: 'Você se conecta muito com contexto, clima e utilidade. Seu desempenho varia conforme interesse, energia e identificação com a situação. Quando o inglês parece vivo e relevante, você floresce.',
         learns: 'Com imersão, temas significativos, repertório contextualizado, conteúdos próximos da sua realidade e uso em situações que façam sentido.',
@@ -893,9 +662,7 @@
         teaching: 'Aulas contextualizadas, temas pessoais, flexibilidade inteligente e estímulos que conectem idioma com identidade e interesse.'
       },
       analitica: {
-        name: 'A Analítica',
-        emoji: '🔍',
-        mini: 'quer entender o porquê',
+        name: 'A Analítica', emoji: '🔍', mini: 'quer entender o porquê',
         subtitle: 'Você se engaja quando a lógica aparece com clareza.',
         summary: 'Você tende a observar padrões, questionar escolhas e buscar coerência. Aprende muito bem quando entende a estrutura por trás da língua. Não gosta de decorar sem critério nem repetir sem compreender.',
         learns: 'Com comparação, análise de padrão, explicação de escolhas, contraste entre estruturas e construção de consciência sobre como a língua funciona.',
@@ -904,9 +671,7 @@
         teaching: 'Aulas com raciocínio, mapa mental da língua, justificativa de uso e exercícios que não tratem você como alguém que só precisa decorar.'
       },
       relaxada: {
-        name: 'A Relaxada',
-        emoji: '🌊',
-        mini: 'aprende melhor sem pressão',
+        name: 'A Relaxada', emoji: '🌊', mini: 'aprende melhor sem pressão',
         subtitle: 'Você rende mais quando se sente segura e à vontade.',
         summary: 'Você absorve bem quando o ambiente não te aperta. Costuma aprender melhor com leveza, repetição tranquila e espaço para errar sem sentir que está performando. A pressão pesa mais do que a dificuldade em si.',
         learns: 'Com ritmo gentil, reforço positivo, escuta, repetição natural e atividades que deixem o inglês mais confortável antes de exigir performance.',
@@ -915,9 +680,7 @@
         teaching: 'Condução tranquila, progressão sem agressividade, segurança emocional e correção com tato, sem deixar de existir.'
       },
       obstinada: {
-        name: 'A Obstinada',
-        emoji: '🚀',
-        mini: 'quer ver progresso concreto',
+        name: 'A Obstinada', emoji: '🚀', mini: 'quer ver progresso concreto',
         subtitle: 'Você tende a se engajar mais quando existe meta e direção.',
         summary: 'Você se move por avanço visível. Gosta de saber para onde está indo, o que está construindo e como medir evolução. Quando sente método frouxo ou progresso nebuloso, a frustração aparece rápido.',
         learns: 'Com metas, checkpoints, desafios claros, noção de progresso e atividades que mostrem construção real de competência.',
@@ -928,164 +691,44 @@
     };
 
     const questions = [
-      {
-        title: 'Você está numa aula e a professora pede pra você falar em inglês na frente de todo mundo. Você:',
-        options: [
-          { text: 'Pede um segundo pra organizar o que vai falar', profile: 'estudiosa' },
-          { text: 'Faz porque precisa, tá aqui pra evoluir', profile: 'obstinada' },
-          { text: 'Já levanta a mão antes de terminar a frase', profile: 'protagonista' },
-          { text: 'Faz, mas fica com aquela ansiedade depois', profile: 'relaxada' },
-          { text: 'Depende do humor do dia', profile: 'camaleao' },
-          { text: 'Pergunta qual é o objetivo do exercício primeiro', profile: 'analitica' }
-        ]
-      },
-      {
-        title: 'Você errou uma palavra em inglês na frente de alguém. Sua reação:',
-        options: [
-          { text: 'Quer entender por que errou', profile: 'analitica' },
-          { text: 'Fica levemente constrangida mas segue em frente', profile: 'relaxada' },
-          { text: 'Anota pra não errar de novo', profile: 'obstinada' },
-          { text: 'Ri e corrige na hora', profile: 'protagonista' },
-          { text: 'Fica pensando no erro horas depois', profile: 'estudiosa' },
-          { text: 'Depende de quem estava presente', profile: 'camaleao' }
-        ]
-      },
-      {
-        title: 'Como você prefere aprender uma palavra nova?',
-        options: [
-          { text: 'Ouvindo várias vezes até cair naturalmente', profile: 'relaxada' },
-          { text: 'Usando ela logo numa frase, mesmo sem ter certeza', profile: 'protagonista' },
-          { text: 'Repetindo até fixar de vez', profile: 'obstinada' },
-          { text: 'Depende — às vezes vê num filme, às vezes numa aula', profile: 'camaleao' },
-          { text: 'Entendendo a origem e como ela se encaixa na gramática', profile: 'analitica' },
-          { text: 'Vendo a escrita, a pronúncia e o contexto antes de usar', profile: 'estudiosa' }
-        ]
-      },
-      {
-        title: 'Você tem uma semana corrida e não conseguiu estudar inglês. Você:',
-        options: [
-          { text: 'Não se estressa muito, retoma quando der', profile: 'camaleao' },
-          { text: 'Dobra o esforço na semana seguinte', profile: 'obstinada' },
-          { text: 'Sente que perdeu o fio e precisa retomar do começo', profile: 'estudiosa' },
-          { text: 'Improvisa no dia seguinte e segue', profile: 'protagonista' },
-          { text: 'Analisa o que impediu e reorganiza a rotina', profile: 'analitica' },
-          { text: 'Sente uma culpa leve mas não deixa virar bola de neve', profile: 'relaxada' }
-        ]
-      },
-      {
-        title: 'Qual dessas situações mais te anima?',
-        options: [
-          { text: 'Terminar um exercício difícil sem nenhum erro', profile: 'estudiosa' },
-          { text: 'Ver que evoluiu comparando com onde estava antes', profile: 'obstinada' },
-          { text: 'Finalmente entender uma regra que sempre te confundiu', profile: 'analitica' },
-          { text: 'Ter uma aula tranquila, sem pressão, só fluindo', profile: 'relaxada' },
-          { text: 'Improvisar uma conversa em inglês com alguém desconhecido', profile: 'protagonista' },
-          { text: 'Assistir uma série e entender tudo sem legenda', profile: 'camaleao' }
-        ]
-      },
-      {
-        title: 'Como você se descreve estudando sozinha?',
-        options: [
-          { text: 'Organizada, com material separado e anotações', profile: 'estudiosa' },
-          { text: 'No meu ritmo, sem me cobrar demais', profile: 'relaxada' },
-          { text: 'Pesquisando além do que foi pedido', profile: 'analitica' },
-          { text: 'Caótica mas produtiva do meu jeito', profile: 'protagonista' },
-          { text: 'Com meta clara e prazo definido', profile: 'obstinada' },
-          { text: 'Irregular — tem dias incríveis e dias que não rola', profile: 'camaleao' }
-        ]
-      },
-      {
-        title: 'Alguém te corrige em inglês. Você sente:',
-        options: [
-          { text: 'Depende muito de como a pessoa falou', profile: 'camaleao' },
-          { text: 'Gratidão — mais uma coisa que aprendi', profile: 'protagonista' },
-          { text: 'Fica ok, desde que seja com gentileza', profile: 'relaxada' },
-          { text: 'Encarada como parte do processo, segue', profile: 'obstinada' },
-          { text: 'Curiosidade — quero entender o porquê da correção', profile: 'analitica' },
-          { text: 'Um aperto, mas sei que é necessário', profile: 'estudiosa' }
-        ]
-      },
-      {
-        title: 'Qual frase mais combina com você?',
-        options: [
-          { text: 'Foco no resultado', profile: 'obstinada' },
-          { text: 'Errar faz parte, o importante é tentar', profile: 'protagonista' },
-          { text: 'Vou no meu tempo', profile: 'relaxada' },
-          { text: 'Prefiro fazer certo do que fazer rápido', profile: 'estudiosa' },
-          { text: 'Depende do contexto', profile: 'camaleao' },
-          { text: 'Preciso entender antes de fazer', profile: 'analitica' }
-        ]
-      },
-      {
-        title: 'Você precisa fazer uma apresentação em inglês em 3 dias. Você:',
-        options: [
-          { text: 'Escreve tudo, revisa e decora', profile: 'estudiosa' },
-          { text: 'Pesquisa bastante antes de montar o conteúdo', profile: 'analitica' },
-          { text: 'Monta um cronograma dos 3 dias e cumpre', profile: 'obstinada' },
-          { text: 'Começa com energia e vai ajustando conforme o humor', profile: 'camaleao' },
-          { text: 'Prepara com calma, sem se estressar com perfeição', profile: 'relaxada' },
-          { text: 'Esboça na hora e pratica falando alto', profile: 'protagonista' }
-        ]
-      },
-      {
-        title: 'O que mais te trava no inglês?',
-        options: [
-          { text: 'A falta de consistência nos estudos', profile: 'camaleao' },
-          { text: 'O medo de errar na frente dos outros', profile: 'estudiosa' },
-          { text: 'A pressão de ter que performar', profile: 'relaxada' },
-          { text: 'Nada muito — o que trava é não ter com quem praticar', profile: 'protagonista' },
-          { text: 'A sensação de que o progresso é lento demais', profile: 'obstinada' },
-          { text: 'Não entender a lógica por trás de algumas estruturas', profile: 'analitica' }
-        ]
-      },
-      {
-        title: 'Qual é o seu maior sonho com o inglês?',
-        options: [
-          { text: 'Me sentir natural em qualquer contexto', profile: 'camaleao' },
-          { text: 'Dominar a língua de verdade, não só no superficial', profile: 'analitica' },
-          { text: 'Falar e escrever com precisão, sem erros', profile: 'estudiosa' },
-          { text: 'Me comunicar bem sem ansiedade', profile: 'relaxada' },
-          { text: 'Conversar com qualquer pessoa em qualquer lugar sem travar', profile: 'protagonista' },
-          { text: 'Atingir um nível específico — C1, fluência, certificado', profile: 'obstinada' }
-        ]
-      },
-      {
-        title: 'No grupinho de inglês, você seria:',
-        options: [
-          { text: 'A que faz a pergunta que ninguém tinha coragem de fazer', profile: 'analitica' },
-          { text: 'A que tá lá com objetivo claro e não para até atingir', profile: 'obstinada' },
-          { text: 'A que se encaixa em qualquer roda', profile: 'camaleao' },
-          { text: 'A que sabe a resposta mas pensa duas vezes antes de falar', profile: 'estudiosa' },
-          { text: 'A que tá lá, presente, absorvendo tudo', profile: 'relaxada' },
-          { text: 'A que puxa conversa com o nativo sem medo', profile: 'protagonista' }
-        ]
-      }
+      { title: 'Você está numa aula e a professora pede pra você falar em inglês na frente de todo mundo. Você:', options: [ { text: 'Pede um segundo pra organizar o que vai falar', profile: 'estudiosa' }, { text: 'Faz porque precisa, tá aqui pra evoluir', profile: 'obstinada' }, { text: 'Já levanta a mão antes de terminar a frase', profile: 'protagonista' }, { text: 'Faz, mas fica com aquela ansiedade depois', profile: 'relaxada' }, { text: 'Depende do humor do dia', profile: 'camaleao' }, { text: 'Pergunta qual é o objetivo do exercício primeiro', profile: 'analitica' } ] },
+      { title: 'Você errou uma palavra em inglês na frente de alguém. Sua reação:', options: [ { text: 'Quer entender por que errou', profile: 'analitica' }, { text: 'Fica levemente constrangida mas segue em frente', profile: 'relaxada' }, { text: 'Anota pra não errar de novo', profile: 'obstinada' }, { text: 'Ri e corrige na hora', profile: 'protagonista' }, { text: 'Fica pensando no erro horas depois', profile: 'estudiosa' }, { text: 'Depende de quem estava presente', profile: 'camaleao' } ] },
+      { title: 'Como você prefere aprender uma palavra nova?', options: [ { text: 'Ouvindo várias vezes até cair naturalmente', profile: 'relaxada' }, { text: 'Usando ela logo numa frase, mesmo sem ter certeza', profile: 'protagonista' }, { text: 'Repetindo até fixar de vez', profile: 'obstinada' }, { text: 'Depende — às vezes vê num filme, às vezes numa aula', profile: 'camaleao' }, { text: 'Entendendo a origem e como ela se encaixa na gramática', profile: 'analitica' }, { text: 'Vendo a escrita, a pronúncia e o contexto antes de usar', profile: 'estudiosa' } ] },
+      { title: 'Você tem uma semana corrida e não conseguiu estudar inglês. Você:', options: [ { text: 'Não se estressa muito, retoma quando der', profile: 'camaleao' }, { text: 'Dobra o esforço na semana seguinte', profile: 'obstinada' }, { text: 'Sente que perdeu o fio e precisa retomar do começo', profile: 'estudiosa' }, { text: 'Improvisa no dia seguinte e segue', profile: 'protagonista' }, { text: 'Analisa o que impediu e reorganiza a rotina', profile: 'analitica' }, { text: 'Sente uma culpa leve mas não deixa virar bola de neve', profile: 'relaxada' } ] },
+      { title: 'Qual dessas situações mais te anima?', options: [ { text: 'Terminar um exercício difícil sem nenhum erro', profile: 'estudiosa' }, { text: 'Ver que evoluiu comparando com onde estava antes', profile: 'obstinada' }, { text: 'Finalmente entender uma regra que sempre te confundiu', profile: 'analitica' }, { text: 'Ter uma aula tranquila, sem pressão, só fluindo', profile: 'relaxada' }, { text: 'Improvisar uma conversa em inglês com alguém desconhecido', profile: 'protagonista' }, { text: 'Assistir uma série e entender tudo sem legenda', profile: 'camaleao' } ] },
+      { title: 'Como você se descreve estudando sozinha?', options: [ { text: 'Organizada, com material separado e anotações', profile: 'estudiosa' }, { text: 'No meu ritmo, sem me cobrar demais', profile: 'relaxada' }, { text: 'Pesquisando além do que foi pedido', profile: 'analitica' }, { text: 'Caótica mas produtiva do meu jeito', profile: 'protagonista' }, { text: 'Com meta clara e prazo definido', profile: 'obstinada' }, { text: 'Irregular — tem dias incríveis e dias que não rola', profile: 'camaleao' } ] },
+      { title: 'Alguém te corrige em inglês. Você sente:', options: [ { text: 'Depende muito de como a pessoa falou', profile: 'camaleao' }, { text: 'Gratidão — mais uma coisa que aprendi', profile: 'protagonista' }, { text: 'Fica ok, desde que seja com gentileza', profile: 'relaxada' }, { text: 'Encarada como parte do processo, segue', profile: 'obstinada' }, { text: 'Curiosidade — quero entender o porquê da correção', profile: 'analitica' }, { text: 'Um aperto, mas sei que é necessário', profile: 'estudiosa' } ] },
+      { title: 'Qual frase mais combina com você?', options: [ { text: 'Foco no resultado', profile: 'obstinada' }, { text: 'Errar faz parte, o importante é tentar', profile: 'protagonista' }, { text: 'Vou no meu tempo', profile: 'relaxada' }, { text: 'Prefiro fazer certo do que fazer rápido', profile: 'estudiosa' }, { text: 'Depende do contexto', profile: 'camaleao' }, { text: 'Preciso entender antes de fazer', profile: 'analitica' } ] },
+      { title: 'Você precisa fazer uma apresentação em inglês em 3 dias. Você:', options: [ { text: 'Escreve tudo, revisa e decora', profile: 'estudiosa' }, { text: 'Pesquisa bastante antes de montar o conteúdo', profile: 'analitica' }, { text: 'Monta um cronograma dos 3 dias e cumpre', profile: 'obstinada' }, { text: 'Começa com energia e vai ajustando conforme o humor', profile: 'camaleao' }, { text: 'Prepara com calma, sem se estressar com perfeição', profile: 'relaxada' }, { text: 'Esboça na hora e pratica falando alto', profile: 'protagonista' } ] },
+      { title: 'O que mais te trava no inglês?', options: [ { text: 'A falta de consistência nos estudos', profile: 'camaleao' }, { text: 'O medo de errar na frente dos outros', profile: 'estudiosa' }, { text: 'A pressão de ter que performar', profile: 'relaxada' }, { text: 'Nada muito — o que trava é não ter com quem praticar', profile: 'protagonista' }, { text: 'A sensação de que o progresso é lento demais', profile: 'obstinada' }, { text: 'Não entender a lógica por trás de algumas estruturas', profile: 'analitica' } ] },
+      { title: 'Qual é o seu maior sonho com o inglês?', options: [ { text: 'Me sentir natural em qualquer contexto', profile: 'camaleao' }, { text: 'Dominar a língua de verdade, não só no superficial', profile: 'analitica' }, { text: 'Falar e escrever com precisão, sem erros', profile: 'estudiosa' }, { text: 'Me comunicar bem sem ansiedade', profile: 'relaxada' }, { text: 'Conversar com qualquer pessoa em qualquer lugar sem travar', profile: 'protagonista' }, { text: 'Atingir um nível específico — C1, fluência, certificado', profile: 'obstinada' } ] },
+      { title: 'No grupinho de inglês, você seria:', options: [ { text: 'A que faz a pergunta que ninguém tinha coragem de fazer', profile: 'analitica' }, { text: 'A que tá lá com objetivo claro e não para até atingir', profile: 'obstinada' }, { text: 'A que se encaixa em qualquer roda', profile: 'camaleao' }, { text: 'A que sabe a resposta mas pensa duas vezes antes de falar', profile: 'estudiosa' }, { text: 'A que tá lá, presente, absorvendo tudo', profile: 'relaxada' }, { text: 'A que puxa conversa com o nativo sem medo', profile: 'protagonista' } ] }
     ];
 
-    const coverScreen = document.getElementById('coverScreen');
+    const coverScreen    = document.getElementById('coverScreen');
     const questionScreen = document.getElementById('questionScreen');
-    const resultScreen = document.getElementById('resultScreen');
-    const stepPill = document.getElementById('stepPill');
-    const characterGrid = document.getElementById('characterGrid');
-    const startBtn = document.getElementById('startBtn');
+    const resultScreen   = document.getElementById('resultScreen');
+    const stepPill       = document.getElementById('stepPill');
+    const characterGrid  = document.getElementById('characterGrid');
+    const startBtn       = document.getElementById('startBtn');
     const seeProfilesBtn = document.getElementById('seeProfilesBtn');
-    const questionTitle = document.getElementById('questionTitle');
+    const questionTitle  = document.getElementById('questionTitle');
     const optionsContainer = document.getElementById('optionsContainer');
-    const backBtn = document.getElementById('backBtn');
-    const navHint = document.getElementById('navHint');
-    const progressText = document.getElementById('progressText');
+    const backBtn        = document.getElementById('backBtn');
+    const navHint        = document.getElementById('navHint');
+    const progressText   = document.getElementById('progressText');
     const progressPercent = document.getElementById('progressPercent');
-    const progressBar = document.getElementById('progressBar');
-    const resultAvatar = document.getElementById('resultAvatar');
-    const resultName = document.getElementById('resultName');
+    const progressBar    = document.getElementById('progressBar');
+    const resultAvatar   = document.getElementById('resultAvatar');
+    const resultName     = document.getElementById('resultName');
     const resultSubtitle = document.getElementById('resultSubtitle');
-    const resultSummary = document.getElementById('resultSummary');
-    const resultLearns = document.getElementById('resultLearns');
-    const resultBlocks = document.getElementById('resultBlocks');
+    const resultSummary  = document.getElementById('resultSummary');
+    const resultLearns   = document.getElementById('resultLearns');
+    const resultBlocks   = document.getElementById('resultBlocks');
     const resultMotivation = document.getElementById('resultMotivation');
     const resultTeaching = document.getElementById('resultTeaching');
-    const scoreList = document.getElementById('scoreList');
-    const copyBtn = document.getElementById('copyBtn');
+    const scoreList      = document.getElementById('scoreList');
+    const copyBtn        = document.getElementById('copyBtn');
 
     let currentQuestion = 0;
     let answers = new Array(questions.length).fill(null);
@@ -1094,13 +737,7 @@
       const order = ['protagonista', 'estudiosa', 'camaleao', 'analitica', 'relaxada', 'obstinada'];
       characterGrid.innerHTML = order.map(key => {
         const p = profiles[key];
-        return `
-          <div class="character-card">
-            <div class="avatar">${p.emoji}</div>
-            <div class="character-title">${p.name}</div>
-            <div class="character-mini">${p.mini}</div>
-          </div>
-        `;
+        return `<div class="character-card"><div class="avatar">${p.emoji}</div><div class="character-title">${p.name}</div><div class="character-mini">${p.mini}</div></div>`;
       }).join('');
     }
 
@@ -1112,6 +749,7 @@
     function startTest() {
       notificationSentForCurrentRun = false;
       currentQuestion = 0;
+      answers = new Array(questions.length).fill(null);
       showScreen(questionScreen);
       stepPill.textContent = 'Perguntas';
       renderQuestion();
@@ -1120,21 +758,16 @@
     function renderQuestion() {
       const question = questions[currentQuestion];
       questionTitle.textContent = question.title;
-      progressText.textContent = `Pergunta ${currentQuestion + 1} de ${questions.length}`;
+      progressText.textContent  = `Pergunta ${currentQuestion + 1} de ${questions.length}`;
       const pct = Math.round(((currentQuestion + 1) / questions.length) * 100);
       progressPercent.textContent = `${pct}%`;
-      progressBar.style.width = `${pct}%`;
+      progressBar.style.width     = `${pct}%`;
       backBtn.disabled = currentQuestion === 0;
       navHint.textContent = answers[currentQuestion] ? 'Resposta marcada. Você pode seguir.' : 'Escolha uma opção para continuar';
 
       optionsContainer.innerHTML = question.options.map((option, index) => {
         const letter = String.fromCharCode(65 + index);
-        return `
-          <button class="option" data-profile="${option.profile}" data-index="${index}">
-            <span class="option-letter">${letter}</span>
-            <span class="option-text">${option.text}</span>
-          </button>
-        `;
+        return `<button class="option" data-profile="${option.profile}" data-index="${index}"><span class="option-letter">${letter}</span><span class="option-text">${option.text}</span></button>`;
       }).join('');
 
       [...optionsContainer.querySelectorAll('.option')].forEach((button) => {
@@ -1154,56 +787,35 @@
     }
 
     function calculateScores() {
-      const base = {
-        protagonista: 0,
-        estudiosa: 0,
-        camaleao: 0,
-        analitica: 0,
-        relaxada: 0,
-        obstinada: 0
-      };
-
-      answers.forEach(answer => {
-        if (answer && base[answer] !== undefined) base[answer] += 1;
-      });
-
+      const base = { protagonista: 0, estudiosa: 0, camaleao: 0, analitica: 0, relaxada: 0, obstinada: 0 };
+      answers.forEach(answer => { if (answer && base[answer] !== undefined) base[answer] += 1; });
       return base;
     }
 
     function getWinner(scores) {
-      const ranking = Object.entries(scores)
-        .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-      return ranking;
+      return Object.entries(scores).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
     }
 
     function renderResult() {
-      const scores = calculateScores();
+      const scores  = calculateScores();
       const ranking = getWinner(scores);
       const [winnerKey, winnerScore] = ranking[0];
-      const total = questions.length;
+      const total  = questions.length;
       const winner = profiles[winnerKey];
 
-      resultAvatar.textContent = winner.emoji;
-      resultName.textContent = winner.name;
-      resultSubtitle.textContent = `${winnerScore} de ${total} respostas mais próximas desse perfil`;
-      resultSummary.textContent = winner.summary;
-      resultLearns.textContent = winner.learns;
-      resultBlocks.textContent = winner.blocks;
+      resultAvatar.textContent     = winner.emoji;
+      resultName.textContent       = winner.name;
+      resultSubtitle.textContent   = `${winnerScore} de ${total} respostas mais próximas desse perfil`;
+      resultSummary.textContent    = winner.summary;
+      resultLearns.textContent     = winner.learns;
+      resultBlocks.textContent     = winner.blocks;
       resultMotivation.textContent = winner.motivation;
-      resultTeaching.textContent = winner.teaching;
+      resultTeaching.textContent   = winner.teaching;
 
       scoreList.innerHTML = ranking.map(([key, score]) => {
         const p = profiles[key];
         const width = Math.max((score / total) * 100, score > 0 ? 8 : 0);
-        return `
-          <div class="score-item">
-            <div class="score-top">
-              <span>${p.name}</span>
-              <span>${score}</span>
-            </div>
-            <div class="score-track"><div class="score-fill" style="width:${width}%"></div></div>
-          </div>
-        `;
+        return `<div class="score-item"><div class="score-top"><span>${p.name}</span><span>${score}</span></div><div class="score-track"><div class="score-fill" style="width:${width}%"></div></div></div>`;
       }).join('');
 
       stepPill.textContent = 'Resultado';
@@ -1211,26 +823,29 @@
 
       if (!notificationSentForCurrentRun) {
         notificationSentForCurrentRun = true;
-        sendPersonalityNotification(winnerKey, scores);
+
+        // Monta array detalhado: cada item tem a pergunta + a opção escolhida
+        const answersDetailed = answers.map((profileKey, i) => ({
+          question_index: i,
+          question:       questions[i].title,
+          chosen_profile: profileKey,
+          chosen_text:    questions[i].options.find(o => o.profile === profileKey)?.text || ""
+        }));
+
+        saveAllResults(winnerKey, winner.name, scores, ranking, answersDetailed);
       }
     }
 
     function copyResult() {
-      const scores = calculateScores();
+      const scores  = calculateScores();
       const ranking = getWinner(scores);
       const [winnerKey] = ranking[0];
-      const winner = profiles[winnerKey];
+      const winner  = profiles[winnerKey];
       const text = `Meu resultado no teste "Quem é você no grupinho do inglês?" foi: ${winner.name}.\n\nResumo: ${winner.summary}\n\nComo eu aprendo melhor: ${winner.learns}`;
 
       navigator.clipboard.writeText(text)
-        .then(() => {
-          copyBtn.textContent = 'Resultado copiado';
-          setTimeout(() => copyBtn.textContent = 'Copiar resultado', 1600);
-        })
-        .catch(() => {
-          copyBtn.textContent = 'Não deu para copiar';
-          setTimeout(() => copyBtn.textContent = 'Copiar resultado', 1600);
-        });
+        .then(() => { copyBtn.textContent = 'Resultado copiado'; setTimeout(() => copyBtn.textContent = 'Copiar resultado', 1600); })
+        .catch(() => { copyBtn.textContent = 'Não deu para copiar'; setTimeout(() => copyBtn.textContent = 'Copiar resultado', 1600); });
     }
 
     startBtn.addEventListener('click', startTest);
@@ -1238,10 +853,7 @@
       document.getElementById('charactersPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
     backBtn.addEventListener('click', () => {
-      if (currentQuestion > 0) {
-        currentQuestion -= 1;
-        renderQuestion();
-      }
+      if (currentQuestion > 0) { currentQuestion -= 1; renderQuestion(); }
     });
     copyBtn.addEventListener('click', copyResult);
 
