@@ -81,168 +81,57 @@
     @media(max-width:1180px){.app{grid-template-columns:1fr}.sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid rgba(122,92,255,.08)}.dashboard-grid,.grid-2{grid-template-columns:1fr}}
     @media(max-width:760px){.main{padding:14px}.topbar{flex-direction:column;align-items:flex-start}.hero-stats{grid-template-columns:1fr}.quick-link,.item-top{flex-direction:column;align-items:flex-start}.calendar-day{min-height:72px;padding:8px}.calendar-grid{gap:6px}}
 
-    /* Esconde mobile-topbar e mobile-top-actions no desktop */
     .mobile-topbar,
     .mobile-top-actions{ display:none; }
 
-    /* ════════════════════════════════════
-       MOBILE FIXES (≤ 768px)
-    ════════════════════════════════════ */
-
-    /* 1. HAMBÚRGUER — esconde sidebar, mostra mobile header */
     @media(max-width:768px){
-
-      /* Sidebar vira drawer oculto por padrão */
-      .app{
-        grid-template-columns:1fr;
-      }
+      .app{ grid-template-columns:1fr; }
       .sidebar{
-        position:fixed;
-        top:0; left:0;
-        width:84vw;
-        max-width:300px;
-        height:100vh;
-        z-index:200;
-        transform:translateX(-100%);
-        transition:transform .28s cubic-bezier(.4,0,.2,1);
-        padding:18px;
-        background:rgba(255,255,255,.96);
-        backdrop-filter:blur(20px);
-        border-right:1px solid rgba(119,92,255,.12);
-        box-shadow:4px 0 32px rgba(63,37,128,.14);
+        position:fixed; top:0; left:0; width:84vw; max-width:300px; height:100vh; z-index:200;
+        transform:translateX(-100%); transition:transform .28s cubic-bezier(.4,0,.2,1);
+        padding:18px; background:rgba(255,255,255,.96); backdrop-filter:blur(20px);
+        border-right:1px solid rgba(119,92,255,.12); box-shadow:4px 0 32px rgba(63,37,128,.14);
       }
-      .sidebar.open{
-        transform:translateX(0);
-      }
-
-      /* Overlay escuro atrás do drawer */
-      .sidebar-overlay{
-        display:none;
-        position:fixed;
-        inset:0;
-        background:rgba(29,22,48,.38);
-        z-index:199;
-        animation:fadeOverlay .22s ease;
-      }
+      .sidebar.open{ transform:translateX(0); }
+      .sidebar-overlay{ display:none; position:fixed; inset:0; background:rgba(29,22,48,.38); z-index:199; animation:fadeOverlay .22s ease; }
       .sidebar-overlay.show{display:block;}
       @keyframes fadeOverlay{from{opacity:0}to{opacity:1}}
-
-      /* Mobile top bar com hambúrguer */
       .mobile-topbar{
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-        padding:14px 16px 10px;
-        background:rgba(246,244,255,.95);
-        backdrop-filter:blur(12px);
-        border-bottom:1px solid rgba(119,92,255,.08);
-        position:sticky;
-        top:0;
-        z-index:100;
+        display:flex; align-items:center; justify-content:space-between;
+        padding:14px 16px 10px; background:rgba(246,244,255,.95); backdrop-filter:blur(12px);
+        border-bottom:1px solid rgba(119,92,255,.08); position:sticky; top:0; z-index:100;
       }
-      .mobile-brand{
-        display:flex;
-        align-items:center;
-        gap:10px;
-      }
+      .mobile-brand{ display:flex; align-items:center; gap:10px; }
       .mobile-brand-logo{
         width:36px;height:36px;border-radius:12px;
         background:linear-gradient(135deg,var(--primary),var(--primary-2));
-        color:white;font-weight:900;font-size:.82rem;
-        display:grid;place-items:center;
+        color:white;font-weight:900;font-size:.82rem; display:grid;place-items:center;
       }
-      .mobile-brand-name{
-        font-size:.9rem;font-weight:900;letter-spacing:-.03em;
-      }
+      .mobile-brand-name{ font-size:.9rem;font-weight:900;letter-spacing:-.03em; }
       .hamburger-btn{
-        width:40px;height:40px;
-        border:1px solid rgba(119,92,255,.14);
-        border-radius:12px;
-        background:rgba(255,255,255,.82);
-        cursor:pointer;
-        display:flex;flex-direction:column;
-        align-items:center;justify-content:center;
-        gap:5px;
-        padding:0;
+        width:40px;height:40px; border:1px solid rgba(119,92,255,.14); border-radius:12px;
+        background:rgba(255,255,255,.82); cursor:pointer;
+        display:flex;flex-direction:column; align-items:center;justify-content:center; gap:5px; padding:0;
       }
-      .hamburger-btn span{
-        display:block;width:18px;height:2px;
-        background:var(--text);border-radius:2px;
-        transition:all .22s ease;
-      }
+      .hamburger-btn span{ display:block;width:18px;height:2px; background:var(--text);border-radius:2px; transition:all .22s ease; }
       .hamburger-btn.active span:nth-child(1){transform:translateY(7px) rotate(45deg);}
       .hamburger-btn.active span:nth-child(2){opacity:0;transform:scaleX(0);}
       .hamburger-btn.active span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
-
-      /* Esconde a topbar original no mobile (substituída pela mobile-topbar) */
-      .topbar{
-        display:none;
-      }
-
-      .main{
-        padding:12px 14px 24px;
-      }
-
-      /* 2. TOP-ACTIONS — menores e lado a lado */
+      .topbar{ display:none; }
+      .main{ padding:12px 14px 24px; }
       .mobile-top-actions{
-        display:flex;
-        gap:8px;
-        padding:0 14px 12px;
-        background:rgba(246,244,255,.9);
+        display:flex; gap:8px; padding:0 14px 12px; background:rgba(246,244,255,.9);
       }
-      .mobile-top-actions .btn{
-        flex:1;
-        padding:10px 12px;
-        font-size:.8rem;
-        font-weight:900;
-        border-radius:12px;
-        text-align:center;
-      }
-      .mobile-top-actions .btn-soft{
-        background:rgba(255,255,255,.88);
-        border:1px solid var(--line);
-      }
-      .mobile-top-actions .btn-primary{
-        background:linear-gradient(135deg,var(--primary),var(--primary-2));
-        color:white;
-        box-shadow:0 6px 18px rgba(122,92,255,.22);
-      }
-
-      /* 3. DIAGNÓSTICO — botão + badge na mesma linha */
-      .diag-item .item-top{
-        flex-direction:row;
-        align-items:center;
-        gap:10px;
-        margin-bottom:0;
-      }
-      .diag-item .diag-head{
-        flex:1;
-        min-width:0;
-      }
-      .diag-item .item-top .mini-badge{
-        flex-shrink:0;
-      }
-      .diag-item .item-actions{
-        padding-top:10px;
-        gap:8px;
-      }
-      /* Botão de ação + badge na mesma linha (baixo) */
-      .diag-item-row{
-        display:flex;
-        align-items:center;
-        gap:8px;
-        flex-wrap:wrap;
-        padding-top:10px;
-      }
-
-      /* Seção dicas — "Ver materiais" e "Entrar na aula ao vivo" lado a lado */
-      #section-dicas .grid-2,
-      #section-ao-vivo .live-grid{
-        grid-template-columns:1fr;
-      }
+      .mobile-top-actions .btn{ flex:1; padding:10px 12px; font-size:.8rem; font-weight:900; border-radius:12px; text-align:center; }
+      .mobile-top-actions .btn-soft{ background:rgba(255,255,255,.88); border:1px solid var(--line); }
+      .mobile-top-actions .btn-primary{ background:linear-gradient(135deg,var(--primary),var(--primary-2)); color:white; box-shadow:0 6px 18px rgba(122,92,255,.22); }
+      .diag-item .item-top{ flex-direction:row; align-items:center; gap:10px; margin-bottom:0; }
+      .diag-item .diag-head{ flex:1; min-width:0; }
+      .diag-item .item-top .mini-badge{ flex-shrink:0; }
+      .diag-item .item-actions{ padding-top:10px; gap:8px; }
+      .diag-item-row{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding-top:10px; }
+      #section-dicas .grid-2, #section-ao-vivo .live-grid{ grid-template-columns:1fr; }
     }
-
-    /* ─── fim mobile ─── */
 
     .payment-item{position:relative;transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease}
     .payment-item.clickable-payment{cursor:pointer}
@@ -370,12 +259,10 @@
     </div>
   </section>
 
-  <!-- Overlay do drawer mobile -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
   <div class="layout app" id="app">
 
-    <!-- ── Mobile top bar ── -->
     <div class="mobile-topbar" id="mobileTopbar">
       <div class="mobile-brand">
         <div class="mobile-brand-logo">hd</div>
@@ -386,7 +273,6 @@
       </button>
     </div>
 
-    <!-- ── Mobile botões topo ── -->
     <div class="mobile-top-actions" id="mobileTopActions">
       <button class="btn btn-soft" onclick="goSection('materiais')">Ver materiais</button>
       <button class="btn btn-primary" onclick="openElos()">Entrar na aula ao vivo</button>
@@ -428,7 +314,6 @@
 
     <main class="main">
       <div class="shell">
-        <!-- topbar desktop (oculta no mobile via CSS) -->
         <div class="topbar">
           <div class="headline"><h1 id="pageTitle">Portal da aluna</h1></div>
           <div class="top-actions">
@@ -439,7 +324,6 @@
 
         <section class="portal-section active" id="section-inicio">
           <div class="dashboard-v2">
-
             <div class="dashboard-row-3">
               <div class="panel dash-card compact">
                 <div class="section-title"><h3>Visão geral</h3></div>
@@ -449,7 +333,6 @@
                   <div class="mini-stat"><span>Diagnósticos pendentes</span><strong id="pendingDiagStat">3</strong></div>
                 </div>
               </div>
-
               <div class="panel dash-card compact">
                 <div class="section-title"><h3>Acesso rápido</h3></div>
                 <div class="quick-links" id="quickLinks">
@@ -458,7 +341,6 @@
                   <div class="quick-link"><div><strong>Financeiro</strong><p>Mensalidade de abril</p></div><a href="#">pagar</a></div>
                 </div>
               </div>
-
               <div class="panel dash-card compact">
                 <div class="section-title"><h3>Mini feedback</h3></div>
                 <div class="feedback-box" id="miniFeedbackBox">
@@ -468,7 +350,6 @@
                 </div>
               </div>
             </div>
-
             <div class="dashboard-row-2">
               <div class="panel dash-card">
                 <div class="section-title"><h3>Progresso do diagnóstico</h3></div>
@@ -491,7 +372,6 @@
                   </div>
                 </div>
               </div>
-
               <div class="panel dash-card">
                 <div class="section-title"><h3>Status financeiro</h3></div>
                 <div id="financeDashboardBox">
@@ -509,7 +389,6 @@
                 </div>
               </div>
             </div>
-
           </div>
         </section>
 
@@ -523,7 +402,6 @@
         <section class="portal-section" id="section-materiais">
           <div id="featuredChecklistArea"></div>
           <div id="checklistEmbedArea" class="checklist-embed"></div>
-
           <div class="panel materials-card">
             <div class="section-title"><h3>Aulas e materiais</h3></div>
             <div class="lesson-list" id="lessonsList"></div>
@@ -599,15 +477,13 @@ function msg(id,text,type="info"){ const el=$(id); el.textContent=text; el.class
 function dateBR(d){ if(!d)return "—"; return new Date(d+"T12:00:00").toLocaleDateString("pt-BR",{weekday:"short",day:"numeric",month:"short"}); }
 function openLink(url){ if(!url){showToast("⚠️ Link ainda não configurado");return;} window.open(url,"_blank"); }
 
-/* ── Hambúrguer ── */
 function toggleSidebar(){
   const sidebar = $("sidebar");
   const overlay = $("sidebarOverlay");
   const btn = $("hamburgerBtn");
   const isOpen = sidebar.classList.contains("open");
-  if(isOpen){
-    closeSidebar();
-  } else {
+  if(isOpen){ closeSidebar(); }
+  else {
     sidebar.classList.add("open");
     overlay.classList.add("show");
     btn.classList.add("active");
@@ -625,14 +501,12 @@ function isDiagnosticDone(item){
   if(!item) return false;
   const status = String(item.status || "").toLowerCase().trim();
   if(["done", "completed", "concluido", "concluído"].includes(status)) return true;
-
   const resultFields = [
     item.result, item.result_data, item.result_json, item.result_text,
     item.answer, item.answers, item.summary,
     item.profile_result, item.level_result, item.interests_result,
     item.completed_at, item.submitted_at
   ];
-
   return resultFields.some(field => {
     if(field === null || field === undefined || field === "") return false;
     if(typeof field === "object" && Object.keys(field).length === 0) return false;
@@ -643,39 +517,23 @@ function isDiagnosticDone(item){
 function getDiagnosisProgress(){
   const totalRequired = 3;
   const requiredTypes = ["profile", "level", "interests"];
-
   const doneCount = requiredTypes.filter(type => {
     const item = diagnostics.find(d => d.type === type);
     return isDiagnosticDone(item);
   }).length;
-
-  if(doneCount === 0){
-    return { label: "começar diagnóstico", className: "diagnosis-red", pending: totalRequired, done: 0, total: totalRequired };
-  }
-
-  if(doneCount < totalRequired){
-    return { label: "trilha ativa", className: "diagnosis-orange", pending: totalRequired - doneCount, done: doneCount, total: totalRequired };
-  }
-
+  if(doneCount === 0) return { label: "começar diagnóstico", className: "diagnosis-red", pending: totalRequired, done: 0, total: totalRequired };
+  if(doneCount < totalRequired) return { label: "trilha ativa", className: "diagnosis-orange", pending: totalRequired - doneCount, done: doneCount, total: totalRequired };
   return { label: "diagnóstico ok", className: "diagnosis-green", pending: 0, done: totalRequired, total: totalRequired };
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
   sb = window.supabase.createClient(SB_URL, SB_ANON);
-
   $("loginBtn").addEventListener("click", login);
-  $("loginPassword").addEventListener("keydown", e => {
-    if(e.key === "Enter") login();
-  });
+  $("loginPassword").addEventListener("keydown", e => { if(e.key === "Enter") login(); });
   $("logoutBtn").addEventListener("click", logout);
-
   document.querySelectorAll(".nav-btn").forEach(btn =>
-    btn.addEventListener("click", () => {
-      goSection(btn.dataset.section);
-      closeSidebar(); /* fecha drawer ao navegar no mobile */
-    })
+    btn.addEventListener("click", () => { goSection(btn.dataset.section); closeSidebar(); })
   );
-
   const { data: { session } } = await sb.auth.getSession();
   if(session) await startPortal(session.user);
 });
@@ -683,28 +541,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function login(){
   const email = $("loginEmail").value.trim();
   const password = $("loginPassword").value;
-
-  if(!email || !password){
-    msg("loginMsg","Preencha email e senha.","error");
-    return;
-  }
-
+  if(!email || !password){ msg("loginMsg","Preencha email e senha.","error"); return; }
   $("loginBtn").disabled = true;
   $("loginBtn").textContent = "Entrando...";
-
   try{
     const { data, error } = await sb.auth.signInWithPassword({ email, password });
-
-    if(error){
-      msg("loginMsg", error.message, "error");
-      return;
-    }
-
-    if(!data.user){
-      msg("loginMsg","Login não retornou usuário.","error");
-      return;
-    }
-
+    if(error){ msg("loginMsg", error.message, "error"); return; }
+    if(!data.user){ msg("loginMsg","Login não retornou usuário.","error"); return; }
     await startPortal(data.user);
   }catch(e){
     console.error(e);
@@ -715,10 +558,7 @@ async function login(){
   }
 }
 
-async function logout(){
-  await sb.auth.signOut();
-  location.reload();
-}
+async function logout(){ await sb.auth.signOut(); location.reload(); }
 
 async function startPortal(authUser){
   user = authUser;
@@ -747,7 +587,6 @@ async function loadData(){
 
   profile = p.data || { full_name:user.email, email:user.email, level:"—", nivel:"—" };
   if(!profile.elos_url) profile.elos_url = "https://elos.vc/sala/teacherdebora";
-
   materials = m.data || [];
   classes = c.data || [];
   diagnostics = d.data || [];
@@ -773,13 +612,11 @@ function renderProfile(){
   const name = profile.full_name || user.email || "Aluna";
   const first = name.split(" ")[0];
   const diag = getDiagnosisProgress();
-
   $("studentName").textContent = first;
   $("studentLevel").textContent = `Aulas individuais • nível ${profile.nivel || profile.level || "—"}`;
   $("studentFocus").textContent = profile.focus || profile.objetivo || "trilha ativa";
   $("diagBadge").textContent = diag.label;
   $("diagBadge").className = `badge ${diag.className}`;
-
   $("profileSummary").innerHTML = `
     <div class="material-item"><strong>Perfil</strong><p>${esc(profile.learning_profile || "Ainda não definido")}</p></div>
     <div class="material-item"><strong>Nível</strong><p>${esc(profile.nivel || profile.level || "Ainda não definido")}</p></div>
@@ -792,25 +629,18 @@ function getLatestFeedback(){
   const feedbackTypes = ["feedback", "summary"];
   const byType = materials.find(m => feedbackTypes.includes((m.type || "").toLowerCase()) && m.description);
   if(byType) return byType.description;
-
   const classWithNotes = [...classes].reverse().find(c => c.notes);
   if(classWithNotes) return classWithNotes.notes;
-
   return "Assim que sua professora registrar um resumo ou observação da aula, ele aparece aqui.";
 }
 
 function getNextPendingDiagnostic(){
   const order = ["profile", "level", "interests"];
-  const labels = {
-    profile: "Quem é você no grupinho do inglês?",
-    level: "Teste de nivelamento",
-    interests: "Área de interesses"
-  };
+  const labels = { profile: "Quem é você no grupinho do inglês?", level: "Teste de nivelamento", interests: "Área de interesses" };
   const pendingType = order.find(type => {
     const item = diagnostics.find(d => d.type === type);
     return !item || item.status !== "done";
   });
-
   return pendingType ? labels[pendingType] : "Diagnóstico completo";
 }
 
@@ -822,10 +652,8 @@ function getCurrentPayment(){
 
 function daysUntil(dateStr){
   if(!dateStr) return null;
-  const today = new Date();
-  today.setHours(0,0,0,0);
-  const due = new Date(dateStr + "T12:00:00");
-  due.setHours(0,0,0,0);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const due = new Date(dateStr + "T12:00:00"); due.setHours(0,0,0,0);
   return Math.ceil((due - today) / (1000 * 60 * 60 * 24));
 }
 
@@ -842,14 +670,12 @@ function renderDiagnosisProgress(){
   const diag = getDiagnosisProgress();
   const pct = Math.min(100, Math.round((diag.done / diag.total) * 100));
   const next = getNextPendingDiagnostic();
-
   const stepClass = (type, index) => {
     const item = diagnostics.find(d => d.type === type);
     if(item?.status === "done") return "done";
     if(index === diag.done) return "current";
     return "";
   };
-
   $("diagnosisProgressBox").innerHTML = `
     <div class="progress-card-body">
       <div>
@@ -860,13 +686,11 @@ function renderDiagnosisProgress(){
           <button class="mini-btn" onclick="goSection('diagnostico')">${diag.done === diag.total ? "Ver diagnóstico" : "Continuar"}</button>
         </div>
       </div>
-
       <div class="progress-steps">
         <div class="progress-step ${stepClass("profile",0)}">1. Perfil</div>
         <div class="progress-step ${stepClass("level",1)}">2. Nível</div>
         <div class="progress-step ${stepClass("interests",2)}">3. Interesses</div>
       </div>
-
       <p class="dash-muted">Próximo passo: ${esc(next)}</p>
     </div>
   `;
@@ -874,7 +698,6 @@ function renderDiagnosisProgress(){
 
 function renderFinanceDashboard(){
   const p = getCurrentPayment();
-
   if(!p){
     $("financeDashboardBox").innerHTML = `
       <div class="finance-status">
@@ -886,7 +709,6 @@ function renderFinanceDashboard(){
     `;
     return;
   }
-
   const diff = daysUntil(p.due_date);
   let dueText = "vencimento não informado";
   if(diff !== null){
@@ -894,10 +716,8 @@ function renderFinanceDashboard(){
     if(diff === 0) dueText = "vence hoje";
     if(diff < 0) dueText = `vencido há ${Math.abs(diff)} dia(s)`;
   }
-
   const paid = p.status === "paid";
   const statusText = paid ? "Pagamento registrado" : "Aguardando pagamento";
-
   $("financeDashboardBox").innerHTML = `
     <div class="finance-status">
       <span class="finance-pill ${paid ? "paid" : "pending"}">${paid ? "pago" : "pendente"}</span>
@@ -906,10 +726,8 @@ function renderFinanceDashboard(){
         <div class="finance-amount">R$ ${Number(p.amount || 0).toFixed(2)}</div>
         <p class="dash-muted">${paid ? "Pagamento registrado." : dueText}</p>
       </div>
-
       <div class="finance-row"><span>Status</span><strong>${statusText}</strong></div>
       <div class="finance-row"><span>Forma</span><strong>${p.pix_code || p.pix_qr_url ? "Pix disponível" : "Pix ainda não configurado"}</strong></div>
-
       <button class="mini-btn" onclick="goSection('financeiro')">${paid ? "Ver histórico" : "Pagar agora"}</button>
     </div>
   `;
@@ -927,32 +745,20 @@ function renderDashboard(){
   if($("elosText")) $("elosText").textContent = profile.elos_url || "https://elos.vc/sala/teacherdebora";
   $("materialsStat").textContent = materials.length;
   $("pendingDiagStat").textContent = diag.pending;
-
   $("diagBadge").textContent = diag.label;
   $("diagBadge").className = `badge ${diag.className}`;
 
   $("quickLinks").innerHTML = `
     <div class="quick-link">
-      <div>
-        <strong>Continuar diagnóstico</strong>
-        <p>${diag.pending ? diag.pending+" pendente(s)" : "Tudo concluído"}</p>
-      </div>
+      <div><strong>Continuar diagnóstico</strong><p>${diag.pending ? diag.pending+" pendente(s)" : "Tudo concluído"}</p></div>
       <a href="#" onclick="goSection('diagnostico');return false;">acessar</a>
     </div>
-
     <div class="quick-link">
-      <div>
-        <strong>Material mais recente</strong>
-        <p>${latest ? esc(latest.title) : "Nenhum material ainda"}</p>
-      </div>
+      <div><strong>Material mais recente</strong><p>${latest ? esc(latest.title) : "Nenhum material ainda"}</p></div>
       <a href="#" onclick="${latest?.url ? `openLink('${latest.url}')` : `showToast('Nenhum material com link')`};return false;">ver</a>
     </div>
-
     <div class="quick-link">
-      <div>
-        <strong>Financeiro</strong>
-        <p>${currentPayment ? esc(currentPayment.reference || "Cobrança ativa") : "Sem cobrança ativa"}</p>
-      </div>
+      <div><strong>Financeiro</strong><p>${currentPayment ? esc(currentPayment.reference || "Cobrança ativa") : "Sem cobrança ativa"}</p></div>
       <a href="#" onclick="goSection('financeiro');return false;">${currentPayment?.status === "paid" ? "ver" : "pagar"}</a>
     </div>
   `;
@@ -967,79 +773,36 @@ function renderDiagnostics(){
   if(!el) return;
 
   const baseDiagnostics = [
-    {
-      type: "profile",
-      icon: "💜",
-      title: "Quem é você no grupinho do inglês?",
-      description: "Teste de personalidade aplicado ao seu jeito de aprender inglês.",
-      actionLabel: "Fazer teste",
-      defaultUrl: "https://helpdebs.github.io/helpdebs-portal/teste-personalidade.html"
-    },
-    {
-      type: "level",
-      icon: "📊",
-      title: "Teste de nivelamento",
-      description: "Mapeamento do seu nível atual para ajustar melhor as aulas.",
-      actionLabel: "Fazer nivelamento",
-      defaultUrl: LEVEL_TEST_URL
-    },
-    {
-      type: "interests",
-      icon: "✨",
-      title: "Área de interesses",
-      description: "Objetivos, rotina, gostos e contextos em que você quer usar inglês.",
-      actionLabel: "Responder interesses",
-      defaultUrl: INTERESTS_TEST_URL
-    }
+    { type:"profile", icon:"💜", title:"Quem é você no grupinho do inglês?", description:"Teste de personalidade aplicado ao seu jeito de aprender inglês.", actionLabel:"Fazer teste", defaultUrl:"https://helpdebs.github.io/helpdebs-portal/teste-personalidade.html" },
+    { type:"level", icon:"📊", title:"Teste de nivelamento", description:"Mapeamento do seu nível atual para ajustar melhor as aulas.", actionLabel:"Fazer nivelamento", defaultUrl:LEVEL_TEST_URL },
+    { type:"interests", icon:"✨", title:"Área de interesses", description:"Objetivos, rotina, gostos e contextos em que você quer usar inglês.", actionLabel:"Responder interesses", defaultUrl:INTERESTS_TEST_URL }
   ];
 
   const merged = baseDiagnostics.map(base => {
     const db = diagnostics.find(d => d.type === base.type);
     const cfg = diagConfig.find(c => c.type === base.type);
     const done = isDiagnosticDone(db);
-
-    return {
-      ...base,
-      db,
-      done,
-      form_url: db?.form_url || cfg?.form_url || base.defaultUrl,
-      result_url: db?.result_url || cfg?.result_url || null
-    };
+    return { ...base, db, done, form_url: db?.form_url || cfg?.form_url || base.defaultUrl, result_url: db?.result_url || cfg?.result_url || null };
   });
 
   el.innerHTML = merged.map(d => {
     const hasLink = !!d.form_url;
-
     const actionBtn = d.done
       ? `<button class="mini-btn done-btn" type="button" disabled>Concluído ✓</button>`
       : hasLink
         ? `<button class="mini-btn" type="button" onclick="openLink('${esc(d.form_url)}')">${esc(d.actionLabel)}</button>`
         : `<button class="mini-btn secondary" type="button" onclick="showToast('Teste ainda não conectado')">Em breve</button>`;
-
-    const resultBtn = d.result_url
-      ? `<button class="mini-btn secondary" type="button" onclick="openLink('${esc(d.result_url)}')">Ver resultado</button>`
-      : "";
-
+    const resultBtn = d.result_url ? `<button class="mini-btn secondary" type="button" onclick="openLink('${esc(d.result_url)}')">Ver resultado</button>` : "";
     return `
       <div class="diag-item ${hasLink || d.done ? "" : "locked"}">
         <div class="item-top">
           <div class="diag-head">
             <div class="diag-icon">${d.icon}</div>
-            <div>
-              <strong>${esc(d.title)}</strong>
-              <p>${esc(d.description)}</p>
-            </div>
+            <div><strong>${esc(d.title)}</strong><p>${esc(d.description)}</p></div>
           </div>
-          <span class="mini-badge ${d.done ? "status-done" : "status-pending"}">
-            ${d.done ? "concluído" : "pendente"}
-          </span>
+          <span class="mini-badge ${d.done ? "status-done" : "status-pending"}">${d.done ? "concluído" : "pendente"}</span>
         </div>
-
-        <!-- botão + resultado na mesma linha (linha de ação) -->
-        <div class="diag-item-row">
-          ${actionBtn}
-          ${resultBtn}
-        </div>
+        <div class="diag-item-row">${actionBtn}${resultBtn}</div>
       </div>
     `;
   }).join("");
@@ -1048,7 +811,6 @@ function renderDiagnostics(){
 function renderFeaturedChecklist(){
   const area = $("featuredChecklistArea");
   if(!area) return;
-
   area.innerHTML = `
     <div class="featured-checklist">
       <div>
@@ -1056,18 +818,12 @@ function renderFeaturedChecklist(){
         <h3>Checklist de vocabulário da aula</h3>
         <p>Revise as estruturas, chunks e combinações mais importantes do mês em uma página interativa feita para praticar sem ficar perdida.</p>
       </div>
-
       <div class="checklist-actions">
-        <a class="checklist-btn"
-           href="https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html"
-           target="_blank"
-           rel="noopener noreferrer"
-           onclick="event.preventDefault(); event.stopPropagation(); window.open('https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html', '_blank', 'noopener,noreferrer'); return false;">
+        <a class="checklist-btn" href="${MONTHLY_CHECKLIST_URL}" target="_blank" rel="noopener noreferrer"
+           onclick="event.preventDefault(); event.stopPropagation(); window.open('${MONTHLY_CHECKLIST_URL}', '_blank', 'noopener,noreferrer'); return false;">
           Abrir checklist
         </a>
-
-        <button type="button"
-                class="checklist-btn secondary"
+        <button type="button" class="checklist-btn secondary"
                 onclick="event.preventDefault(); event.stopPropagation(); toggleChecklistEmbed(); return false;">
           Ver dentro do portal
         </button>
@@ -1076,28 +832,24 @@ function renderFeaturedChecklist(){
   `;
 }
 
-function openMonthlyChecklist(){
-  window.open(MONTHLY_CHECKLIST_URL, "_blank", "noopener,noreferrer");
-}
+function openMonthlyChecklist(){ window.open(MONTHLY_CHECKLIST_URL, "_blank", "noopener,noreferrer"); }
 
 function toggleChecklistEmbed(){
   const box = $("checklistEmbedArea");
   if(!box) return;
-
-  const url = MONTHLY_CHECKLIST_URL;
   const isOpen = box.classList.contains("show");
-
-  if(isOpen){
-    box.classList.remove("show");
-    box.innerHTML = "";
-    return;
-  }
-
-  box.innerHTML = `<iframe src="${url}" title="Checklist mensal"></iframe>`;
+  if(isOpen){ box.classList.remove("show"); box.innerHTML = ""; return; }
+  box.innerHTML = `<iframe src="${MONTHLY_CHECKLIST_URL}" title="Checklist mensal"></iframe>`;
   box.classList.add("show");
   box.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
+// ─────────────────────────────────────────────────────────────
+// renderMaterials — CORRIGIDO
+// Resumo e chunks agora lidos do próprio registro do material
+// (campo description para resumo, campo chunks para chunks)
+// além de suportar registros separados por type
+// ─────────────────────────────────────────────────────────────
 function renderMaterials(){
   const el = $("lessonsList") || $("materialsList");
   if(!el) return;
@@ -1115,9 +867,7 @@ function renderMaterials(){
   const groups = [];
 
   const classIdsWithMaterial = [...new Set(
-    visibleMaterials
-      .filter(m => m.class_id)
-      .map(m => m.class_id)
+    visibleMaterials.filter(m => m.class_id).map(m => m.class_id)
   )];
 
   classIdsWithMaterial.forEach(classId => {
@@ -1127,9 +877,7 @@ function renderMaterials(){
   });
 
   const looseMaterials = visibleMaterials.filter(m => !m.class_id);
-  looseMaterials.forEach(m => {
-    groups.push({ classItem: null, materials: [m] });
-  });
+  looseMaterials.forEach(m => { groups.push({ classItem: null, materials: [m] }); });
 
   groups.sort((a,b) => {
     const aDate = a.classItem?.class_date || a.materials[0]?.created_at || "";
@@ -1141,20 +889,32 @@ function renderMaterials(){
     const c = group.classItem;
     const items = group.materials || [];
 
-    const pdf = items.find(m => ["pdf","checklist","resource","vocabulary"].includes((m.type || "").toLowerCase())) || items.find(m => m.url);
-    const summary = items.find(m => (m.type || "").toLowerCase() === "summary");
-    const chunks = items.find(m => (m.type || "").toLowerCase() === "chunks");
+    // Busca registros dedicados por type
+    const pdfItem     = items.find(m => ["pdf","checklist","resource","vocabulary"].includes((m.type || "").toLowerCase())) || items.find(m => m.url);
+    const summaryItem = items.find(m => (m.type || "").toLowerCase() === "summary");
+    const chunksItem  = items.find(m => (m.type || "").toLowerCase() === "chunks");
 
-    const main = pdf || summary || chunks || items[0];
+    const main = pdfItem || summaryItem || chunksItem || items[0];
+
+    // CORREÇÃO: pega description e chunks do próprio registro principal
+    // se não houver registros separados de type summary/chunks
+    const resumoText = summaryItem?.description
+      || main?.description
+      || "";
+
+    const chunksText = chunksItem?.chunks
+      || chunksItem?.description
+      || main?.chunks
+      || "";
 
     const title = main?.title || "Material da aula";
     const date = c
       ? `${dateBR(c.class_date)} • ${String(c.class_time || "").slice(0,5)}`
       : (main?.month || "Material sem aula vinculada");
 
-    const thumb = pdf?.thumbnail_url
-      ? `<img src="${esc(pdf.thumbnail_url)}" alt="Miniatura do PDF">`
-      : `<div>PDF<br><small>${esc(pdf?.type || main?.type || "material")}</small></div>`;
+    const thumb = pdfItem?.thumbnail_url
+      ? `<img src="${esc(pdfItem.thumbnail_url)}" alt="Miniatura do PDF">`
+      : `<div>PDF<br><small>${esc(pdfItem?.type || main?.type || "material")}</small></div>`;
 
     return `
       <div class="lesson-card">
@@ -1163,7 +923,7 @@ function renderMaterials(){
             <strong>${esc(title)}</strong>
             <span>${esc(date)}</span>
           </div>
-          ${pdf?.url ? `<button class="mini-btn" onclick="openLink('${esc(pdf.url)}')">Abrir material</button>` : ""}
+          ${pdfItem?.url ? `<button class="mini-btn" onclick="openLink('${esc(pdfItem.url)}')">Abrir material</button>` : ""}
         </div>
 
         <div class="lesson-body">
@@ -1171,12 +931,12 @@ function renderMaterials(){
 
           <div class="lesson-block">
             <h4>Resumo da aula</h4>
-            <p>${esc(summary?.description || "Resumo ainda não cadastrado.")}</p>
+            <p>${esc(resumoText || "Resumo ainda não cadastrado.")}</p>
           </div>
 
           <div class="lesson-block">
             <h4>Chunks usados</h4>
-            <p>${esc(chunks?.description || "Chunks ainda não cadastrados.")}</p>
+            <p>${esc(chunksText || "Chunks ainda não cadastrados.")}</p>
           </div>
         </div>
       </div>
@@ -1188,7 +948,6 @@ function renderCalendar(){
   const calendarGrid = $("calendarGrid");
   const calendarMonthEl = $("calendarMonth");
   const classListEl = $("studentClassList");
-
   if(!calendarGrid || !calendarMonthEl) return;
 
   const months = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
@@ -1205,38 +964,27 @@ function renderCalendar(){
   for(let i=0;i<first;i++){
     html += `<div class="calendar-day muted"><div class="day-number">${prevTotal-first+i+1}</div></div>`;
   }
-
   for(let d=1; d<=total; d++){
     const date = `${calYear}-${String(calMonth+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
     const dayClasses = classes.filter(c => c.class_date === date);
     const isToday = today.getFullYear()===calYear && today.getMonth()===calMonth && today.getDate()===d;
-
     html += `
       <div class="calendar-day ${dayClasses.length ? "has-class" : ""} ${isToday ? "today" : ""}">
         <div class="day-number">${d}</div>
-        ${dayClasses.map(c => `
-          <div class="mini-class">
-            Aula • ${String(c.class_time || "").slice(0,5)}
-          </div>
-        `).join("")}
+        ${dayClasses.map(c => `<div class="mini-class">Aula • ${String(c.class_time || "").slice(0,5)}</div>`).join("")}
       </div>
     `;
   }
-
   calendarGrid.innerHTML = html;
 
   if(classListEl){
-    const upcoming = classes
-      .filter(c => c.class_date >= new Date().toISOString().slice(0,10))
-      .slice(0,5);
-
+    const upcoming = classes.filter(c => c.class_date >= new Date().toISOString().slice(0,10)).slice(0,5);
     classListEl.innerHTML = upcoming.length
       ? upcoming.map(c => `
           <div class="student-class-card">
             <strong>${dateBR(c.class_date)} • ${String(c.class_time || "").slice(0,5)}</strong>
             <p>${esc(c.notes || "Aula marcada")}</p>
-          </div>
-        `).join("")
+          </div>`).join("")
       : `<div class="empty">Nenhuma aula futura cadastrada.</div>`;
   }
 }
@@ -1264,81 +1012,38 @@ function renderVideos(){
 }
 
 async function copyPix(code){
-  try{
-    await navigator.clipboard.writeText(code);
-    showToast("Pix copiado! Abra seu banco e cole.");
-  }catch(e){
-    showToast("Não consegui copiar automaticamente.");
-  }
+  try{ await navigator.clipboard.writeText(code); showToast("Pix copiado! Abra seu banco e cole."); }
+  catch(e){ showToast("Não consegui copiar automaticamente."); }
 }
 
 function paymentAction(id){
   const p = payments.find(item => item.id === id);
-  if(!p){
-    showToast("Cobrança não encontrada.");
-    return;
-  }
-
-  if(p.pix_code){
-    copyPix(p.pix_code);
-    return;
-  }
-
-  if(p.pix_qr_url){
-    openLink(p.pix_qr_url);
-    return;
-  }
-
+  if(!p){ showToast("Cobrança não encontrada."); return; }
+  if(p.pix_code){ copyPix(p.pix_code); return; }
+  if(p.pix_qr_url){ openLink(p.pix_qr_url); return; }
   showToast("Forma de pagamento ainda não configurada.");
 }
 
 function renderPayments(){
   const list = $("paymentsList");
   if(!list) return;
-
-  if(!payments.length){
-    list.innerHTML = `<div class="empty">Nenhum pagamento cadastrado ainda.</div>`;
-    return;
-  }
-
+  if(!payments.length){ list.innerHTML = `<div class="empty">Nenhum pagamento cadastrado ainda.</div>`; return; }
   list.innerHTML = payments.map(p => {
     const pixCode = p.pix_code || "";
     const pixQr = p.pix_qr_url || "";
     const hasAction = pixCode || pixQr;
-
     return `
-    <div class="payment-item ${hasAction ? "clickable-payment" : "no-payment-action"}"
-         onclick="paymentAction('${esc(p.id)}')">
-
+    <div class="payment-item ${hasAction ? "clickable-payment" : "no-payment-action"}" onclick="paymentAction('${esc(p.id)}')">
       <div class="item-top">
         <div>
           <strong>${esc(p.reference || "Cobrança")}</strong>
           <p>R$ ${Number(p.amount || 0).toFixed(2)} • vence ${dateBR(p.due_date)}</p>
         </div>
-
-        <span class="mini-badge ${
-          p.status === "paid"
-            ? "status-paid"
-            : p.status === "overdue"
-            ? "status-overdue"
-            : "status-pending"
-        }">${esc(p.status || "pending")}</span>
+        <span class="mini-badge ${p.status === "paid" ? "status-paid" : p.status === "overdue" ? "status-overdue" : "status-pending"}">${esc(p.status || "pending")}</span>
       </div>
-
       ${p.notes ? `<p>${esc(p.notes)}</p>` : ""}
-
-      ${pixQr ? `
-        <div class="qr-preview">
-          <img src="${esc(pixQr)}" alt="QR Code Pix">
-        </div>
-      ` : ""}
-
-      ${pixCode ? `
-        <p style="word-break:break-all;font-size:.82rem;margin-top:10px">
-          <b>Pix copia e cola:</b> ${esc(pixCode)}
-        </p>
-      ` : ""}
-
+      ${pixQr ? `<div class="qr-preview"><img src="${esc(pixQr)}" alt="QR Code Pix"></div>` : ""}
+      ${pixCode ? `<p style="word-break:break-all;font-size:.82rem;margin-top:10px"><b>Pix copia e cola:</b> ${esc(pixCode)}</p>` : ""}
       <div class="pay-actions" onclick="event.stopPropagation()">
         ${pixCode ? `<button class="mini-btn" onclick="copyPix('${esc(pixCode)}')">Copiar Pix</button>` : ""}
         ${pixQr ? `<button class="mini-btn secondary" onclick="openLink('${esc(pixQr)}')">Abrir QR Code</button>` : ""}
@@ -1359,10 +1064,7 @@ function goSection(target){
   document.querySelectorAll(".portal-section").forEach(section => section.classList.remove("active"));
   $(`section-${target}`).classList.add("active");
   $("pageTitle").textContent = sectionMeta[target] || target;
-
-  /* Atualiza título no mobile topbar */
   if($("mobileSectionTitle")) $("mobileSectionTitle").textContent = sectionMeta[target] || target;
-
   if(target === "calendario") renderCalendar();
   if(target === "materiais"){ renderFeaturedChecklist(); renderMaterials(); }
   if(target === "diagnostico") renderDiagnostics();
