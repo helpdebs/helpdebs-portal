@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conheça o grupinho | help.debs</title>
+  <style>
+    :root{
+      --bg:#f6f4ff;
+      --text:#1d1630;
+      --muted:#746b92;
+      --primary:#8b5cf6;
+      --line:rgba(139,92,246,.18);
+      --panel:rgba(255,255,255,.88);
+      --shadow:0 24px 80px rgba(45,28,90,.22);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left,rgba(139,92,246,.18),transparent 30%),
+        radial-gradient(circle at top right,rgba(219,255,102,.22),transparent 26%),
+        linear-gradient(180deg,#fbfaff,#f3efff);
+      overflow-x:hidden;
+    }
+    .page{width:min(1500px,100%);margin:0 auto;padding:28px 18px 34px;}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px;}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:950;letter-spacing:-.04em;}
+    .logo{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,#7a5cff,#ab96ff);color:white;box-shadow:0 14px 30px rgba(122,92,255,.24)}
+    .pill{border:1px solid var(--line);background:rgba(255,255,255,.75);padding:10px 14px;border-radius:999px;font-size:.82rem;font-weight:900;color:var(--primary);}
+    .stage-wrap{position:relative;border-radius:30px;overflow:hidden;background:#17121f;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.76);}
+    .stage{position:relative;width:100%;aspect-ratio:1536/1024;overflow:hidden;}
+    .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:filter .28s ease, transform .5s ease;}
+    .stage.has-active .poster{filter:saturate(.92) brightness(.72);}
+    .hotspot{position:absolute;border:0;background:transparent;cursor:pointer;z-index:4;border-radius:32px;outline:none;}
+    .hotspot::before{content:"";position:absolute;inset:-8px;border-radius:inherit;border:2px solid transparent;background:radial-gradient(circle at center,rgba(255,255,255,.22),transparent 65%);opacity:0;transform:scale(.96);transition:.22s ease;}
+    .hotspot::after{content:attr(data-label);position:absolute;left:50%;top:-16px;transform:translate(-50%,-100%);white-space:nowrap;background:rgba(255,255,255,.92);color:var(--text);border:1px solid var(--line);box-shadow:0 14px 34px rgba(31,20,70,.18);border-radius:999px;padding:8px 12px;font-size:.78rem;font-weight:950;opacity:0;pointer-events:none;transition:.22s ease;}
+    .hotspot:hover::before,.hotspot:focus-visible::before,.hotspot.active::before{opacity:1;transform:scale(1.02);box-shadow:0 0 0 9999px rgba(14,10,22,.20),0 0 48px 16px var(--glow);}
+    .hotspot:hover::after,.hotspot:focus-visible::after,.hotspot.active::after{opacity:1;transform:translate(-50%,-108%);}
+    .hotspot:hover,.hotspot.active{animation:floaty 1.8s ease-in-out infinite alternate;}
+    @keyframes floaty{from{transform:translateY(0)}to{transform:translateY(-5px)}}
+
+    .analitica{left:14%;top:9%;width:19%;height:48%;--glow:rgba(92,68,255,.60)}
+    .protagonista{left:35%;top:17%;width:20%;height:63%;--glow:rgba(236,72,153,.62)}
+    .estudiosa{left:54%;top:17%;width:15%;height:52%;--glow:rgba(56,189,248,.58)}
+    .camaleao{left:73%;top:6%;width:18%;height:46%;--glow:rgba(245,158,11,.62)}
+    .tranquila{left:10%;top:52%;width:27%;height:44%;--glow:rgba(132,204,22,.58)}
+    .obstinada{left:60%;top:41%;width:32%;height:54%;--glow:rgba(239,68,68,.60)}
+
+    .info-card{position:absolute;z-index:8;right:24px;bottom:24px;width:min(390px,calc(100% - 48px));padding:20px;border-radius:24px;background:rgba(255,255,255,.88);border:1px solid rgba(255,255,255,.74);box-shadow:0 28px 70px rgba(18,10,42,.32);backdrop-filter:blur(18px);opacity:0;transform:translateY(14px) scale(.98);pointer-events:none;transition:.24s ease;}
+    .stage.has-active .info-card{opacity:1;transform:translateY(0) scale(1);}
+    .info-card .tag{display:inline-flex;width:fit-content;padding:7px 10px;border-radius:999px;background:var(--accent-bg);color:var(--accent);font-size:.72rem;font-weight:950;margin-bottom:12px;}
+    .info-card h2{margin:0 0 6px;font-size:1.6rem;letter-spacing:-.06em;}
+    .info-card p{margin:0;color:var(--muted);line-height:1.55;font-size:.94rem;}
+    .info-card .mini{margin-top:14px;padding:13px;border-radius:18px;background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.10);font-weight:850;color:var(--text);font-size:.9rem;line-height:1.45;}
+    .hint-mobile{display:none;margin:14px 0 0;color:var(--muted);font-size:.88rem;text-align:center;}
+    @media(max-width:850px){
+      .page{padding:16px 10px 24px}.topbar{padding:0 4px}.pill{display:none}.stage-wrap{border-radius:22px;overflow:auto}.stage{width:1050px;max-width:none}.info-card{position:fixed;left:14px;right:14px;bottom:14px;width:auto;z-index:20}.hint-mobile{display:block}.hotspot::after{display:none}
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div class="brand"><div class="logo">hd</div><span>Conheça o grupinho</span></div>
+      <div class="pill">passe o mouse ou toque em uma personagem</div>
+    </header>
+    <section class="stage-wrap">
+      <div class="stage" id="stage">
+        <img class="poster" src="personagens_helpdebs.png" alt="Personagens do grupinho help.debs em uma sala de aula" />
+
+        <button class="hotspot analitica" data-label="A Analítica" data-key="analitica" aria-label="A Analítica"></button>
+        <button class="hotspot protagonista" data-label="A Protagonista" data-key="protagonista" aria-label="A Protagonista"></button>
+        <button class="hotspot estudiosa" data-label="A Estudiosa" data-key="estudiosa" aria-label="A Estudiosa"></button>
+        <button class="hotspot camaleao" data-label="A Camaleão" data-key="camaleao" aria-label="A Camaleão"></button>
+        <button class="hotspot tranquila" data-label="A Tranquila" data-key="tranquila" aria-label="A Tranquila"></button>
+        <button class="hotspot obstinada" data-label="A Obstinada" data-key="obstinada" aria-label="A Obstinada"></button>
+
+        <article class="info-card" id="infoCard">
+          <span class="tag" id="cardTag">perfil</span>
+          <h2 id="cardTitle">Escolha uma personagem</h2>
+          <p id="cardText">Passe o mouse ou toque em uma personagem para ver a animação e abrir este card.</p>
+          <div class="mini" id="cardMini">As dicas detalhadas entram aqui depois.</div>
+        </article>
+      </div>
+    </section>
+    <p class="hint-mobile">No celular, arraste a imagem para os lados e toque em uma personagem.</p>
+  </main>
+
+  <script>
+    const stage = document.getElementById('stage');
+    const card = document.getElementById('infoCard');
+    const cardTag = document.getElementById('cardTag');
+    const cardTitle = document.getElementById('cardTitle');
+    const cardText = document.getElementById('cardText');
+    const cardMini = document.getElementById('cardMini');
+    const hotspots = [...document.querySelectorAll('.hotspot')];
+
+    const profiles = {
+      analitica:{title:'A Analítica',color:'#5b4bff',bg:'rgba(91,75,255,.12)',text:'Observadora, lógica e curiosa. Gosta de entender o funcionamento das coisas antes de se jogar.',mini:'Espaço reservado para dicas de estudo da Analítica.'},
+      protagonista:{title:'A Protagonista',color:'#db2777',bg:'rgba(219,39,119,.13)',text:'Comunicativa, confiante e cheia de presença. Aprende melhor quando coloca a língua em movimento.',mini:'Espaço reservado para dicas de estudo da Protagonista.'},
+      estudiosa:{title:'A Estudiosa',color:'#0284c7',bg:'rgba(2,132,199,.12)',text:'Organizada, dedicada e atenta. Gosta de entender com calma e registrar o que está aprendendo.',mini:'Espaço reservado para dicas de estudo da Estudiosa.'},
+      camaleao:{title:'A Camaleão',color:'#b45309',bg:'rgba(180,83,9,.14)',text:'Versátil, esperta e contextual. Aprende lendo o ambiente e se adaptando à situação.',mini:'Espaço reservado para dicas de estudo da Camaleão.'},
+      tranquila:{title:'A Tranquila',color:'#4d7c0f',bg:'rgba(77,124,15,.13)',text:'Leva tudo com leveza e aprende melhor sem pressão. Precisa de um ambiente seguro para render bem.',mini:'Espaço reservado para dicas de estudo da Tranquila.'},
+      obstinada:{title:'A Obstinada',color:'#b91c1c',bg:'rgba(185,28,28,.13)',text:'Focada, determinada e persistente. Gosta de sentir progresso e transformar esforço em conquista.',mini:'Espaço reservado para dicas de estudo da Obstinada.'}
+    };
+
+    function activate(key){
+      const p = profiles[key];
+      if(!p) return;
+      hotspots.forEach(h => h.classList.toggle('active', h.dataset.key === key));
+      stage.classList.add('has-active');
+      card.style.setProperty('--accent', p.color);
+      card.style.setProperty('--accent-bg', p.bg);
+      cardTag.textContent = 'perfil de aprendizagem';
+      cardTitle.textContent = p.title;
+      cardText.textContent = p.text;
+      cardMini.textContent = p.mini;
+    }
+
+    function clearActive(){
+      hotspots.forEach(h => h.classList.remove('active'));
+      stage.classList.remove('has-active');
+    }
+
+    hotspots.forEach(h => {
+      h.addEventListener('mouseenter', () => activate(h.dataset.key));
+      h.addEventListener('focus', () => activate(h.dataset.key));
+      h.addEventListener('click', () => activate(h.dataset.key));
+    });
+
+    stage.addEventListener('mouseleave', clearActive);
+  </script>
+</body>
+</html>
