@@ -561,22 +561,44 @@
         const fullName = studentProfile?.full_name || authUser.email || "Aluna";
         const email    = studentProfile?.email    || authUser.email || "";
 
-        // 1. Salva na tabela de resultados completos
-        //    Cada tentativa gera uma nova linha — histórico preservado
-        const { error: resultError } = await client
+        // 1. Salva histórico completo e cru de respostas
+        //    Cada tentativa gera uma nova linha em diagnostic_answers.
+        const completeResult = {
+          winner_key:  winnerKey,
+          winner_name: winnerName,
+          scores:      scores,
+          ranking:     ranking
+        };
+
+        const { error: answerError } = await client
+          .from("diagnostic_answers")
+          .insert({
+            student_id: authUser.id,
+            diagnostic_type: "profile",
+            answers: answersDetailed,
+            result: completeResult,
+            status: "submitted",
+            updated_at: new Date().toISOString()
+          });
+
+        if (answerError) {
+          console.warn("Erro ao salvar em diagnostic_answers:", answerError.message);
+        }
+
+        // Compatibilidade: se a tabela antiga existir, também preserva o histórico nela.
+        await client
           .from("personality_test_results")
           .insert({
             student_id:  authUser.id,
-            answers:     answersDetailed,  // array com pergunta + resposta escolhida
-            scores:      scores,           // { protagonista: 2, camaleao: 5, ... }
-            winner_key:  winnerKey,        // "camaleao"
-            winner_name: winnerName,       // "A Camaleão"
-            ranking:     ranking           // [ ["camaleao",5], ["relaxada",2], ... ]
+            answers:     answersDetailed,
+            scores:      scores,
+            winner_key:  winnerKey,
+            winner_name: winnerName,
+            ranking:     ranking
+          })
+          .then(({ error }) => {
+            if (error) console.warn("Tabela personality_test_results ignorada:", error.message);
           });
-
-        if (resultError) {
-          console.warn("Erro ao salvar em personality_test_results:", resultError.message);
-        }
 
         // 2. Atualiza learning_profile no perfil da aluna
         const { error: profileError } = await client
@@ -599,9 +621,10 @@
         const diagPayload = {
           student_id:   authUser.id,
           type:         "profile",
-          status:       "done",
+          status:       "submitted",
           result:       winnerName,
-          result_data:  scores,
+          result_data:  completeResult,
+          submitted_at: new Date().toISOString(),
           completed_at: new Date().toISOString(),
           updated_at:   new Date().toISOString()
         };
