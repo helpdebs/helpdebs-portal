@@ -115,7 +115,7 @@ const ADMIN_EMAIL = "instrutor28sib.campos@gmail.com";
 
   
 const SB_URL="https://pgdanuifukzisyyummpz.supabase.co";const SB_ANON="sb_publishable_81NM6F08rsXXSCgjWl4iSg_v99cdVpo";const BUCKET="materials";let sb,currentUser,STUDENTS=[],MATERIALS=[],CLASSES=[],PAYMENTS=[],NOTIFICATIONS=[],FEEDBACKS=[],DIAGNOSTIC_ANSWERS=[],STUDENT_FEEDBACK=[];let calYear=new Date().getFullYear(),calMonth=new Date().getMonth();const $=id=>document.getElementById(id);function showMsg(id,t,type="info"){const el=$(id);el.textContent=t;el.className=`msg show ${type}`;setTimeout(()=>el.classList.remove("show"),4500)}function toast(t){const el=$("toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2600)}function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}function dateBR(d){if(!d)return"—";return new Date(d+"T12:00:00").toLocaleDateString("pt-BR")}document.addEventListener("DOMContentLoaded", async () => {
-  sb = window.supabase.createClient(SB_URL, SB_ANON);
+  sb = window.supabase.createClient(SB_URL, SB_ANON, { auth: { storageKey: 'helpdebs-admin-auth', persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
 
   $("loginBtn").addEventListener("click", login);
   $("loginPassword").addEventListener("keydown", e => {
