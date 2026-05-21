@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quem é você no grupinho do inglês?</title>
+  <title>Teste de Nivelamento</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
       --bg: #f5f2ff;
-      --bg-2: #fffdfd;
       --card: rgba(255, 255, 255, 0.84);
       --card-strong: #ffffff;
       --text: #1f1634;
@@ -114,19 +113,15 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* ── COVER ── */
     .hero {
       display: grid;
       grid-template-columns: 1.12fr 0.88fr;
       gap: 24px;
       align-items: stretch;
-      min-height: 100%;
     }
 
-    .hero-left,
-    .hero-right,
-    .question-card,
-    .result-card,
-    .result-side {
+    .hero-left, .hero-right {
       background: var(--card);
       border: 1px solid rgba(123, 91, 255, 0.12);
       border-radius: var(--radius-xl);
@@ -161,17 +156,22 @@
       font-size: clamp(2.1rem, 4vw, 4rem);
       line-height: 0.95;
       letter-spacing: -0.06em;
-      max-width: 10ch;
+      max-width: 14ch;
     }
 
-    .lead { font-size: 1.02rem; line-height: 1.6; color: var(--muted); max-width: 54ch; }
+    .lead {
+      font-size: 1.02rem;
+      line-height: 1.6;
+      color: var(--muted);
+      max-width: 54ch;
+    }
+
     .bullets { display: grid; gap: 12px; }
 
     .bullet {
       display: flex;
       gap: 12px;
       align-items: flex-start;
-      color: var(--text);
       font-size: 0.98rem;
       line-height: 1.45;
     }
@@ -186,7 +186,12 @@
       box-shadow: 0 0 0 5px rgba(223, 251, 98, 0.25);
     }
 
-    .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+    }
 
     button {
       border: none;
@@ -218,44 +223,65 @@
       font-weight: 700;
     }
 
-    .hero-right { padding: 24px; display: flex; flex-direction: column; gap: 16px; justify-content: center; }
-    .grid-label { font-size: 0.88rem; color: var(--muted); font-weight: 700; letter-spacing: 0.02em; }
-    .characters { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-
-    .character-card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(245,241,255,0.9));
-      border: 1px solid rgba(123, 91, 255, 0.12);
-      border-radius: 22px;
-      padding: 16px;
+    .hero-right {
+      padding: 28px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      min-height: 146px;
+      gap: 20px;
+      justify-content: center;
     }
 
-    .avatar {
-      width: 58px;
-      height: 58px;
-      border-radius: 18px;
+    .grid-label {
+      font-size: 0.88rem;
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .sections-preview { display: grid; gap: 14px; }
+
+    .section-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(245,241,255,0.9));
+      border: 1px solid rgba(123, 91, 255, 0.12);
+      border-radius: 20px;
+      padding: 16px 18px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .section-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
       display: grid;
       place-items: center;
-      font-size: 1.35rem;
+      font-size: 1.2rem;
       background: linear-gradient(135deg, rgba(123,91,255,0.16), rgba(223,251,98,0.5));
       border: 1px solid rgba(123, 91, 255, 0.1);
+      flex: 0 0 auto;
     }
 
-    .character-title { font-size: 1rem; font-weight: 800; letter-spacing: -0.03em; }
-    .character-mini { color: var(--muted); font-size: 0.9rem; line-height: 1.45; }
-    .footer-note { font-size: 0.86rem; color: var(--muted); line-height: 1.45; padding-top: 6px; }
+    .section-info { display: grid; gap: 3px; }
+    .section-title { font-size: 0.97rem; font-weight: 800; letter-spacing: -0.02em; }
+    .section-desc { color: var(--muted); font-size: 0.88rem; line-height: 1.4; }
 
-    .question-layout, .result-layout {
+    /* ── QUESTIONS ── */
+    .question-layout {
       display: grid;
       grid-template-columns: 0.98fr 1.02fr;
       gap: 24px;
       align-items: stretch;
     }
 
-    .question-card, .result-card, .result-side { padding: 28px; }
+    .question-card {
+      background: var(--card);
+      border: 1px solid rgba(123, 91, 255, 0.12);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 10px 30px rgba(77, 39, 149, 0.07);
+      padding: 28px;
+    }
+
     .progress-wrap { display: grid; gap: 14px; margin-bottom: 24px; }
 
     .progress-meta {
@@ -268,7 +294,13 @@
       font-weight: 700;
     }
 
-    .progress-track { width: 100%; height: 12px; background: rgba(123, 91, 255, 0.08); border-radius: 999px; overflow: hidden; }
+    .progress-track {
+      width: 100%;
+      height: 12px;
+      background: rgba(123, 91, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+    }
 
     .progress-bar {
       height: 100%;
@@ -278,7 +310,7 @@
       transition: width .28s ease;
     }
 
-    .question-label {
+    .section-badge {
       display: inline-flex;
       padding: 8px 12px;
       border-radius: 999px;
@@ -289,21 +321,32 @@
       margin-bottom: 18px;
     }
 
-    .question-title { font-size: clamp(1.6rem, 3vw, 2.8rem); line-height: 1.02; letter-spacing: -0.05em; margin-bottom: 16px; }
-    .question-support { color: var(--muted); line-height: 1.6; font-size: 0.98rem; max-width: 50ch; }
+    .question-title {
+      font-size: clamp(1.3rem, 2.5vw, 2rem);
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+      margin-bottom: 16px;
+    }
 
-    .question-side-box {
+    .question-support {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .side-box {
       margin-top: 26px;
       padding: 18px;
       border-radius: 20px;
       background: rgba(255,255,255,0.82);
       border: 1px solid rgba(123, 91, 255, 0.1);
       display: grid;
-      gap: 10px;
+      gap: 8px;
     }
 
-    .question-side-box strong { font-size: 0.95rem; letter-spacing: -0.02em; }
-    .question-side-box span { color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
+    .side-box strong { font-size: 0.95rem; letter-spacing: -0.02em; }
+    .side-box span { color: var(--muted); font-size: 0.9rem; line-height: 1.45; }
+
     .options { display: grid; gap: 12px; }
 
     .option {
@@ -312,14 +355,22 @@
       background: rgba(255,255,255,0.88);
       border: 1px solid rgba(123, 91, 255, 0.12);
       border-radius: 22px;
-      padding: 18px 18px;
+      padding: 16px 18px;
       display: flex;
       gap: 14px;
       align-items: flex-start;
       color: var(--text);
     }
 
-    .option:hover { border-color: rgba(123, 91, 255, 0.28); box-shadow: 0 10px 24px rgba(123, 91, 255, 0.08); }
+    .option:hover {
+      border-color: rgba(123, 91, 255, 0.28);
+      box-shadow: 0 10px 24px rgba(123, 91, 255, 0.08);
+    }
+
+    .option.selected {
+      border-color: var(--primary);
+      background: rgba(123, 91, 255, 0.06);
+    }
 
     .option-letter {
       width: 34px;
@@ -333,74 +384,271 @@
       flex: 0 0 auto;
     }
 
-    .option-text { font-size: 0.98rem; line-height: 1.45; letter-spacing: -0.01em; padding-top: 2px; }
-
-    .nav-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-top: 20px; }
-    .nav-row .btn-secondary { padding-inline: 16px; }
-    .muted-small { color: var(--muted); font-size: 0.88rem; }
-    .result-card { display: grid; gap: 18px; align-content: start; }
-
-    .result-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      width: fit-content;
-      padding: 9px 14px;
-      border-radius: 999px;
-      background: rgba(223, 251, 98, 0.45);
-      font-size: 0.84rem;
-      font-weight: 800;
+    .option-text {
+      font-size: 0.97rem;
+      line-height: 1.45;
+      letter-spacing: -0.01em;
+      padding-top: 4px;
     }
 
-    .result-head { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+    .nav-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-top: 20px;
+    }
 
-    .result-avatar {
-      width: 84px;
-      height: 84px;
-      border-radius: 24px;
+    .muted-small { color: var(--muted); font-size: 0.88rem; }
+
+    /* ── READING ── */
+    .reading-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .reading-text-card {
+      background: var(--card);
+      border: 1px solid rgba(123, 91, 255, 0.12);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 10px 30px rgba(77, 39, 149, 0.07);
+      padding: 28px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .reading-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .reading-body {
+      color: var(--text);
+      font-size: 0.97rem;
+      line-height: 1.75;
+    }
+
+    /* ── WRITING ── */
+    .writing-layout {
+      display: grid;
+      grid-template-columns: 0.98fr 1.02fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .writing-info {
+      background: var(--card);
+      border: 1px solid rgba(123, 91, 255, 0.12);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 10px 30px rgba(77, 39, 149, 0.07);
+      padding: 28px;
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+
+    .writing-card {
+      background: var(--card);
+      border: 1px solid rgba(123, 91, 255, 0.12);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 10px 30px rgba(77, 39, 149, 0.07);
+      padding: 28px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .writing-prompt {
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+    }
+
+    .writing-tips { display: grid; gap: 10px; }
+
+    .writing-tip {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 0.93rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .tip-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--primary-2);
+      margin-top: 6px;
+      flex: 0 0 auto;
+      opacity: 0.6;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 200px;
+      border: 1px solid rgba(123, 91, 255, 0.18);
+      border-radius: 18px;
+      padding: 18px;
+      font-family: inherit;
+      font-size: 0.97rem;
+      line-height: 1.6;
+      color: var(--text);
+      background: rgba(255,255,255,0.88);
+      resize: vertical;
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    textarea:focus { border-color: var(--primary); }
+    textarea::placeholder { color: var(--muted); opacity: 0.7; }
+
+    .char-count {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    /* ── EMAIL COLLECT ── */
+    .email-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: center;
+      min-height: calc(760px - 79px - 68px);
+    }
+
+    .email-card {
+      background: var(--card);
+      border: 1px solid rgba(123, 91, 255, 0.12);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 10px 30px rgba(77, 39, 149, 0.07);
+      padding: 34px;
+      display: grid;
+      gap: 22px;
+    }
+
+    .email-side {
+      background: var(--card);
+      border: 1px solid rgba(123, 91, 255, 0.12);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 10px 30px rgba(77, 39, 149, 0.07);
+      padding: 28px;
+      display: grid;
+      gap: 16px;
+      align-content: start;
+    }
+
+    .input-group { display: grid; gap: 8px; }
+
+    .input-label {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    input[type="text"],
+    input[type="email"] {
+      width: 100%;
+      border: 1px solid rgba(123, 91, 255, 0.18);
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-family: inherit;
+      font-size: 0.97rem;
+      color: var(--text);
+      background: rgba(255,255,255,0.88);
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    input:focus { border-color: var(--primary); }
+    input::placeholder { color: var(--muted); opacity: 0.7; }
+
+    .what-happens { display: grid; gap: 12px; }
+
+    .what-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 0.93rem;
+      line-height: 1.45;
+    }
+
+    .what-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      background: rgba(123, 91, 255, 0.1);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 0.82rem;
+      color: var(--primary);
+      flex: 0 0 auto;
+    }
+
+    /* ── CONFIRM ── */
+    .confirm-layout {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(760px - 79px - 68px);
+    }
+
+    .confirm-card {
+      background: var(--card);
+      border: 1px solid rgba(123, 91, 255, 0.12);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 10px 30px rgba(77, 39, 149, 0.07);
+      padding: 48px;
+      max-width: 560px;
+      width: 100%;
+      display: grid;
+      gap: 20px;
+      text-align: center;
+    }
+
+    .confirm-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 22px;
       display: grid;
       place-items: center;
       font-size: 2rem;
-      background: linear-gradient(135deg, rgba(123,91,255,0.16), rgba(223,251,98,0.56));
-      border: 1px solid rgba(123,91,255,0.12);
+      background: linear-gradient(135deg, rgba(123,91,255,0.16), rgba(223,251,98,0.5));
+      border: 1px solid rgba(123, 91, 255, 0.1);
+      margin: 0 auto;
     }
 
-    .result-name { font-size: clamp(2rem, 3vw, 3.1rem); line-height: 0.96; letter-spacing: -0.06em; }
-    .result-summary { color: var(--muted); font-size: 1rem; line-height: 1.65; max-width: 62ch; }
-    .insights { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-
-    .insight {
-      background: rgba(255,255,255,0.74);
-      border: 1px solid rgba(123,91,255,0.1);
-      border-radius: 20px;
-      padding: 18px;
-      display: grid;
-      gap: 10px;
+    .confirm-title {
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      line-height: 1;
+      letter-spacing: -0.05em;
     }
 
-    .insight h3 { font-size: 0.98rem; letter-spacing: -0.02em; }
-    .insight p { color: var(--muted); font-size: 0.93rem; line-height: 1.5; }
-    .result-side { display: grid; gap: 18px; align-content: start; }
-    .score-list { display: grid; gap: 12px; }
-    .score-item { display: grid; gap: 8px; }
-    .score-top { display: flex; justify-content: space-between; gap: 12px; font-size: 0.92rem; font-weight: 700; }
-    .score-track { width: 100%; height: 10px; border-radius: 999px; background: rgba(123,91,255,0.08); overflow: hidden; }
-    .score-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, rgba(123,91,255,0.9), rgba(223,251,98,0.95)); }
+    .confirm-text {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.65;
+    }
 
-    .tip-box {
+    .confirm-detail {
       background: rgba(255,255,255,0.75);
       border: 1px solid rgba(123,91,255,0.1);
-      border-radius: 20px;
-      padding: 18px;
-      display: grid;
-      gap: 10px;
+      border-radius: 18px;
+      padding: 18px 22px;
+      font-size: 0.93rem;
+      color: var(--muted);
+      line-height: 1.55;
     }
 
-    .tip-box p { color: var(--muted); font-size: 0.93rem; line-height: 1.55; }
-    .result-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
-
     @media (max-width: 980px) {
-      .hero, .question-layout, .result-layout { grid-template-columns: 1fr; }
+      .hero, .question-layout, .reading-layout, .writing-layout, .email-layout { grid-template-columns: 1fr; }
       .shell { min-height: auto; }
       .screen { min-height: auto; }
     }
@@ -409,478 +657,874 @@
       .app { padding: 12px; }
       .screen { padding: 16px; }
       .topbar { padding: 14px 16px; }
-      .hero-left, .hero-right, .question-card, .result-card, .result-side { padding: 18px; }
-      .characters { grid-template-columns: 1fr 1fr; }
-      .insights { grid-template-columns: 1fr; }
       .step-pill { display: none; }
-      h1 { max-width: 12ch; }
     }
+
+
+    .state-screen {
+      min-height: calc(760px - 79px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 34px;
+    }
+
+    .state-card {
+      background: var(--card);
+      border: 1px solid rgba(123, 91, 255, 0.12);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 10px 30px rgba(77, 39, 149, 0.07);
+      padding: 44px;
+      max-width: 560px;
+      width: 100%;
+      display: grid;
+      gap: 16px;
+      text-align: center;
+    }
+
+    .state-card h2 {
+      font-size: clamp(1.8rem, 3vw, 2.7rem);
+      line-height: 1;
+      letter-spacing: -0.05em;
+    }
+
+    .state-card p {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.65;
+    }
+
   </style>
 </head>
 <body>
-  <div class="app">
-    <main class="shell">
-      <div class="topbar">
-        <div class="brand">
-          <div class="brand-badge">hd</div>
-          <span>Perfil no inglês</span>
-        </div>
-        <div class="step-pill" id="stepPill">Introdução</div>
+<div class="app">
+  <main class="shell">
+
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-badge">hd</div>
+        <span>Nivelamento</span>
       </div>
+      <div class="step-pill" id="stepPill">Introdução</div>
+    </div>
 
-      <section class="screen active" id="coverScreen">
-        <div class="hero">
-          <div class="hero-left">
-            <div>
-              <div class="eyebrow">mapeamento do seu perfil no inglês</div>
-              <h1>Quem é você no grupinho do inglês?</h1>
-            </div>
-            <p class="lead">Uma experiência rápida para entender como você reage ao inglês, o que te motiva, como você lida com erro, pressão, constância e que tipo de aprendizado tende a funcionar melhor para você.</p>
-            <div class="bullets">
-              <div class="bullet"><span class="bullet-dot"></span><span>12 perguntas, uma por vez, em formato leve e direto.</span></div>
-              <div class="bullet"><span class="bullet-dot"></span><span>No final, você recebe um perfil dominante com leitura prática para o seu aprendizado.</span></div>
-              <div class="bullet"><span class="bullet-dot"></span><span>Sem cara de prova. Sem precisar "acertar". É mais descoberta do que avaliação.</span></div>
-            </div>
-            <div class="hero-actions">
-              <button class="btn-primary" id="startBtn">Descobrir meu perfil</button>
-              <button class="btn-secondary" id="seeProfilesBtn">Ver personagens</button>
-            </div>
+    <!-- COVER -->
+    <section class="screen active" id="coverScreen">
+      <div class="hero">
+        <div class="hero-left">
+          <div>
+            <div class="eyebrow">descubra seu nível de inglês</div>
+            <h1>Onde você está no inglês agora?</h1>
           </div>
-          <div class="hero-right" id="charactersPanel">
-            <div class="grid-label">os personagens do grupinho</div>
-            <div class="characters" id="characterGrid"></div>
-            <p class="footer-note">Aqui aparecem só os nomes para gerar curiosidade. A explicação completa entra no resultado.</p>
+          <p class="lead">
+            Um teste rápido e funcional para mapear seu nível real de inglês — do A1 ao B2 —
+            com base em gramática, vocabulário, leitura e escrita.
+          </p>
+          <div class="bullets">
+            <div class="bullet"><span class="bullet-dot"></span><span>15 perguntas + uma atividade de escrita livre.</span></div>
+            <div class="bullet"><span class="bullet-dot"></span><span>Em até 24h você recebe seu nível e um feedback personalizado.</span></div>
+            <div class="bullet"><span class="bullet-dot"></span><span>Sem armadilha, sem tempo. Responda com calma e honestidade.</span></div>
+          </div>
+          <div class="hero-actions">
+            <button class="btn-primary" id="startBtn">Começar teste</button>
           </div>
         </div>
-      </section>
 
-      <section class="screen" id="questionScreen">
-        <div class="question-layout">
-          <div class="question-card">
-            <div class="progress-wrap">
-              <div class="progress-meta">
-                <span id="progressText">Pergunta 1 de 12</span>
-                <span id="progressPercent">8%</span>
-              </div>
-              <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
-            </div>
-            <div class="question-label">responda pelo que mais parece com você</div>
-            <h2 class="question-title" id="questionTitle"></h2>
-            <p class="question-support">Não tenta responder pelo "ideal". Marca o que parece mais real no seu jeito de lidar com o inglês.</p>
-            <div class="question-side-box">
-              <strong>Como essa tela funciona</strong>
-              <span>Você escolhe uma opção por pergunta. A navegação é simples e o resultado aparece no final com o perfil dominante.</span>
-            </div>
-          </div>
-          <div class="question-card">
-            <div class="options" id="optionsContainer"></div>
-            <div class="nav-row">
-              <button class="btn-secondary" id="backBtn">Voltar</button>
-              <span class="muted-small" id="navHint">Escolha uma opção para continuar</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="screen" id="resultScreen">
-        <div class="result-layout">
-          <div class="result-card">
-            <div class="result-badge">seu perfil dominante</div>
-            <div class="result-head">
-              <div class="result-avatar" id="resultAvatar"></div>
-              <div>
-                <h2 class="result-name" id="resultName"></h2>
-                <p class="muted-small" id="resultSubtitle"></p>
+        <div class="hero-right">
+          <div class="grid-label">o que o teste avalia</div>
+          <div class="sections-preview">
+            <div class="section-card">
+              <div class="section-icon">📝</div>
+              <div class="section-info">
+                <div class="section-title">Gramática & Vocabulário</div>
+                <div class="section-desc">12 questões de múltipla escolha, do básico ao avançado</div>
               </div>
             </div>
-            <p class="result-summary" id="resultSummary"></p>
-            <div class="insights">
-              <div class="insight"><h3>Como você aprende melhor</h3><p id="resultLearns"></p></div>
-              <div class="insight"><h3>O que tende a te travar</h3><p id="resultBlocks"></p></div>
-              <div class="insight"><h3>O que mais te move</h3><p id="resultMotivation"></p></div>
-              <div class="insight"><h3>Direção pedagógica</h3><p id="resultTeaching"></p></div>
+            <div class="section-card">
+              <div class="section-icon">📖</div>
+              <div class="section-info">
+                <div class="section-title">Leitura</div>
+                <div class="section-desc">Um texto curto com 3 perguntas de compreensão</div>
+              </div>
+            </div>
+            <div class="section-card">
+              <div class="section-icon">✍️</div>
+              <div class="section-info">
+                <div class="section-title">Escrita livre</div>
+                <div class="section-desc">Um tema simples, você escreve à vontade, sem pressão</div>
+              </div>
             </div>
           </div>
-          <aside class="result-side">
-            <div>
-              <h3 style="margin-bottom:10px; letter-spacing:-0.03em; font-size:1.15rem;">Pontuação dos perfis</h3>
-              <div class="score-list" id="scoreList"></div>
-            </div>
-            <div class="tip-box">
-              <strong>Como usar esse resultado</strong>
-              <p>Esse resultado não precisa virar rótulo fixo. Ele serve como leitura inicial para personalizar trilha, ritmo, tipo de exercício e forma de acompanhamento.</p>
-            </div>
-            <div class="result-actions">
-              <button class="btn-secondary" id="copyBtn">Copiar resultado</button>
-            </div>
-          </aside>
+          <p style="font-size:0.86rem; color:var(--muted); line-height:1.45;">
+            O resultado é entregue em até 24h com seu nível CEFR e um comentário personalizado.
+          </p>
         </div>
-      </section>
-    </main>
-  </div>
+      </div>
+    </section>
 
-  <script>
-    const SB_URL  = "https://pgdanuifukzisyyummpz.supabase.co";
-    const SB_ANON = "sb_publishable_81NM6F08rsXXSCgjWl4iSg_v99cdVpo";
+    <!-- GRAMMAR/VOCAB QUESTIONS -->
+    <section class="screen" id="questionScreen">
+      <div class="question-layout">
+        <div class="question-card">
+          <div class="progress-wrap">
+            <div class="progress-meta">
+              <span id="progressText">Pergunta 1 de 12</span>
+              <span id="progressPercent">8%</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-bar" id="progressBar"></div>
+            </div>
+          </div>
+          <div class="section-badge" id="sectionBadge">Gramática & Vocabulário</div>
+          <h2 class="question-title" id="questionTitle"></h2>
+          <p class="question-support" id="questionSupport"></p>
+          <div class="side-box">
+            <strong>Dica</strong>
+            <span>Escolha a opção que parece mais correta. Se não souber, tudo bem — esse teste é pra mapear, não pra julgar.</span>
+          </div>
+        </div>
 
-    let sb = null;
-    let notificationSentForCurrentRun = false;
+        <div class="question-card">
+          <div class="options" id="optionsContainer"></div>
+          <div class="nav-row">
+            <button class="btn-secondary" id="backBtn" disabled>Voltar</button>
+            <span class="muted-small" id="navHint">Escolha uma opção para continuar</span>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    function getSupabaseClient() {
-      if (!window.supabase) return null;
-      if (!sb) sb = window.supabase.createClient(SB_URL, SB_ANON);
-      return sb;
+    <!-- READING -->
+    <section class="screen" id="readingScreen">
+      <div class="reading-layout">
+        <div class="reading-text-card">
+          <div class="section-badge">Leitura</div>
+          <div class="reading-title" id="readingTitle"></div>
+          <div class="reading-body" id="readingBody"></div>
+        </div>
+
+        <div class="question-card">
+          <p style="font-size:0.93rem; color:var(--muted); margin-bottom:20px; line-height:1.55;">
+            Leia o texto ao lado e responda as 3 perguntas abaixo.
+          </p>
+          <div class="options" id="readingOptionsContainer"></div>
+          <div class="nav-row">
+            <span class="muted-small" id="readingProgressText">Pergunta 1 de 3</span>
+            <span class="muted-small" id="readingNavHint">Escolha uma opção para continuar</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WRITING -->
+    <section class="screen" id="writingScreen">
+      <div class="writing-layout">
+        <div class="writing-info">
+          <div class="section-badge">Escrita livre</div>
+          <div class="writing-prompt">Talk about your likes and dislikes.</div>
+          <p style="color:var(--muted); font-size:0.97rem; line-height:1.65;">
+            Escreva em inglês sobre o que você gosta e o que não gosta. Pode ser comida, música, rotina, hobbies, trabalho — qualquer coisa.
+          </p>
+          <div class="writing-tips">
+            <div class="writing-tip"><span class="tip-dot"></span><span>Não existe resposta certa ou errada aqui.</span></div>
+            <div class="writing-tip"><span class="tip-dot"></span><span>Escreva da forma mais natural que conseguir.</span></div>
+            <div class="writing-tip"><span class="tip-dot"></span><span>Não use tradutor. O objetivo é ver o seu inglês real.</span></div>
+            <div class="writing-tip"><span class="tip-dot"></span><span>Mínimo sugerido: 3 a 5 linhas.</span></div>
+          </div>
+        </div>
+
+        <div class="writing-card">
+          <textarea id="writingTextarea" placeholder="Start writing here..."></textarea>
+          <div class="char-count"><span id="charCount">0</span> palavras</div>
+          <div class="nav-row" style="margin-top:0;">
+            <span class="muted-small">Quando terminar, clique em continuar</span>
+            <button class="btn-primary" id="writingNextBtn" disabled>Continuar</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EMAIL COLLECT -->
+    <section class="screen" id="emailScreen">
+      <div class="email-layout">
+        <div class="email-card">
+          <div>
+            <div class="eyebrow" style="margin-bottom:16px;">quase lá</div>
+            <h2 style="font-size:clamp(1.8rem,3vw,2.8rem); letter-spacing:-0.05em; line-height:1.05; margin-bottom:12px;">Para onde enviamos seu resultado?</h2>
+            <p style="color:var(--muted); font-size:0.97rem; line-height:1.6;">
+              Insira seu nome e e-mail abaixo. Em até 24h você recebe seu nível CEFR e um feedback personalizado.
+            </p>
+          </div>
+
+          <div style="display:grid; gap:16px;">
+            <div class="input-group">
+              <label class="input-label">Seu nome</label>
+              <input type="text" id="nameInput" placeholder="Como você se chama?" />
+            </div>
+            <div class="input-group">
+              <label class="input-label">Seu e-mail</label>
+              <input type="email" id="emailInput" placeholder="seu@email.com" />
+            </div>
+          </div>
+
+          <button class="btn-primary" id="submitBtn" style="width:fit-content;">Enviar teste</button>
+          <p id="submitError" style="color:#e05c5c; font-size:0.88rem; display:none;">Por favor, preencha nome e e-mail antes de enviar.</p>
+        </div>
+
+        <div class="email-side">
+          <h3 style="font-size:1.1rem; letter-spacing:-0.03em;">O que acontece agora</h3>
+          <div class="what-happens">
+            <div class="what-item">
+              <div class="what-num">1</div>
+              <span>Suas respostas são registradas junto com sua escrita livre.</span>
+            </div>
+            <div class="what-item">
+              <div class="what-num">2</div>
+              <span>Em até 24h você recebe um e-mail com seu nível (A1–B2) e um comentário personalizado.</span>
+            </div>
+            <div class="what-item">
+              <div class="what-num">3</div>
+              <span>O resultado também aparece na sua área na plataforma.</span>
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,0.75); border:1px solid rgba(123,91,255,0.1); border-radius:18px; padding:18px;">
+            <p style="font-size:0.9rem; color:var(--muted); line-height:1.55;">
+              Suas respostas são confidenciais e usadas apenas para definir seu nível e personalizar seu aprendizado.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONFIRM -->
+    <section class="screen" id="confirmScreen">
+      <div class="confirm-layout">
+        <div class="confirm-card">
+          <div class="confirm-icon">✅</div>
+          <h2 class="confirm-title">Teste enviado!</h2>
+          <p class="confirm-text">
+            Recebemos suas respostas, <strong id="confirmName"></strong>. Agora é só aguardar —
+            em até 24h você recebe seu resultado no e-mail e na plataforma.
+          </p>
+          <div class="confirm-detail">
+            Seu nível CEFR (A1, A2, B1 ou B2) será determinado com base nas suas respostas e na sua escrita. O comentário vai ser personalizado de acordo com o seu desempenho.
+          </div>
+          <button class="btn-secondary" id="restartBtn" style="margin:0 auto;">Voltar ao portal</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  const SB_URL = "https://pgdanuifukzisyyummpz.supabase.co";
+  const SB_ANON = "sb_publishable_81NM6F08rsXXSCgjWl4iSg_v99cdVpo";
+  const sb = window.supabase.createClient(SB_URL, SB_ANON);
+
+  let authUser = null;
+  let levelDiagnostic = null;
+  let testBlocked = false;
+
+  function renderStateScreen(title, text, buttonText = "Voltar ao portal") {
+    const app = document.querySelector('.app');
+    app.innerHTML = `
+      <main class="shell">
+        <div class="topbar">
+          <div class="brand">
+            <div class="brand-badge">hd</div>
+            <span>Nivelamento</span>
+          </div>
+          <div class="step-pill">Status</div>
+        </div>
+        <div class="state-screen">
+          <div class="state-card">
+            <div class="confirm-icon">✅</div>
+            <h2>${title}</h2>
+            <p>${text}</p>
+            <button class="btn-secondary" onclick="window.location.href='portal.html'">${buttonText}</button>
+          </div>
+        </div>
+      </main>
+    `;
+  }
+
+  async function initStudentAccess() {
+    const { data: { session } } = await sb.auth.getSession();
+
+    if (!session || !session.user) {
+      testBlocked = true;
+      renderStateScreen(
+        "Acesso necessário",
+        "Você precisa entrar no portal da aluna antes de responder o nivelamento.",
+        "Entrar no portal"
+      );
+      return;
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Salva tudo de uma vez ao concluir o teste:
-    //   1. personality_test_results — todas as respostas + resultado completo
-    //   2. profiles.learning_profile — perfil vencedor
-    //   3. diagnostics (type="profile") — status done + pontuações
-    //   4. notifications — aviso pro admin
-    // ─────────────────────────────────────────────────────────────────────────
-    async function saveAllResults(winnerKey, winnerName, scores, ranking, answersDetailed) {
-      try {
-        const client = getSupabaseClient();
-        if (!client) return;
+    authUser = session.user;
 
-        const { data: { session } } = await client.auth.getSession();
-        const authUser = session?.user;
-
-        if (!authUser) {
-          console.warn("Sem sessão ativa. Resultado não salvo.");
-          return;
-        }
-
-        const { data: studentProfile } = await client
-          .from("profiles")
-          .select("full_name,email")
-          .eq("id", authUser.id)
-          .maybeSingle();
-
-        const fullName = studentProfile?.full_name || authUser.email || "Aluna";
-        const email    = studentProfile?.email    || authUser.email || "";
-
-        // 1. Salva histórico completo e cru de respostas
-        //    Cada tentativa gera uma nova linha em diagnostic_answers.
-        const completeResult = {
-          winner_key:  winnerKey,
-          winner_name: winnerName,
-          scores:      scores,
-          ranking:     ranking
-        };
-
-        const { error: answerError } = await client
-          .from("diagnostic_answers")
-          .insert({
-            student_id: authUser.id,
-            diagnostic_type: "profile",
-            answers: answersDetailed,
-            result: completeResult,
-            status: "submitted",
-            updated_at: new Date().toISOString()
-          });
-
-        if (answerError) {
-          console.warn("Erro ao salvar em diagnostic_answers:", answerError.message);
-        }
-
-        // Compatibilidade: se a tabela antiga existir, também preserva o histórico nela.
-        await client
-          .from("personality_test_results")
-          .insert({
-            student_id:  authUser.id,
-            answers:     answersDetailed,
-            scores:      scores,
-            winner_key:  winnerKey,
-            winner_name: winnerName,
-            ranking:     ranking
-          })
-          .then(({ error }) => {
-            if (error) console.warn("Tabela personality_test_results ignorada:", error.message);
-          });
-
-        // 2. Atualiza learning_profile no perfil da aluna
-        const { error: profileError } = await client
-          .from("profiles")
-          .update({ learning_profile: winnerName })
-          .eq("id", authUser.id);
-
-        if (profileError) {
-          console.warn("Erro ao atualizar learning_profile:", profileError.message);
-        }
-
-        // 3. Insere ou atualiza diagnostics (type="profile")
-        const { data: existing } = await client
-          .from("diagnostics")
-          .select("id")
-          .eq("student_id", authUser.id)
-          .eq("type", "profile")
-          .maybeSingle();
-
-        const diagPayload = {
-          student_id:   authUser.id,
-          type:         "profile",
-          status:       "submitted",
-          result:       winnerName,
-          result_data:  completeResult,
-          submitted_at: new Date().toISOString(),
-          completed_at: new Date().toISOString(),
-          updated_at:   new Date().toISOString()
-        };
-
-        if (existing?.id) {
-          await client.from("diagnostics").update(diagPayload).eq("id", existing.id);
-        } else {
-          await client.from("diagnostics").insert(diagPayload);
-        }
-
-        // 4. Notificação pro admin
-        const { error: notifError } = await client
-          .from("notifications")
-          .insert({
-            student_id:    authUser.id,
-            student_name:  fullName,
-            student_email: email,
-            test_type:     "personality_test",
-            message:       `${fullName} concluiu o teste de personalidade. Resultado: ${winnerName}.`,
-            is_read:       false
-          });
-
-        if (notifError) {
-          console.warn("Erro ao enviar notificação:", notifError.message);
-        }
-
-      } catch (err) {
-        console.warn("Erro inesperado ao salvar resultado:", err);
-      }
+    const localKey = `helpdebs_level_submitted_${authUser.id}`;
+    if (localStorage.getItem(localKey) === "yes") {
+      testBlocked = true;
+      renderStateScreen(
+        "Teste já enviado",
+        "Seu nivelamento já foi concluído. Agora é só aguardar a avaliação da professora.",
+        "Voltar ao portal"
+      );
+      return;
     }
 
-    const profiles = {
-      protagonista: {
-        name: 'A Protagonista', emoji: '🎤', mini: 'fala sem travar tanto',
-        subtitle: 'Você tende a aprender se colocando em jogo.',
-        summary: 'Você reage bem ao movimento, à fala e à prática real. Costuma aprender rápido quando entra na experiência, mesmo antes de sentir que está 100% pronta. O erro não te paralisa tanto quanto a estagnação.',
-        learns: 'Com conversa, improviso, tarefas orais, simulação de vida real e prática frequente. Você ganha muito quando usa o inglês cedo, em vez de esperar domínio completo.',
-        blocks: 'Falta de prática, excesso de teoria antes da ação e ambientes muito travados. Você pode perder interesse se tudo parecer lento ou burocrático demais.',
-        motivation: 'Sensação de fluidez, interação, coragem em uso real e percepção de que já consegue se virar em situações concretas.',
-        teaching: 'Aulas com speaking desde cedo, correção estratégica sem interromper demais, desafios práticos e sensação de progresso em uso real.'
-      },
-      estudiosa: {
-        name: 'A Estudiosa', emoji: '📖', mini: 'quer entender bem antes',
-        subtitle: 'Você tende a buscar segurança antes de se expor.',
-        summary: 'Você valoriza clareza, estrutura e precisão. Aprende melhor quando sente que entendeu a lógica e sabe o que está fazendo. Seu desafio não é falta de capacidade, e sim a cobrança interna que pode travar sua fala.',
-        learns: 'Com explicações organizadas, exemplos claros, revisão, comparação entre formas e tempo para preparar respostas antes de usar.',
-        blocks: 'Medo de errar, sensação de não estar pronta e pressão para responder rápido. Quando a cobrança sobe demais, a espontaneidade cai.',
-        motivation: 'Sentir domínio, perceber melhora na precisão e enxergar que consegue fazer certo sem depender de improviso total.',
-        teaching: 'Estrutura clara, progressão lógica, espaço para preparação e depois transição gradual para fala mais espontânea.'
-      },
-      camaleao: {
-        name: 'A Camaleão', emoji: '🎭', mini: 'se adapta ao contexto',
-        subtitle: 'Você aprende melhor quando o inglês faz sentido para a sua vida.',
-        summary: 'Você se conecta muito com contexto, clima e utilidade. Seu desempenho varia conforme interesse, energia e identificação com a situação. Quando o inglês parece vivo e relevante, você floresce.',
-        learns: 'Com imersão, temas significativos, repertório contextualizado, conteúdos próximos da sua realidade e uso em situações que façam sentido.',
-        blocks: 'Rotina engessada, estudo desconectado da vida real e falta de constância. Você pode até gostar, mas oscila quando perde o vínculo com propósito.',
-        motivation: 'Sentir naturalidade, enxergar utilidade e perceber que o inglês está entrando na sua rotina de forma orgânica.',
-        teaching: 'Aulas contextualizadas, temas pessoais, flexibilidade inteligente e estímulos que conectem idioma com identidade e interesse.'
-      },
-      analitica: {
-        name: 'A Analítica', emoji: '🔍', mini: 'quer entender o porquê',
-        subtitle: 'Você se engaja quando a lógica aparece com clareza.',
-        summary: 'Você tende a observar padrões, questionar escolhas e buscar coerência. Aprende muito bem quando entende a estrutura por trás da língua. Não gosta de decorar sem critério nem repetir sem compreender.',
-        learns: 'Com comparação, análise de padrão, explicação de escolhas, contraste entre estruturas e construção de consciência sobre como a língua funciona.',
-        blocks: 'Explicações vagas, métodos muito soltos e sensação de estar fazendo algo sem entender a razão. Isso pode gerar resistência ou distanciamento.',
-        motivation: 'Perceber lógica, ganhar clareza e entender exatamente o que muda de uma estrutura para outra.',
-        teaching: 'Aulas com raciocínio, mapa mental da língua, justificativa de uso e exercícios que não tratem você como alguém que só precisa decorar.'
-      },
-      relaxada: {
-        name: 'A Relaxada', emoji: '🌊', mini: 'aprende melhor sem pressão',
-        subtitle: 'Você rende mais quando se sente segura e à vontade.',
-        summary: 'Você absorve bem quando o ambiente não te aperta. Costuma aprender melhor com leveza, repetição tranquila e espaço para errar sem sentir que está performando. A pressão pesa mais do que a dificuldade em si.',
-        learns: 'Com ritmo gentil, reforço positivo, escuta, repetição natural e atividades que deixem o inglês mais confortável antes de exigir performance.',
-        blocks: 'Ambiente rígido, cobrança excessiva, comparação e sensação de exposição. Isso pode te fazer desacelerar ou recuar.',
-        motivation: 'Sentir acolhimento, leveza e constatar que consegue avançar sem sofrer para isso.',
-        teaching: 'Condução tranquila, progressão sem agressividade, segurança emocional e correção com tato, sem deixar de existir.'
-      },
-      obstinada: {
-        name: 'A Obstinada', emoji: '🚀', mini: 'quer ver progresso concreto',
-        subtitle: 'Você tende a se engajar mais quando existe meta e direção.',
-        summary: 'Você se move por avanço visível. Gosta de saber para onde está indo, o que está construindo e como medir evolução. Quando sente método frouxo ou progresso nebuloso, a frustração aparece rápido.',
-        learns: 'Com metas, checkpoints, desafios claros, noção de progresso e atividades que mostrem construção real de competência.',
-        blocks: 'Metodologia vaga, excesso de abstração e sensação de estar estudando sem sair do lugar. Você perde energia quando não enxerga resultado.',
-        motivation: 'Meta concreta, comparação entre antes e depois e percepção de que cada etapa leva a um objetivo maior.',
-        teaching: 'Trilha clara, objetivos definidos, marcos visíveis e comunicação constante de progresso e próximos passos.'
-      }
+    const { data, error } = await sb
+      .from("diagnostics")
+      .select("*")
+      .eq("student_id", authUser.id)
+      .eq("type", "level")
+      .maybeSingle();
+
+    if (error) {
+      console.error("Erro ao verificar diagnóstico:", error);
+      testBlocked = true;
+      renderStateScreen(
+        "Erro ao carregar",
+        "Não consegui verificar o status do seu nivelamento. Volte ao portal e tente novamente.",
+        "Voltar ao portal"
+      );
+      return;
+    }
+
+    levelDiagnostic = data || null;
+
+    if (levelDiagnostic && levelDiagnostic.status && levelDiagnostic.status !== "pending") {
+      testBlocked = true;
+      renderStateScreen(
+        "Teste já enviado",
+        "Seu nivelamento já foi concluído. Agora é só aguardar a avaliação da professora.",
+        "Voltar ao portal"
+      );
+    }
+  }
+
+  // ─── DATA ───────────────────────────────────────────────────────────────────
+
+  const grammarQuestions = [
+    // A1 — 1pt each
+    {
+      level: 'A1', weight: 1,
+      title: 'Choose the correct option:',
+      support: '___ my name is Ana and ___ from Brazil.',
+      options: ["I'm / I'm", "My / I'm", "I'm / my", "My / my"],
+      correct: 0
+    },
+    {
+      level: 'A1', weight: 1,
+      title: 'What ___ she do on weekends?',
+      support: 'Choose the correct auxiliary verb.',
+      options: ['do', 'is', 'does', 'are'],
+      correct: 2
+    },
+    {
+      level: 'A1', weight: 1,
+      title: 'There ___ two cats in the garden.',
+      support: 'Choose the correct form of "to be".',
+      options: ['is', 'are', 'be', 'am'],
+      correct: 1
+    },
+    // A2 — 2pts each
+    {
+      level: 'A2', weight: 2,
+      title: 'I ___ to the gym three times last week.',
+      support: 'Choose the correct verb form.',
+      options: ['go', 'goes', 'went', 'gone'],
+      correct: 2
+    },
+    {
+      level: 'A2', weight: 2,
+      title: 'Choose the correct sentence:',
+      support: '',
+      options: ["He don't likes coffee.", "He doesn't like coffee.", "He not like coffee.", "He doesn't likes coffee."],
+      correct: 1
+    },
+    {
+      level: 'A2', weight: 2,
+      title: 'She ___ English for two years when she moved abroad.',
+      support: 'Choose the correct verb tense.',
+      options: ['studied', 'has studied', 'had been studying', 'was study'],
+      correct: 2
+    },
+    // B1 — 3pts each
+    {
+      level: 'B1', weight: 3,
+      title: 'If I ___ more time, I would travel every month.',
+      support: 'Choose the correct conditional form.',
+      options: ['have', 'had', 'would have', 'has'],
+      correct: 1
+    },
+    {
+      level: 'B1', weight: 3,
+      title: 'The report ___ by the team before the meeting started.',
+      support: 'Choose the correct passive form.',
+      options: ['was finished', 'finished', 'has finished', 'were finished'],
+      correct: 0
+    },
+    {
+      level: 'B1', weight: 3,
+      title: 'She asked me ___ I had seen her keys.',
+      support: 'Choose the correct word to introduce indirect speech.',
+      options: ['that', 'if', 'what', 'whether or not'],
+      correct: 1
+    },
+    // B2 — 4pts each
+    {
+      level: 'B2', weight: 4,
+      title: '___ having lived abroad for years, she still struggles with the local accent.',
+      support: 'Choose the correct connector.',
+      options: ['Although', 'Despite', 'Even', 'However'],
+      correct: 1
+    },
+    {
+      level: 'B2', weight: 4,
+      title: 'The new policy will have a significant impact ___ small businesses.',
+      support: 'Choose the correct preposition.',
+      options: ['at', 'for', 'on', 'over'],
+      correct: 2
+    },
+    {
+      level: 'B2', weight: 4,
+      title: 'Choose the most natural and precise sentence:',
+      support: '',
+      options: [
+        'The situation was very unique and never happened before.',
+        'The situation was unprecedented.',
+        'The situation was totally and completely unique.',
+        'The situation had never happened in any way before.'
+      ],
+      correct: 1
+    }
+  ];
+
+  const readingTexts = {
+    A: {
+      title: 'My Daily Routine',
+      body: `My name is Sarah. I am 28 years old and I live in London. Every day, I wake up at 7am and have breakfast at home. I usually eat toast and drink coffee. After breakfast, I take the bus to work. I work in a small office near the city centre.\n\nAfter work, I go to the supermarket or visit my friends. I love cooking, so I usually make dinner at home. At night, I watch TV or read a book. I go to bed at 10pm. I think my routine is simple, but I am happy with my life.`,
+      questions: [
+        {
+          title: 'Where does Sarah work?',
+          options: ['At a supermarket', 'At a school', 'In a small office', 'At home'],
+          correct: 2
+        },
+        {
+          title: 'What does Sarah usually do after work?',
+          options: ['She goes to the gym', 'She goes to the supermarket or visits friends', 'She cooks and watches TV', 'She takes the bus home'],
+          correct: 1
+        },
+        {
+          title: 'Which word best describes Sarah\'s routine?',
+          options: ['Stressful', 'Exciting', 'Simple', 'Boring'],
+          correct: 2
+        }
+      ]
+    },
+    B: {
+      title: 'The Rise of Remote Work',
+      body: `In recent years, remote work has become increasingly common around the world. Many companies that once required employees to work from the office have now adopted flexible working arrangements. For some workers, this change has been positive — they save time on commuting, spend more time with family, and often feel more productive at home.\n\nHowever, not everyone shares this view. Some employees miss the social environment of the office and find it difficult to separate work from personal life when both happen in the same space. Companies, too, face challenges: maintaining team culture and communication can be harder when people rarely meet in person.\n\nDespite these difficulties, most experts agree that remote work is here to stay — at least in some form.`,
+      questions: [
+        {
+          title: 'According to the text, what is one advantage of remote work?',
+          options: ['Higher salaries', 'Less time commuting', 'More meetings with colleagues', 'Better office equipment'],
+          correct: 1
+        },
+        {
+          title: 'What challenge do companies face with remote work?',
+          options: ['Finding new employees', 'Paying for office space', 'Maintaining team culture and communication', 'Managing international clients'],
+          correct: 2
+        },
+        {
+          title: 'What does the author suggest about the future of remote work?',
+          options: ['It will disappear soon', 'It will replace all office work', 'It is likely to continue in some form', 'It only works for large companies'],
+          correct: 2
+        }
+      ]
+    },
+    C: {
+      title: 'The Paradox of Choice',
+      body: `In contemporary consumer culture, choice is often presented as an unqualified good. The more options available, the better — or so the assumption goes. Yet psychologist Barry Schwartz has argued convincingly that an abundance of choice can, paradoxically, lead to greater dissatisfaction rather than freedom.\n\nWhen faced with too many options, people tend to experience what Schwartz calls "decision fatigue" — a state in which the mental effort required to evaluate alternatives becomes overwhelming. Moreover, after making a choice, individuals are more likely to ruminate over the options they rejected, wondering whether a different decision might have led to a better outcome. This phenomenon, known as "post-decision regret," is significantly more prevalent in environments where alternatives are plentiful.\n\nThe implications extend beyond shopping. In education, careers, and relationships, an excess of options may paradoxically reduce our sense of agency rather than enhance it.`,
+      questions: [
+        {
+          title: 'What is the central argument of the text?',
+          options: ['People should have fewer options in life', 'Too many choices can lead to less satisfaction', 'Barry Schwartz is against consumer culture', 'Decision-making is always a difficult process'],
+          correct: 1
+        },
+        {
+          title: 'What does "decision fatigue" refer to in the text?',
+          options: ['Being too tired to go shopping', 'Feeling relieved after making a decision', 'The exhaustion caused by evaluating too many options', 'The regret of making the wrong choice'],
+          correct: 2
+        },
+        {
+          title: 'What can be inferred about the author\'s perspective?',
+          options: ['The author believes choice is always positive', 'The author thinks Schwartz\'s ideas are wrong', 'The author agrees that excess choice can be problematic', 'The author argues that choice only affects shopping decisions'],
+          correct: 2
+        }
+      ]
+    }
+  };
+
+  // ─── STATE ──────────────────────────────────────────────────────────────────
+
+  let currentQ = 0;
+  let grammarAnswers = new Array(grammarQuestions.length).fill(null);
+  let grammarScore = 0;
+  let readingKey = 'A';
+  let currentReadingQ = 0;
+  let readingAnswers = [];
+  let readingScore = 0;
+  let writingText = '';
+  let userName = '';
+  let userEmail = '';
+
+  // ─── HELPERS ────────────────────────────────────────────────────────────────
+
+  const screens = {
+    cover: document.getElementById('coverScreen'),
+    question: document.getElementById('questionScreen'),
+    reading: document.getElementById('readingScreen'),
+    writing: document.getElementById('writingScreen'),
+    email: document.getElementById('emailScreen'),
+    confirm: document.getElementById('confirmScreen')
+  };
+
+  const stepPill = document.getElementById('stepPill');
+
+  function showScreen(name) {
+    Object.values(screens).forEach(s => s.classList.remove('active'));
+    screens[name].classList.add('active');
+  }
+
+  function levelLabel(score) {
+    if (score <= 8)  return 'A1';
+    if (score <= 16) return 'A2';
+    if (score <= 25) return 'B1';
+    return 'B2';
+  }
+
+  function pickReadingKey(score) {
+    if (score <= 9)  return 'A';
+    if (score <= 20) return 'B';
+    return 'C';
+  }
+
+  // ─── GRAMMAR SCREEN ─────────────────────────────────────────────────────────
+
+  function startTest() {
+    if (testBlocked) return;
+    currentQ = 0;
+    grammarAnswers = new Array(grammarQuestions.length).fill(null);
+    showScreen('question');
+    stepPill.textContent = 'Parte 1 — Gramática';
+    renderGrammarQuestion();
+  }
+
+  function renderGrammarQuestion() {
+    const q = grammarQuestions[currentQ];
+    const total = grammarQuestions.length;
+    const pct = Math.round(((currentQ + 1) / total) * 100);
+
+    document.getElementById('progressText').textContent = `Pergunta ${currentQ + 1} de ${total}`;
+    document.getElementById('progressPercent').textContent = `${pct}%`;
+    document.getElementById('progressBar').style.width = `${pct}%`;
+    document.getElementById('sectionBadge').textContent = `Nível ${q.level} · ${q.weight} ${q.weight === 1 ? 'ponto' : 'pontos'}`;
+    document.getElementById('questionTitle').textContent = q.title;
+    document.getElementById('questionSupport').textContent = q.support;
+    document.getElementById('backBtn').disabled = currentQ === 0;
+    document.getElementById('navHint').textContent = grammarAnswers[currentQ] !== null ? 'Resposta marcada.' : 'Escolha uma opção para continuar';
+
+    const container = document.getElementById('optionsContainer');
+    container.innerHTML = q.options.map((opt, i) => `
+      <button class="option ${grammarAnswers[currentQ] === i ? 'selected' : ''}" data-index="${i}">
+        <span class="option-letter">${String.fromCharCode(65 + i)}</span>
+        <span class="option-text">${opt}</span>
+      </button>
+    `).join('');
+
+    container.querySelectorAll('.option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        grammarAnswers[currentQ] = parseInt(btn.dataset.index);
+        document.getElementById('navHint').textContent = 'Resposta registrada';
+        setTimeout(() => {
+          if (currentQ < grammarQuestions.length - 1) {
+            currentQ++;
+            renderGrammarQuestion();
+          } else {
+            finishGrammar();
+          }
+        }, 180);
+      });
+    });
+  }
+
+  document.getElementById('backBtn').addEventListener('click', () => {
+    if (currentQ > 0) { currentQ--; renderGrammarQuestion(); }
+  });
+
+  function finishGrammar() {
+    grammarScore = grammarQuestions.reduce((sum, q, i) => {
+      return sum + (grammarAnswers[i] === q.correct ? q.weight : 0);
+    }, 0);
+    readingKey = pickReadingKey(grammarScore);
+    startReading();
+  }
+
+  // ─── READING SCREEN ─────────────────────────────────────────────────────────
+
+  function startReading() {
+    currentReadingQ = 0;
+    readingAnswers = [];
+    const text = readingTexts[readingKey];
+    document.getElementById('readingTitle').textContent = text.title;
+    document.getElementById('readingBody').innerHTML = text.body.replace(/\n\n/g, '<br><br>');
+    stepPill.textContent = 'Parte 2 — Leitura';
+    showScreen('reading');
+    renderReadingQuestion();
+  }
+
+  function renderReadingQuestion() {
+    const q = readingTexts[readingKey].questions[currentReadingQ];
+    document.getElementById('readingProgressText').textContent = `Pergunta ${currentReadingQ + 1} de 3`;
+    document.getElementById('readingNavHint').textContent = 'Escolha uma opção para continuar';
+
+    const container = document.getElementById('readingOptionsContainer');
+    container.innerHTML = `
+      <p style="font-weight:700; font-size:1rem; letter-spacing:-0.02em; margin-bottom:14px; line-height:1.35;">${q.title}</p>
+      ${q.options.map((opt, i) => `
+        <button class="option" data-index="${i}" style="margin-bottom:10px;">
+          <span class="option-letter">${String.fromCharCode(65 + i)}</span>
+          <span class="option-text">${opt}</span>
+        </button>
+      `).join('')}
+    `;
+
+    container.querySelectorAll('.option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        readingAnswers[currentReadingQ] = parseInt(btn.dataset.index);
+        document.getElementById('readingNavHint').textContent = 'Resposta registrada';
+        setTimeout(() => {
+          if (currentReadingQ < 2) {
+            currentReadingQ++;
+            renderReadingQuestion();
+          } else {
+            finishReading();
+          }
+        }, 180);
+      });
+    });
+  }
+
+  function finishReading() {
+    readingScore = readingTexts[readingKey].questions.reduce((sum, q, i) => {
+      return sum + (readingAnswers[i] === q.correct ? 3 : 0);
+    }, 0);
+    stepPill.textContent = 'Parte 3 — Escrita';
+    showScreen('writing');
+  }
+
+  // ─── WRITING SCREEN ─────────────────────────────────────────────────────────
+
+  const writingTextarea = document.getElementById('writingTextarea');
+  const charCount = document.getElementById('charCount');
+  const writingNextBtn = document.getElementById('writingNextBtn');
+
+  writingTextarea.addEventListener('input', () => {
+    const words = writingTextarea.value.trim().split(/\s+/).filter(w => w.length > 0);
+    charCount.textContent = words.length;
+    writingNextBtn.disabled = words.length < 5;
+  });
+
+  writingNextBtn.addEventListener('click', () => {
+    writingText = writingTextarea.value.trim();
+    stepPill.textContent = 'Finalizar';
+    showScreen('email');
+  });
+
+  // ─── EMAIL SCREEN ────────────────────────────────────────────────────────────
+
+  document.getElementById('submitBtn').addEventListener('click', async () => {
+    const name = document.getElementById('nameInput').value.trim();
+    const email = document.getElementById('emailInput').value.trim();
+    const error = document.getElementById('submitError');
+
+    if (!authUser) {
+      error.textContent = 'Você precisa estar logada no portal para enviar o teste.';
+      error.style.display = 'block';
+      return;
+    }
+
+    if (!name || !email || !email.includes('@')) {
+      error.textContent = 'Por favor, preencha nome e e-mail antes de enviar.';
+      error.style.display = 'block';
+      return;
+    }
+
+    error.style.display = 'none';
+    userName = name;
+    userEmail = email;
+
+    const totalScore = grammarScore + readingScore;
+    const provisionalLevel = levelLabel(totalScore);
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.textContent = 'Enviando...';
+    submitBtn.disabled = true;
+
+    const payload = {
+      nome: userName,
+      email: userEmail,
+      pontuacaoGramatica: grammarScore,
+      pontuacaoReading: readingScore,
+      pontuacaoTotal: totalScore,
+      nivelProvisorio: provisionalLevel,
+      textoReading: readingKey,
+      writing: writingText
     };
 
-    const questions = [
-      { title: 'Você está numa aula e a professora pede pra você falar em inglês na frente de todo mundo. Você:', options: [ { text: 'Pede um segundo pra organizar o que vai falar', profile: 'estudiosa' }, { text: 'Faz porque precisa, tá aqui pra evoluir', profile: 'obstinada' }, { text: 'Já levanta a mão antes de terminar a frase', profile: 'protagonista' }, { text: 'Faz, mas fica com aquela ansiedade depois', profile: 'relaxada' }, { text: 'Depende do humor do dia', profile: 'camaleao' }, { text: 'Pergunta qual é o objetivo do exercício primeiro', profile: 'analitica' } ] },
-      { title: 'Você errou uma palavra em inglês na frente de alguém. Sua reação:', options: [ { text: 'Quer entender por que errou', profile: 'analitica' }, { text: 'Fica levemente constrangida mas segue em frente', profile: 'relaxada' }, { text: 'Anota pra não errar de novo', profile: 'obstinada' }, { text: 'Ri e corrige na hora', profile: 'protagonista' }, { text: 'Fica pensando no erro horas depois', profile: 'estudiosa' }, { text: 'Depende de quem estava presente', profile: 'camaleao' } ] },
-      { title: 'Como você prefere aprender uma palavra nova?', options: [ { text: 'Ouvindo várias vezes até cair naturalmente', profile: 'relaxada' }, { text: 'Usando ela logo numa frase, mesmo sem ter certeza', profile: 'protagonista' }, { text: 'Repetindo até fixar de vez', profile: 'obstinada' }, { text: 'Depende — às vezes vê num filme, às vezes numa aula', profile: 'camaleao' }, { text: 'Entendendo a origem e como ela se encaixa na gramática', profile: 'analitica' }, { text: 'Vendo a escrita, a pronúncia e o contexto antes de usar', profile: 'estudiosa' } ] },
-      { title: 'Você tem uma semana corrida e não conseguiu estudar inglês. Você:', options: [ { text: 'Não se estressa muito, retoma quando der', profile: 'camaleao' }, { text: 'Dobra o esforço na semana seguinte', profile: 'obstinada' }, { text: 'Sente que perdeu o fio e precisa retomar do começo', profile: 'estudiosa' }, { text: 'Improvisa no dia seguinte e segue', profile: 'protagonista' }, { text: 'Analisa o que impediu e reorganiza a rotina', profile: 'analitica' }, { text: 'Sente uma culpa leve mas não deixa virar bola de neve', profile: 'relaxada' } ] },
-      { title: 'Qual dessas situações mais te anima?', options: [ { text: 'Terminar um exercício difícil sem nenhum erro', profile: 'estudiosa' }, { text: 'Ver que evoluiu comparando com onde estava antes', profile: 'obstinada' }, { text: 'Finalmente entender uma regra que sempre te confundiu', profile: 'analitica' }, { text: 'Ter uma aula tranquila, sem pressão, só fluindo', profile: 'relaxada' }, { text: 'Improvisar uma conversa em inglês com alguém desconhecido', profile: 'protagonista' }, { text: 'Assistir uma série e entender tudo sem legenda', profile: 'camaleao' } ] },
-      { title: 'Como você se descreve estudando sozinha?', options: [ { text: 'Organizada, com material separado e anotações', profile: 'estudiosa' }, { text: 'No meu ritmo, sem me cobrar demais', profile: 'relaxada' }, { text: 'Pesquisando além do que foi pedido', profile: 'analitica' }, { text: 'Caótica mas produtiva do meu jeito', profile: 'protagonista' }, { text: 'Com meta clara e prazo definido', profile: 'obstinada' }, { text: 'Irregular — tem dias incríveis e dias que não rola', profile: 'camaleao' } ] },
-      { title: 'Alguém te corrige em inglês. Você sente:', options: [ { text: 'Depende muito de como a pessoa falou', profile: 'camaleao' }, { text: 'Gratidão — mais uma coisa que aprendi', profile: 'protagonista' }, { text: 'Fica ok, desde que seja com gentileza', profile: 'relaxada' }, { text: 'Encarada como parte do processo, segue', profile: 'obstinada' }, { text: 'Curiosidade — quero entender o porquê da correção', profile: 'analitica' }, { text: 'Um aperto, mas sei que é necessário', profile: 'estudiosa' } ] },
-      { title: 'Qual frase mais combina com você?', options: [ { text: 'Foco no resultado', profile: 'obstinada' }, { text: 'Errar faz parte, o importante é tentar', profile: 'protagonista' }, { text: 'Vou no meu tempo', profile: 'relaxada' }, { text: 'Prefiro fazer certo do que fazer rápido', profile: 'estudiosa' }, { text: 'Depende do contexto', profile: 'camaleao' }, { text: 'Preciso entender antes de fazer', profile: 'analitica' } ] },
-      { title: 'Você precisa fazer uma apresentação em inglês em 3 dias. Você:', options: [ { text: 'Escreve tudo, revisa e decora', profile: 'estudiosa' }, { text: 'Pesquisa bastante antes de montar o conteúdo', profile: 'analitica' }, { text: 'Monta um cronograma dos 3 dias e cumpre', profile: 'obstinada' }, { text: 'Começa com energia e vai ajustando conforme o humor', profile: 'camaleao' }, { text: 'Prepara com calma, sem se estressar com perfeição', profile: 'relaxada' }, { text: 'Esboça na hora e pratica falando alto', profile: 'protagonista' } ] },
-      { title: 'O que mais te trava no inglês?', options: [ { text: 'A falta de consistência nos estudos', profile: 'camaleao' }, { text: 'O medo de errar na frente dos outros', profile: 'estudiosa' }, { text: 'A pressão de ter que performar', profile: 'relaxada' }, { text: 'Nada muito — o que trava é não ter com quem praticar', profile: 'protagonista' }, { text: 'A sensação de que o progresso é lento demais', profile: 'obstinada' }, { text: 'Não entender a lógica por trás de algumas estruturas', profile: 'analitica' } ] },
-      { title: 'Qual é o seu maior sonho com o inglês?', options: [ { text: 'Me sentir natural em qualquer contexto', profile: 'camaleao' }, { text: 'Dominar a língua de verdade, não só no superficial', profile: 'analitica' }, { text: 'Falar e escrever com precisão, sem erros', profile: 'estudiosa' }, { text: 'Me comunicar bem sem ansiedade', profile: 'relaxada' }, { text: 'Conversar com qualquer pessoa em qualquer lugar sem travar', profile: 'protagonista' }, { text: 'Atingir um nível específico — C1, fluência, certificado', profile: 'obstinada' } ] },
-      { title: 'No grupinho de inglês, você seria:', options: [ { text: 'A que faz a pergunta que ninguém tinha coragem de fazer', profile: 'analitica' }, { text: 'A que tá lá com objetivo claro e não para até atingir', profile: 'obstinada' }, { text: 'A que se encaixa em qualquer roda', profile: 'camaleao' }, { text: 'A que sabe a resposta mas pensa duas vezes antes de falar', profile: 'estudiosa' }, { text: 'A que tá lá, presente, absorvendo tudo', profile: 'relaxada' }, { text: 'A que puxa conversa com o nativo sem medo', profile: 'protagonista' } ] }
-    ];
-
-    const coverScreen    = document.getElementById('coverScreen');
-    const questionScreen = document.getElementById('questionScreen');
-    const resultScreen   = document.getElementById('resultScreen');
-    const stepPill       = document.getElementById('stepPill');
-    const characterGrid  = document.getElementById('characterGrid');
-    const startBtn       = document.getElementById('startBtn');
-    const seeProfilesBtn = document.getElementById('seeProfilesBtn');
-    const questionTitle  = document.getElementById('questionTitle');
-    const optionsContainer = document.getElementById('optionsContainer');
-    const backBtn        = document.getElementById('backBtn');
-    const navHint        = document.getElementById('navHint');
-    const progressText   = document.getElementById('progressText');
-    const progressPercent = document.getElementById('progressPercent');
-    const progressBar    = document.getElementById('progressBar');
-    const resultAvatar   = document.getElementById('resultAvatar');
-    const resultName     = document.getElementById('resultName');
-    const resultSubtitle = document.getElementById('resultSubtitle');
-    const resultSummary  = document.getElementById('resultSummary');
-    const resultLearns   = document.getElementById('resultLearns');
-    const resultBlocks   = document.getElementById('resultBlocks');
-    const resultMotivation = document.getElementById('resultMotivation');
-    const resultTeaching = document.getElementById('resultTeaching');
-    const scoreList      = document.getElementById('scoreList');
-    const copyBtn        = document.getElementById('copyBtn');
-
-    let currentQuestion = 0;
-    let answers = new Array(questions.length).fill(null);
-
-    function renderCharacters() {
-      const order = ['protagonista', 'estudiosa', 'camaleao', 'analitica', 'relaxada', 'obstinada'];
-      characterGrid.innerHTML = order.map(key => {
-        const p = profiles[key];
-        return `<div class="character-card"><div class="avatar">${p.emoji}</div><div class="character-title">${p.name}</div><div class="character-mini">${p.mini}</div></div>`;
-      }).join('');
-    }
-
-    function showScreen(screen) {
-      [coverScreen, questionScreen, resultScreen].forEach(s => s.classList.remove('active'));
-      screen.classList.add('active');
-    }
-
-    function startTest() {
-      notificationSentForCurrentRun = false;
-      currentQuestion = 0;
-      answers = new Array(questions.length).fill(null);
-      showScreen(questionScreen);
-      stepPill.textContent = 'Perguntas';
-      renderQuestion();
-    }
-
-    function renderQuestion() {
-      const question = questions[currentQuestion];
-      questionTitle.textContent = question.title;
-      progressText.textContent  = `Pergunta ${currentQuestion + 1} de ${questions.length}`;
-      const pct = Math.round(((currentQuestion + 1) / questions.length) * 100);
-      progressPercent.textContent = `${pct}%`;
-      progressBar.style.width     = `${pct}%`;
-      backBtn.disabled = currentQuestion === 0;
-      navHint.textContent = answers[currentQuestion] ? 'Resposta marcada. Você pode seguir.' : 'Escolha uma opção para continuar';
-
-      optionsContainer.innerHTML = question.options.map((option, index) => {
-        const letter = String.fromCharCode(65 + index);
-        return `<button class="option" data-profile="${option.profile}" data-index="${index}"><span class="option-letter">${letter}</span><span class="option-text">${option.text}</span></button>`;
-      }).join('');
-
-      [...optionsContainer.querySelectorAll('.option')].forEach((button) => {
-        button.addEventListener('click', () => {
-          answers[currentQuestion] = button.dataset.profile;
-          navHint.textContent = 'Resposta registrada';
-          setTimeout(() => {
-            if (currentQuestion < questions.length - 1) {
-              currentQuestion += 1;
-              renderQuestion();
-            } else {
-              renderResult();
-            }
-          }, 180);
-        });
-      });
-    }
-
-    function calculateScores() {
-      const base = { protagonista: 0, estudiosa: 0, camaleao: 0, analitica: 0, relaxada: 0, obstinada: 0 };
-      answers.forEach(answer => { if (answer && base[answer] !== undefined) base[answer] += 1; });
-      return base;
-    }
-
-    function getWinner(scores) {
-      return Object.entries(scores).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
-    }
-
-    function renderResult() {
-      const scores  = calculateScores();
-      const ranking = getWinner(scores);
-      const [winnerKey, winnerScore] = ranking[0];
-      const total  = questions.length;
-      const winner = profiles[winnerKey];
-
-      resultAvatar.textContent     = winner.emoji;
-      resultName.textContent       = winner.name;
-      resultSubtitle.textContent   = `${winnerScore} de ${total} respostas mais próximas desse perfil`;
-      resultSummary.textContent    = winner.summary;
-      resultLearns.textContent     = winner.learns;
-      resultBlocks.textContent     = winner.blocks;
-      resultMotivation.textContent = winner.motivation;
-      resultTeaching.textContent   = winner.teaching;
-
-      scoreList.innerHTML = ranking.map(([key, score]) => {
-        const p = profiles[key];
-        const width = Math.max((score / total) * 100, score > 0 ? 8 : 0);
-        return `<div class="score-item"><div class="score-top"><span>${p.name}</span><span>${score}</span></div><div class="score-track"><div class="score-fill" style="width:${width}%"></div></div></div>`;
-      }).join('');
-
-      stepPill.textContent = 'Resultado';
-      showScreen(resultScreen);
-
-      if (!notificationSentForCurrentRun) {
-        notificationSentForCurrentRun = true;
-
-        // Monta array detalhado: cada item tem a pergunta + a opção escolhida
-        const answersDetailed = answers.map((profileKey, i) => ({
+    const completeAnswers = {
+      grammar: grammarQuestions.map((q, i) => ({
+        question_index: i,
+        level: q.level,
+        weight: q.weight,
+        question: q.title,
+        support: q.support,
+        options: q.options,
+        selected_index: grammarAnswers[i],
+        selected_text: q.options[grammarAnswers[i]] || "",
+        correct_index: q.correct,
+        correct_text: q.options[q.correct] || "",
+        is_correct: grammarAnswers[i] === q.correct
+      })),
+      reading: {
+        text_key: readingKey,
+        title: readingTexts[readingKey].title,
+        body: readingTexts[readingKey].body,
+        answers: readingTexts[readingKey].questions.map((q, i) => ({
           question_index: i,
-          question:       questions[i].title,
-          chosen_profile: profileKey,
-          chosen_text:    questions[i].options.find(o => o.profile === profileKey)?.text || ""
-        }));
+          question: q.title,
+          options: q.options,
+          selected_index: readingAnswers[i],
+          selected_text: q.options[readingAnswers[i]] || "",
+          correct_index: q.correct,
+          correct_text: q.options[q.correct] || "",
+          is_correct: readingAnswers[i] === q.correct
+        }))
+      },
+      writing: writingText,
+      student_name: userName,
+      student_email: userEmail
+    };
 
-        saveAllResults(winnerKey, winner.name, scores, ranking, answersDetailed);
+    const completeResult = {
+      pontuacaoGramatica: grammarScore,
+      pontuacaoReading: readingScore,
+      pontuacaoTotal: totalScore,
+      nivelProvisorio: provisionalLevel,
+      textoReading: readingKey,
+      writing: writingText
+    };
+
+    const diagnosticPayload = {
+      student_id: authUser.id,
+      type: 'level',
+      status: 'submitted',
+      submitted_at: new Date().toISOString(),
+      completed_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      result: provisionalLevel,
+      result_data: completeResult
+    };
+
+    try {
+      const sheetRequest = fetch('https://script.google.com/macros/s/AKfycbxhkK_NhIIAM3C-MxyJCbOIiMAcTtSEUIoMgLFaeKU-0tA-QIAnM9Pl_OolVzrvT6wz/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      let dbResult;
+
+      const answerInsert = await sb
+        .from('diagnostic_answers')
+        .insert({
+          student_id: authUser.id,
+          diagnostic_type: 'level',
+          answers: completeAnswers,
+          result: completeResult,
+          status: 'submitted',
+          updated_at: new Date().toISOString()
+        });
+
+      if (answerInsert.error) {
+        throw answerInsert.error;
       }
+
+      if (levelDiagnostic && levelDiagnostic.id) {
+        dbResult = await sb
+          .from('diagnostics')
+          .update(diagnosticPayload)
+          .eq('id', levelDiagnostic.id)
+          .eq('student_id', authUser.id)
+          .select()
+          .single();
+      } else {
+        dbResult = await sb
+          .from('diagnostics')
+          .insert(diagnosticPayload)
+          .select()
+          .single();
+      }
+
+      if (dbResult.error) {
+        throw dbResult.error;
+      }
+
+      await sb.from('notifications').insert({
+        student_id: authUser.id,
+        student_name: userName,
+        student_email: userEmail,
+        test_type: 'level_test',
+        message: `${userName} enviou o teste de nivelamento. Resultado provisório: ${provisionalLevel}.`,
+        is_read: false
+      }).then(({ error }) => {
+        if (error) console.warn('Erro ao criar notificação:', error.message);
+      });
+
+      await sheetRequest.catch(() => null);
+
+      levelDiagnostic = dbResult.data;
+      if (authUser && authUser.id) localStorage.setItem(`helpdebs_level_submitted_${authUser.id}`, "yes");
+      testBlocked = true;
+
+      document.getElementById('confirmName').textContent = name.split(' ')[0];
+      stepPill.textContent = 'Concluído';
+      showScreen('confirm');
+    } catch (err) {
+      console.error('Erro ao salvar nivelamento:', err);
+      error.textContent = 'Erro ao enviar o teste. Tente novamente em alguns segundos.';
+      error.style.display = 'block';
+      submitBtn.textContent = 'Enviar teste';
+      submitBtn.disabled = false;
     }
+  });
 
-    function copyResult() {
-      const scores  = calculateScores();
-      const ranking = getWinner(scores);
-      const [winnerKey] = ranking[0];
-      const winner  = profiles[winnerKey];
-      const text = `Meu resultado no teste "Quem é você no grupinho do inglês?" foi: ${winner.name}.\n\nResumo: ${winner.summary}\n\nComo eu aprendo melhor: ${winner.learns}`;
+  // ─── RESTART ────────────────────────────────────────────────────────────────
 
-      navigator.clipboard.writeText(text)
-        .then(() => { copyBtn.textContent = 'Resultado copiado'; setTimeout(() => copyBtn.textContent = 'Copiar resultado', 1600); })
-        .catch(() => { copyBtn.textContent = 'Não deu para copiar'; setTimeout(() => copyBtn.textContent = 'Copiar resultado', 1600); });
-    }
+  document.getElementById('restartBtn').textContent = 'Voltar ao portal';
+  document.getElementById('restartBtn').addEventListener('click', () => {
+    window.location.href = 'portal.html';
+  });
 
-    startBtn.addEventListener('click', startTest);
-    seeProfilesBtn.addEventListener('click', () => {
-      document.getElementById('charactersPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    });
-    backBtn.addEventListener('click', () => {
-      if (currentQuestion > 0) { currentQuestion -= 1; renderQuestion(); }
-    });
-    copyBtn.addEventListener('click', copyResult);
+  // ─── INIT ────────────────────────────────────────────────────────────────────
 
-    renderCharacters();
-  </script>
+  initStudentAccess();
+  document.getElementById('startBtn').addEventListener('click', startTest);
+</script>
 </body>
 </html>
