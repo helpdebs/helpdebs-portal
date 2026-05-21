@@ -466,7 +466,7 @@ const LEVEL_TEST_URL = "https://helpdebs.github.io/helpdebs-portal/teste_nivelam
 const INTERESTS_TEST_URL = "https://helpdebs.github.io/helpdebs-portal/interesses.html";
 const MONTHLY_CHECKLIST_URL = "https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html";
 
-let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[], diagConfig=[];
+let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[], diagConfig=[], studentFeedback=null;
 let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth();
 
@@ -569,13 +569,14 @@ async function startPortal(authUser){
 }
 
 async function loadData(){
-  const [p, m, c, d, pay, cfg] = await Promise.all([
+  const [p, m, c, d, pay, cfg, fb] = await Promise.all([
     sb.from("profiles").select("*").eq("id", user.id).single(),
     sb.from("materials").select("*").eq("student_id", user.id).order("created_at",{ascending:false}),
     sb.from("classes").select("*").eq("student_id", user.id).order("class_date",{ascending:true}),
     sb.from("diagnostics").select("*").eq("student_id", user.id).order("updated_at",{ascending:false}),
     sb.from("payments").select("*").eq("student_id", user.id).order("due_date",{ascending:false}),
-    sb.from("diagnostics").select("type,form_url,result_url").is("student_id", null)
+    sb.from("diagnostics").select("type,form_url,result_url").is("student_id", null),
+    sb.from("student_feedback").select("*").eq("student_id", user.id).maybeSingle()
   ]);
 
   if(p.error && p.error.code !== "PGRST116"){ showToast("Erro ao carregar perfil: " + p.error.message); console.error("profiles", p.error); }
@@ -584,6 +585,7 @@ async function loadData(){
   if(d.error){ showToast("Erro ao carregar diagnóstico: " + d.error.message); console.error("diagnostics", d.error); }
   if(pay.error){ showToast("Erro ao carregar financeiro: " + pay.error.message); console.error("payments", pay.error); }
   if(cfg?.error){ console.warn("diagnostics config", cfg.error); }
+  if(fb?.error && fb.error.code !== "PGRST116"){ console.warn("student_feedback", fb.error); }
 
   profile = p.data || { full_name:user.email, email:user.email, level:"—", nivel:"—" };
   if(!profile.elos_url) profile.elos_url = "https://elos.vc/sala/teacherdebora";
@@ -592,8 +594,9 @@ async function loadData(){
   diagnostics = d.data || [];
   payments = pay.data || [];
   diagConfig = cfg?.data || [];
+  studentFeedback = fb?.data || null;
 
-  console.log("PORTAL DATA", {user:user.id, profile, materials, classes, diagnostics, payments, diagConfig});
+  console.log("PORTAL DATA", {user:user.id, profile, materials, classes, diagnostics, payments, diagConfig, studentFeedback});
 }
 
 function renderAll(){
@@ -658,11 +661,14 @@ function daysUntil(dateStr){
 }
 
 function renderMiniFeedback(){
-  const text = getLatestFeedback();
+  const title = studentFeedback?.feedback_title || "Observação da professora";
+  const text = studentFeedback?.feedback_text || getLatestFeedback();
+  const focus = studentFeedback?.weekly_focus || "Foco da semana ainda não definido";
+
   $("miniFeedbackBox").innerHTML = `
-    <strong>Observação da professora</strong>
+    <strong>${esc(title)}</strong>
     <p class="feedback-note">${esc(text)}</p>
-    <div class="feedback-focus">Foco da semana: clareza + vocabulário ativo</div>
+    <div class="feedback-focus">${studentFeedback?.weekly_focus ? "Foco da semana: " : ""}${esc(focus)}</div>
   `;
 }
 
