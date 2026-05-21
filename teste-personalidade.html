@@ -694,7 +694,7 @@
         teaching: 'Aulas com raciocínio, mapa mental da língua, justificativa de uso e exercícios que não tratem você como alguém que só precisa decorar.'
       },
       relaxada: {
-        name: 'A Relaxada', emoji: '🌊', mini: 'aprende melhor sem pressão',
+        name: 'A Tranquila', emoji: '🌊', mini: 'aprende melhor sem pressão',
         subtitle: 'Você rende mais quando se sente segura e à vontade.',
         summary: 'Você absorve bem quando o ambiente não te aperta. Costuma aprender melhor com leveza, repetição tranquila e espaço para errar sem sentir que está performando. A pressão pesa mais do que a dificuldade em si.',
         learns: 'Com ritmo gentil, reforço positivo, escuta, repetição natural e atividades que deixem o inglês mais confortável antes de exigir performance.',
@@ -873,7 +873,7 @@
 
     startBtn.addEventListener('click', startTest);
     seeProfilesBtn.addEventListener('click', () => {
-      document.getElementById('charactersPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      window.location.href = 'personagens.html';
     });
     backBtn.addEventListener('click', () => {
       if (currentQuestion > 0) { currentQuestion -= 1; renderQuestion(); }
