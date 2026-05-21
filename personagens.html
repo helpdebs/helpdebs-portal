@@ -31,6 +31,10 @@
     .brand{display:flex;align-items:center;gap:12px;font-weight:950;letter-spacing:-.04em;}
     .logo{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,#7a5cff,#ab96ff);color:white;box-shadow:0 14px 30px rgba(122,92,255,.24)}
     .pill{border:1px solid var(--line);background:rgba(255,255,255,.75);padding:10px 14px;border-radius:999px;font-size:.82rem;font-weight:900;color:var(--primary);}
+
+    .top-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;}
+    .back-btn{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);background:rgba(255,255,255,.82);color:var(--text);padding:11px 14px;border-radius:999px;font-size:.84rem;font-weight:950;text-decoration:none;box-shadow:0 12px 28px rgba(45,28,90,.10);transition:.18s ease;}
+    .back-btn:hover{transform:translateY(-1px);border-color:rgba(139,92,246,.32);}
     .stage-wrap{position:relative;border-radius:30px;overflow:hidden;background:#17121f;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.76);}
     .stage{position:relative;width:100%;aspect-ratio:1536/1024;overflow:hidden;}
     .poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:filter .28s ease, transform .5s ease;}
@@ -66,7 +70,10 @@
   <main class="page">
     <header class="topbar">
       <div class="brand"><div class="logo">hd</div><span>Conheça o grupinho</span></div>
-      <div class="pill">passe o mouse ou toque em uma personagem</div>
+      <div class="top-actions">
+        <a class="back-btn" href="teste-personalidade.html">← Voltar ao teste</a>
+        <div class="pill">passe o mouse ou toque em uma personagem</div>
+      </div>
     </header>
     <section class="stage-wrap">
       <div class="stage" id="stage">
