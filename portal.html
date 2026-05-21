@@ -244,6 +244,31 @@
     .checklist-embed.show{display:block}
     .checklist-embed iframe{display:block;width:100%;height:78vh;border:none;background:white;}
     @media(max-width:850px){.featured-checklist{grid-template-columns:1fr}.checklist-actions{justify-content:flex-start}.checklist-embed iframe{height:72vh}}
+
+
+    /* ─── TRILHA MVP ─── */
+    .trail-hero{padding:26px;border-radius:28px;background:radial-gradient(circle at 90% 8%,rgba(219,255,102,.48),transparent 26%),radial-gradient(circle at 0% 0%,rgba(122,92,255,.20),transparent 32%),linear-gradient(135deg,rgba(255,255,255,.96),rgba(247,244,255,.94));border:1px solid rgba(122,92,255,.16);box-shadow:var(--shadow);display:grid;gap:18px;margin-bottom:18px}
+    .trail-hero h2{margin:0;font-size:clamp(1.6rem,2.4vw,2.6rem);line-height:1;letter-spacing:-.06em}
+    .trail-hero p{margin:0;color:var(--muted);line-height:1.6;max-width:70ch}
+    .trail-status-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .trail-map{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px;margin-top:16px}
+    .trail-day{border:none;min-height:96px;border-radius:22px;background:rgba(255,255,255,.80);border:1px solid rgba(122,92,255,.11);box-shadow:0 14px 30px rgba(63,37,128,.08);padding:14px;text-align:left;display:grid;align-content:space-between;gap:10px;cursor:pointer;transition:.18s ease;color:var(--text)}
+    .trail-day:hover{transform:translateY(-2px);border-color:rgba(122,92,255,.28)}
+    .trail-day.locked{opacity:.52;cursor:not-allowed;background:rgba(255,255,255,.56)}
+    .trail-day.current{background:linear-gradient(180deg,rgba(122,92,255,.14),rgba(255,255,255,.92));border-color:rgba(122,92,255,.24)}
+    .trail-day.done{background:linear-gradient(180deg,rgba(219,255,102,.36),rgba(255,255,255,.92));border-color:rgba(219,255,102,.48)}
+    .trail-day strong{font-size:.92rem;letter-spacing:-.03em}.trail-day span{font-size:.76rem;color:var(--muted);font-weight:900}
+    .trail-lesson{display:grid;gap:16px;margin-top:18px}
+    .activity-card{padding:22px;border-radius:24px;background:rgba(255,255,255,.88);border:1px solid rgba(122,92,255,.12);box-shadow:var(--shadow);display:grid;gap:16px}
+    .activity-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.activity-top h3{margin:0;font-size:1.2rem;letter-spacing:-.04em}.activity-top p{margin:5px 0 0;color:var(--muted);line-height:1.5}
+    .activity-question{font-size:1.15rem;font-weight:900;line-height:1.35;letter-spacing:-.03em;padding:18px;border-radius:20px;background:rgba(122,92,255,.07);border:1px solid rgba(122,92,255,.10)}
+    .activity-options{display:grid;gap:10px}.activity-option{border:1px solid rgba(122,92,255,.12);background:white;border-radius:16px;padding:14px 16px;text-align:left;cursor:pointer;font-weight:800;color:var(--text)}
+    .activity-option:hover{border-color:rgba(122,92,255,.32);background:rgba(122,92,255,.05)}
+    .activity-option.correct{background:rgba(219,255,102,.38);border-color:rgba(219,255,102,.62);color:#53710d}.activity-option.wrong{background:rgba(255,120,150,.13);border-color:rgba(255,120,150,.26);color:#b44b67}
+    .activity-input{margin:0;min-height:52px}.trail-actions{display:flex;flex-wrap:wrap;gap:10px}.trail-feedback{font-weight:900;color:var(--primary);min-height:22px}
+    .trail-locked-box{padding:26px;border-radius:26px;background:rgba(255,255,255,.82);border:1px solid rgba(255,120,150,.16);box-shadow:var(--shadow);display:grid;gap:14px}.trail-locked-box h3{margin:0;font-size:1.25rem;letter-spacing:-.04em}.trail-locked-box p{margin:0;color:var(--muted);line-height:1.6}
+    @media(max-width:900px){.trail-map{grid-template-columns:repeat(3,minmax(0,1fr))}.activity-top{flex-direction:column}.trail-day{min-height:86px}}
+    @media(max-width:560px){.trail-map{grid-template-columns:repeat(2,minmax(0,1fr))}}
   </style>
 </head>
 <body>
@@ -301,6 +326,7 @@
           <div class="nav-label">menu</div>
           <button class="nav-btn active" data-section="inicio">Início <small>dashboard</small></button>
           <button class="nav-btn" data-section="diagnostico">Diagnóstico <small>perfil e nível</small></button>
+          <button class="nav-btn" data-section="trilha">Trilha <small>21 dias</small></button>
           <button class="nav-btn" data-section="materiais">Materiais <small>PDFs e resumos</small></button>
           <button class="nav-btn" data-section="calendario">Calendário <small>aulas marcadas</small></button>
           <button class="nav-btn" data-section="ao-vivo">Aula ao vivo <small>link do Elos</small></button>
@@ -399,6 +425,12 @@
           </div>
         </section>
 
+
+
+        <section class="portal-section" id="section-trilha">
+          <div id="trailApp"></div>
+        </section>
+
         <section class="portal-section" id="section-materiais">
           <div id="featuredChecklistArea"></div>
           <div id="checklistEmbedArea" class="checklist-embed"></div>
@@ -466,7 +498,39 @@ const LEVEL_TEST_URL = "https://helpdebs.github.io/helpdebs-portal/teste_nivelam
 const INTERESTS_TEST_URL = "https://helpdebs.github.io/helpdebs-portal/interesses.html";
 const MONTHLY_CHECKLIST_URL = "https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html";
 
-let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[], diagConfig=[], studentFeedback=null;
+const TRAIL_TOTAL_DAYS = 21;
+const TRAIL_ACTIVITIES_PER_DAY = 5;
+const TRAIL_DAY_TITLES = [
+  "Gostos e interesses", "Rotina real", "Opiniões", "Passado", "Planos", "Preferências", "Revisão 1",
+  "Trabalho e estudos", "Séries e filmes", "Conversas sociais", "Problemas do dia a dia", "Comparações", "Histórias curtas", "Revisão 2",
+  "Argumentos", "Listening leve", "Mensagens", "Decisões", "Situações reais", "Revisão final", "Desafio final"
+];
+
+const TRAIL_DAY_1_BANK = {
+  A1: [
+    {type:"choice", skill:"preferences", question:"Choose the best sentence:", options:["I like {interest}.", "I likes {interest}.", "I liking {interest}."], answer:"I like {interest}."},
+    {type:"complete", skill:"vocabulary", question:"Complete: I watch {interest} when I want to ____.", options:["relax", "sleeping", "hungry"], answer:"relax"},
+    {type:"order", skill:"word order", question:"Put the words in order:", words:["like", "I", "{interest}"], answer:"I like {interest}"},
+    {type:"choice", skill:"reading", question:"What does this sentence mean? ‘I like {interest}.’", options:["Eu gosto de {interest}.", "Eu odeio {interest}.", "Eu trabalho com {interest}."], answer:"Eu gosto de {interest}."},
+    {type:"write", skill:"writing", question:"Write a simple sentence with: {interest}", answer:"I like {interest}."}
+  ],
+  B1: [
+    {type:"choice", skill:"preferences", question:"Choose the most natural sentence:", options:["I usually watch {interest} when I need to relax.", "I watch usually {interest} when I need relax.", "I usually watches {interest} when I need relaxing."], answer:"I usually watch {interest} when I need to relax."},
+    {type:"complete", skill:"connection", question:"Complete: I enjoy {interest} because it helps me ____ after a long day.", options:["switch off", "switch on", "turn out"], answer:"switch off"},
+    {type:"order", skill:"word order", question:"Put the words in order:", words:["helps", "relax", "me", "{interest}", "after work"], answer:"{interest} helps me relax after work"},
+    {type:"choice", skill:"reading", question:"Which sentence sounds more natural?", options:["I’m into {interest} because the characters feel familiar.", "I’m in {interest} because characters feels familiar.", "I into {interest} because the characters familiar."], answer:"I’m into {interest} because the characters feel familiar."},
+    {type:"write", skill:"writing", question:"Write one sentence explaining why you like {interest}.", answer:"I like {interest} because it helps me relax."}
+  ],
+  B2: [
+    {type:"choice", skill:"nuance", question:"Choose the sentence with the most natural B2 tone:", options:["What makes {interest} enjoyable is how familiar and comforting it feels.", "What does {interest} enjoyable is how comfort it feels.", "{interest} is enjoyable because familiar and comfort."], answer:"What makes {interest} enjoyable is how familiar and comforting it feels."},
+    {type:"complete", skill:"expression", question:"Complete: I tend to go back to {interest} whenever I want something ____ but still engaging.", options:["comforting", "comfort", "comforted"], answer:"comforting"},
+    {type:"order", skill:"structure", question:"Put the words in order:", words:["stands out", "because", "{interest}", "the dialogue", "feels natural"], answer:"{interest} stands out because the dialogue feels natural"},
+    {type:"choice", skill:"reading", question:"Which sentence expresses a more developed opinion?", options:["What I appreciate about {interest} is the way it balances humor and emotional familiarity.", "I like {interest} because good.", "{interest} is very more better because funny."], answer:"What I appreciate about {interest} is the way it balances humor and emotional familiarity."},
+    {type:"write", skill:"writing", question:"Write a B2-style opinion sentence about {interest}.", answer:"What I appreciate about {interest} is how natural the dialogue feels."}
+  ]
+};
+
+let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[], diagConfig=[], trailProgress=[];
 let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth();
 
@@ -561,13 +625,146 @@ function getDiagnosisProgress(){
   const totalRequired = 3;
   const requiredTypes = ["profile", "level", "interests"];
   const doneCount = requiredTypes.filter(type => {
-    const item = diagnostics.find(d => d.type === type);
+    const item = getLatestDiagnostic(type);
     return isDiagnosticDone(item);
   }).length;
   if(doneCount === 0) return { label: "começar diagnóstico", className: "diagnosis-red", pending: totalRequired, done: 0, total: totalRequired };
-  if(doneCount < totalRequired) return { label: "trilha ativa", className: "diagnosis-orange", pending: totalRequired - doneCount, done: doneCount, total: totalRequired };
-  return { label: "diagnóstico ok", className: "diagnosis-green", pending: 0, done: totalRequired, total: totalRequired };
+  if(doneCount < totalRequired) return { label: "trilha bloqueada", className: "diagnosis-orange", pending: totalRequired - doneCount, done: doneCount, total: totalRequired };
+  return { label: "trilha liberada", className: "diagnosis-green", pending: 0, done: totalRequired, total: totalRequired };
 }
+
+function areDiagnosticsComplete(){
+  return ["profile", "level", "interests"].every(type => isDiagnosticDone(getLatestDiagnostic(type)));
+}
+
+function normalizeTrailLevel(){
+  const raw = String(getSavedLevelResult() || "").toUpperCase();
+  if(raw.includes("B2") || raw.includes("C1") || raw.includes("C2")) return "B2";
+  if(raw.includes("B1")) return "B1";
+  return "A1";
+}
+
+function getPrimaryInterest(){
+  const item = getLatestDiagnostic("interests");
+  const raw = item?.result_data || item?.result_json || item?.result || profile?.interests || profile?.interesses || "";
+  let value = "your favorite topic";
+  if(Array.isArray(raw)) value = raw[0] || value;
+  else if(raw && typeof raw === "object"){
+    const possible = raw.interests || raw.interesses || raw.favorite_topics || raw.temas || raw.series || raw.movies || raw.hobbies;
+    if(Array.isArray(possible)) value = possible[0] || value;
+    else value = possible || raw.favorite || raw.interest || raw.interesse || raw.topic || value;
+  } else if(typeof raw === "string"){
+    value = raw.split(/[,;|]/).map(x => x.trim()).filter(Boolean)[0] || value;
+  }
+  return String(value || "your favorite topic").trim();
+}
+
+function fillTrailText(text){
+  return String(text ?? "").replaceAll("{interest}", getPrimaryInterest());
+}
+
+function getTrailStorageKey(){ return `helpdebs_trail_${user?.id || "guest"}`; }
+function getTrailProgress(){
+  try{return JSON.parse(localStorage.getItem(getTrailStorageKey()) || "{}");}
+  catch(e){return {};}
+}
+function setTrailProgress(progress){ localStorage.setItem(getTrailStorageKey(), JSON.stringify(progress)); }
+function isTrailActivityDone(day, index){ return !!getTrailProgress()?.[`day_${day}_activity_${index}`]; }
+function isTrailDayDone(day){
+  if(day !== 1) return false;
+  return Array.from({length:TRAIL_ACTIVITIES_PER_DAY}, (_,i) => isTrailActivityDone(day, i)).every(Boolean);
+}
+
+function checkTrailAnswer(activityIndex, expected, selected){
+  const input = $(`trailInput${activityIndex}`);
+  const feedback = $(`trailFeedback${activityIndex}`);
+  const expectedText = fillTrailText(expected).trim().toLowerCase().replace(/[.!?]/g, "");
+  const selectedText = String(selected ?? input?.value ?? "").trim().toLowerCase().replace(/[.!?]/g, "");
+  const ok = selectedText === expectedText || (input && selectedText.length >= 8);
+  if(feedback) feedback.textContent = ok ? "Certo! Atividade registrada ✓" : "Ainda não. Tenta de novo.";
+  if(ok){
+    const progress = getTrailProgress();
+    progress[`day_1_activity_${activityIndex}`] = { done:true, completed_at:new Date().toISOString() };
+    setTrailProgress(progress);
+    showToast("Atividade concluída ✨");
+    renderTrail();
+  }
+}
+
+function renderActivity(activity, index){
+  const done = isTrailActivityDone(1, index);
+  const badge = done ? `<span class="mini-badge status-done">concluída</span>` : `<span class="mini-badge status-pending">pendente</span>`;
+  let body = "";
+  if(activity.type === "choice" || activity.type === "complete"){
+    body = `<div class="activity-options">${activity.options.map(opt => `<button class="activity-option" onclick="checkTrailAnswer(${index}, '${esc(fillTrailText(activity.answer))}', '${esc(fillTrailText(opt))}')">${esc(fillTrailText(opt))}</button>`).join("")}</div>`;
+  } else if(activity.type === "order"){
+    body = `<div class="activity-options">${activity.words.map(w => `<span class="activity-option">${esc(fillTrailText(w))}</span>`).join("")}</div><input class="activity-input" id="trailInput${index}" placeholder="Digite a frase em ordem" /><button class="mini-btn" onclick="checkTrailAnswer(${index}, '${esc(fillTrailText(activity.answer))}')">Conferir</button>`;
+  } else {
+    body = `<input class="activity-input" id="trailInput${index}" placeholder="Escreva sua resposta" /><button class="mini-btn" onclick="checkTrailAnswer(${index}, '${esc(fillTrailText(activity.answer))}')">Salvar resposta</button>`;
+  }
+  return `
+    <div class="activity-card">
+      <div class="activity-top">
+        <div><h3>Atividade ${index + 1}</h3><p>${esc(activity.skill)} • ${esc(activity.type)}</p></div>
+        ${badge}
+      </div>
+      <div class="activity-question">${esc(fillTrailText(activity.question))}</div>
+      ${body}
+      <div class="trail-feedback" id="trailFeedback${index}">${done ? "Já concluída ✓" : ""}</div>
+    </div>
+  `;
+}
+
+function renderTrail(){
+  const el = $("trailApp");
+  if(!el) return;
+  const unlocked = areDiagnosticsComplete();
+  const level = normalizeTrailLevel();
+  const interest = getPrimaryInterest();
+  const doneCount = Array.from({length:TRAIL_ACTIVITIES_PER_DAY}, (_,i) => isTrailActivityDone(1, i)).filter(Boolean).length;
+  if(!unlocked){
+    el.innerHTML = `
+      <div class="trail-locked-box">
+        <span class="badge diagnosis-orange">trilha bloqueada</span>
+        <h3>Complete os 3 diagnósticos para liberar sua trilha.</h3>
+        <p>A trilha usa personalidade, nível e interesses para escolher atividades mais adequadas para cada aluna.</p>
+        <div class="trail-actions"><button class="btn btn-primary" onclick="goSection('diagnostico')">Ir para diagnóstico</button></div>
+      </div>
+    `;
+    return;
+  }
+  const activities = TRAIL_DAY_1_BANK[level] || TRAIL_DAY_1_BANK.A1;
+  el.innerHTML = `
+    <div class="trail-hero">
+      <div class="trail-status-row">
+        <span class="badge diagnosis-green">trilha liberada</span>
+        <span class="badge">nível ${esc(level)}</span>
+        <span class="badge">tema: ${esc(interest)}</span>
+      </div>
+      <div>
+        <h2>Sua trilha de 21 dias</h2>
+        <p>Este é o MVP: o Dia 1 já funciona com 5 atividades personalizadas. Os outros dias aparecem no mapa para a estrutura ficar pronta no portal.</p>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${Math.round((doneCount/TRAIL_ACTIVITIES_PER_DAY)*100)}%"></div></div>
+      <p class="dash-muted">Dia 1: ${doneCount} de ${TRAIL_ACTIVITIES_PER_DAY} atividades concluídas.</p>
+    </div>
+    <div class="panel materials-card">
+      <div class="section-title"><h3>Mapa da trilha</h3></div>
+      <div class="trail-map">
+        ${Array.from({length:TRAIL_TOTAL_DAYS}, (_,i) => {
+          const day = i + 1;
+          const cls = day === 1 ? (isTrailDayDone(1) ? "done" : "current") : "locked";
+          const status = day === 1 ? (isTrailDayDone(1) ? "concluído" : "liberado") : "em breve";
+          return `<button class="trail-day ${cls}" onclick="${day === 1 ? "document.getElementById('trailLesson').scrollIntoView({behavior:'smooth'})" : "showToast('Esse dia fica para a próxima etapa')"}"><strong>Dia ${day}</strong><span>${esc(TRAIL_DAY_TITLES[i] || "Lição")}</span><span>${status}</span></button>`;
+        }).join("")}
+      </div>
+    </div>
+    <div class="trail-lesson" id="trailLesson">
+      ${activities.map(renderActivity).join("")}
+    </div>
+  `;
+}
+
 
 document.addEventListener("DOMContentLoaded", async () => {
   sb = window.supabase.createClient(SB_URL, SB_ANON);
@@ -612,14 +809,13 @@ async function startPortal(authUser){
 }
 
 async function loadData(){
-  const [p, m, c, d, pay, cfg, fb] = await Promise.all([
+  const [p, m, c, d, pay, cfg] = await Promise.all([
     sb.from("profiles").select("*").eq("id", user.id).single(),
     sb.from("materials").select("*").eq("student_id", user.id).order("created_at",{ascending:false}),
     sb.from("classes").select("*").eq("student_id", user.id).order("class_date",{ascending:true}),
     sb.from("diagnostics").select("*").eq("student_id", user.id).order("updated_at",{ascending:false}),
     sb.from("payments").select("*").eq("student_id", user.id).order("due_date",{ascending:false}),
-    sb.from("diagnostics").select("type,form_url,result_url").is("student_id", null),
-    sb.from("student_feedback").select("*").eq("student_id", user.id).order("updated_at",{ascending:false}).limit(1).maybeSingle()
+    sb.from("diagnostics").select("type,form_url,result_url").is("student_id", null)
   ]);
 
   if(p.error && p.error.code !== "PGRST116"){ showToast("Erro ao carregar perfil: " + p.error.message); console.error("profiles", p.error); }
@@ -628,7 +824,6 @@ async function loadData(){
   if(d.error){ showToast("Erro ao carregar diagnóstico: " + d.error.message); console.error("diagnostics", d.error); }
   if(pay.error){ showToast("Erro ao carregar financeiro: " + pay.error.message); console.error("payments", pay.error); }
   if(cfg?.error){ console.warn("diagnostics config", cfg.error); }
-  if(fb?.error){ console.warn("student_feedback", fb.error); }
 
   profile = p.data || { full_name:user.email, email:user.email, level:"—", nivel:"—" };
   if(!profile.elos_url) profile.elos_url = "https://elos.vc/sala/teacherdebora";
@@ -637,9 +832,8 @@ async function loadData(){
   diagnostics = d.data || [];
   payments = pay.data || [];
   diagConfig = cfg?.data || [];
-  studentFeedback = fb?.data || null;
 
-  console.log("PORTAL DATA", {user:user.id, profile, materials, classes, diagnostics, payments, diagConfig, studentFeedback});
+  console.log("PORTAL DATA", {user:user.id, profile, materials, classes, diagnostics, payments, diagConfig});
 }
 
 function renderAll(){
@@ -652,6 +846,7 @@ function renderAll(){
   renderTips();
   renderVideos();
   renderPayments();
+  renderTrail();
 }
 
 function renderProfile(){
@@ -708,14 +903,11 @@ function daysUntil(dateStr){
 }
 
 function renderMiniFeedback(){
-  const title = studentFeedback?.feedback_title || "Observação da professora";
-  const text = studentFeedback?.feedback_text || getLatestFeedback();
-  const focus = studentFeedback?.weekly_focus || "clareza + vocabulário ativo";
-
+  const text = getLatestFeedback();
   $("miniFeedbackBox").innerHTML = `
-    <strong>${esc(title)}</strong>
+    <strong>Observação da professora</strong>
     <p class="feedback-note">${esc(text)}</p>
-    <div class="feedback-focus">Foco da semana: ${esc(focus)}</div>
+    <div class="feedback-focus">Foco da semana: clareza + vocabulário ativo</div>
   `;
 }
 
@@ -803,8 +995,8 @@ function renderDashboard(){
 
   $("quickLinks").innerHTML = `
     <div class="quick-link">
-      <div><strong>Continuar diagnóstico</strong><p>${diag.pending ? diag.pending+" pendente(s)" : "Tudo concluído"}</p></div>
-      <a href="#" onclick="goSection('diagnostico');return false;">acessar</a>
+      <div><strong>${diag.pending ? "Continuar diagnóstico" : "Começar trilha"}</strong><p>${diag.pending ? diag.pending+" pendente(s)" : "Trilha de 21 dias liberada"}</p></div>
+      <a href="#" onclick="goSection('${diag.pending ? "diagnostico" : "trilha"}');return false;">${diag.pending ? "acessar" : "abrir"}</a>
     </div>
     <div class="quick-link">
       <div><strong>Material mais recente</strong><p>${latest ? esc(latest.title) : "Nenhum material ainda"}</p></div>
@@ -1110,18 +1302,21 @@ function openElos(){
   openLink(url);
 }
 
-const sectionMeta = {inicio:"Portal da aluna",diagnostico:"Diagnóstico",materiais:"Materiais",calendario:"Calendário","ao-vivo":"Aula ao vivo",dicas:"Dicas",videoaulas:"Videoaulas",financeiro:"Financeiro"};
+const sectionMeta = {inicio:"Portal da aluna",diagnostico:"Diagnóstico",trilha:"Trilha",materiais:"Materiais",calendario:"Calendário","ao-vivo":"Aula ao vivo",dicas:"Dicas",videoaulas:"Videoaulas",financeiro:"Financeiro"};
 
 function goSection(target){
   document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.section === target));
   document.querySelectorAll(".portal-section").forEach(section => section.classList.remove("active"));
-  $(`section-${target}`).classList.add("active");
+  const section = $(`section-${target}`);
+  if(!section){ showToast("Seção não encontrada"); return; }
+  section.classList.add("active");
   $("pageTitle").textContent = sectionMeta[target] || target;
   if($("mobileSectionTitle")) $("mobileSectionTitle").textContent = sectionMeta[target] || target;
   if(target === "calendario") renderCalendar();
   if(target === "materiais"){ renderFeaturedChecklist(); renderMaterials(); }
   if(target === "diagnostico") renderDiagnostics();
   if(target === "financeiro") renderPayments();
+  if(target === "trilha") renderTrail();
   if(target === "ao-vivo"){
     const next = classes.find(c => c.class_date >= new Date().toISOString().slice(0,10));
     $("nextClassLive").textContent = next
