@@ -920,7 +920,7 @@
 <script>
   const SB_URL = "https://pgdanuifukzisyyummpz.supabase.co";
   const SB_ANON = "sb_publishable_81NM6F08rsXXSCgjWl4iSg_v99cdVpo";
-  const sb = window.supabase.createClient(SB_URL, SB_ANON);
+  const sb = window.supabase.createClient(SB_URL, SB_ANON, { auth: { storageKey: 'helpdebs-portal-auth', persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
 
   let authUser = null;
   let levelDiagnostic = null;
