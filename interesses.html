@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Área de Interesse | HelpDebs</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     :root {
@@ -1029,6 +1030,50 @@
   </div>
 
   <script>
+    const SB_URL = "https://pgdanuifukzisyyummpz.supabase.co";
+    const SB_ANON = "sb_publishable_81NM6F08rsXXSCgjWl4iSg_v99cdVpo";
+    const sb = window.supabase.createClient(SB_URL, SB_ANON);
+    let authUser = null;
+    let testBlocked = false;
+
+    async function initStudentAccess(){
+      const { data: { session } } = await sb.auth.getSession();
+      if(!session || !session.user){
+        testBlocked = true;
+        document.querySelector('.form-card').innerHTML = `
+          <div class="step active" style="display:block;text-align:center;min-height:360px">
+            <div class="step-inner">
+              <span class="step-kicker">Acesso necessário</span>
+              <h2>Entre pelo portal antes de responder.</h2>
+              <p class="step-subtitle" style="margin:0 auto 20px">Assim consigo vincular suas respostas à sua conta.</p>
+              <button type="button" class="primary" onclick="window.location.href='portal.html'">Voltar ao portal</button>
+            </div>
+          </div>`;
+        return;
+      }
+      authUser = session.user;
+
+      const { data } = await sb
+        .from('diagnostics')
+        .select('*')
+        .eq('student_id', authUser.id)
+        .eq('type', 'interests')
+        .maybeSingle();
+
+      if(data && data.status && data.status !== 'pending'){
+        testBlocked = true;
+        document.querySelector('.form-card').innerHTML = `
+          <div class="step active" style="display:block;text-align:center;min-height:360px">
+            <div class="step-inner">
+              <span class="step-kicker">Questionário já enviado</span>
+              <h2>Suas respostas de interesse já foram salvas.</h2>
+              <p class="step-subtitle" style="margin:0 auto 20px">Elas já podem ser usadas para personalizar suas aulas e materiais.</p>
+              <button type="button" class="primary" onclick="window.location.href='portal.html'">Voltar ao portal</button>
+            </div>
+          </div>`;
+      }
+    }
+
     const steps = document.querySelectorAll('.step');
     const stepItems = document.querySelectorAll('.step-item');
     const nextBtn = document.getElementById('nextBtn');
@@ -1116,16 +1161,99 @@
       rangeValue.textContent = `${comfortRange.value}/10`;
     });
 
-    form.addEventListener('submit', (event) => {
+    form.addEventListener('submit', async (event) => {
       event.preventDefault();
+      if(testBlocked) return;
+
+      if(!authUser){
+        alert('Você precisa estar logada no portal para enviar.');
+        return;
+      }
 
       const answers = collectFormData();
-      console.log('Respostas do questionário de interesses:', answers);
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Salvando...';
 
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3600);
+      try{
+        const now = new Date().toISOString();
+        const completeResult = {
+          summary: 'Questionário de interesses enviado',
+          comfort_level: answers.comfort_level || null,
+          area: answers.area || null,
+          class_style: answers.class_style || null,
+          main_difficulties: answers.difficulty || [],
+          goals: answers.goals || ''
+        };
+
+        const answerInsert = await sb.from('diagnostic_answers').insert({
+          student_id: authUser.id,
+          diagnostic_type: 'interests',
+          answers,
+          result: completeResult,
+          status: 'submitted',
+          updated_at: now
+        });
+        if(answerInsert.error) throw answerInsert.error;
+
+        const { data: existing } = await sb
+          .from('diagnostics')
+          .select('id')
+          .eq('student_id', authUser.id)
+          .eq('type', 'interests')
+          .maybeSingle();
+
+        const diagPayload = {
+          student_id: authUser.id,
+          type: 'interests',
+          status: 'submitted',
+          result: 'Interesses enviados',
+          result_data: completeResult,
+          submitted_at: now,
+          completed_at: now,
+          updated_at: now
+        };
+
+        if(existing?.id){
+          const { error } = await sb.from('diagnostics').update(diagPayload).eq('id', existing.id);
+          if(error) throw error;
+        }else{
+          const { error } = await sb.from('diagnostics').insert(diagPayload);
+          if(error) throw error;
+        }
+
+        const { data: profile } = await sb
+          .from('profiles')
+          .select('full_name,email')
+          .eq('id', authUser.id)
+          .maybeSingle();
+
+        const studentName = profile?.full_name || authUser.email || 'Aluna';
+        const studentEmail = profile?.email || authUser.email || '';
+
+        await sb.from('notifications').insert({
+          student_id: authUser.id,
+          student_name: studentName,
+          student_email: studentEmail,
+          test_type: 'interests_test',
+          message: `${studentName} respondeu a área de interesses.`,
+          is_read: false
+        }).then(({ error }) => {
+          if(error) console.warn('Erro ao criar notificação:', error.message);
+        });
+
+        toast.querySelector('strong').textContent = 'Questionário salvo ✨';
+        toast.querySelector('p').textContent = 'Suas respostas foram salvas e já podem ser usadas na personalização.';
+        toast.classList.add('show');
+        setTimeout(() => { window.location.href = 'portal.html'; }, 1400);
+      }catch(err){
+        console.error(err);
+        alert('Erro ao salvar respostas: ' + (err.message || 'tente novamente.'));
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Finalizar questionário';
+      }
     });
 
+    initStudentAccess();
     updateStep();
   </script>
 </body>
