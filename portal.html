@@ -678,7 +678,7 @@ function renderDiagnosisProgress(){
   const next = getNextPendingDiagnostic();
   const stepClass = (type, index) => {
     const item = diagnostics.find(d => d.type === type);
-    if(item?.status === "done") return "done";
+    if(isDiagnosticDone(item)) return "done";
     if(index === diag.done) return "current";
     return "";
   };
