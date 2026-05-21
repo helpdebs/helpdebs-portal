@@ -466,7 +466,7 @@ const LEVEL_TEST_URL = "https://helpdebs.github.io/helpdebs-portal/teste_nivelam
 const INTERESTS_TEST_URL = "https://helpdebs.github.io/helpdebs-portal/interesses.html";
 const MONTHLY_CHECKLIST_URL = "https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html";
 
-let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[], diagConfig=[], studentFeedback=null;
+let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[], diagConfig=[];
 let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth();
 
@@ -514,6 +514,49 @@ function isDiagnosticDone(item){
   });
 }
 
+
+function normalizeDiagnosticResult(value){
+  if(value === null || value === undefined || value === "") return "";
+  if(typeof value === "string") return value;
+  if(typeof value === "number") return String(value);
+  if(typeof value === "object"){
+    return value.level || value.nivel || value.profile || value.perfil || value.result || value.label || value.title || value.name || "";
+  }
+  return String(value);
+}
+
+function getLatestDiagnostic(type){
+  return diagnostics
+    .filter(d => d.type === type)
+    .sort((a,b) => String(b.updated_at || b.submitted_at || b.completed_at || "").localeCompare(String(a.updated_at || a.submitted_at || a.completed_at || "")))[0] || null;
+}
+
+function getDiagnosticResult(type){
+  const item = getLatestDiagnostic(type);
+  if(!item) return "";
+  return normalizeDiagnosticResult(item.result)
+    || normalizeDiagnosticResult(item.result_data)
+    || normalizeDiagnosticResult(item.result_json)
+    || normalizeDiagnosticResult(item.summary);
+}
+
+function getSavedProfileResult(){
+  return getDiagnosticResult("profile") || profile.learning_profile || "Ainda não definido";
+}
+
+function getSavedLevelResult(){
+  return getDiagnosticResult("level") || profile.nivel || profile.level || "Ainda não definido";
+}
+
+function getSavedFocusResult(){
+  const interests = getLatestDiagnostic("interests");
+  const raw = interests?.result_data || interests?.result_json || interests?.result || null;
+  if(raw && typeof raw === "object"){
+    return raw.focus || raw.foco || raw.objective || raw.objetivo || raw.goal || raw.meta || profile.focus || profile.objetivo || "Ainda não definido";
+  }
+  return profile.focus || profile.objetivo || normalizeDiagnosticResult(raw) || "Ainda não definido";
+}
+
 function getDiagnosisProgress(){
   const totalRequired = 3;
   const requiredTypes = ["profile", "level", "interests"];
@@ -527,7 +570,7 @@ function getDiagnosisProgress(){
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  sb = window.supabase.createClient(SB_URL, SB_ANON, { auth: { storageKey: 'helpdebs-portal-auth', persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+  sb = window.supabase.createClient(SB_URL, SB_ANON);
   $("loginBtn").addEventListener("click", login);
   $("loginPassword").addEventListener("keydown", e => { if(e.key === "Enter") login(); });
   $("logoutBtn").addEventListener("click", logout);
@@ -569,14 +612,13 @@ async function startPortal(authUser){
 }
 
 async function loadData(){
-  const [p, m, c, d, pay, cfg, fb] = await Promise.all([
+  const [p, m, c, d, pay, cfg] = await Promise.all([
     sb.from("profiles").select("*").eq("id", user.id).single(),
     sb.from("materials").select("*").eq("student_id", user.id).order("created_at",{ascending:false}),
     sb.from("classes").select("*").eq("student_id", user.id).order("class_date",{ascending:true}),
     sb.from("diagnostics").select("*").eq("student_id", user.id).order("updated_at",{ascending:false}),
     sb.from("payments").select("*").eq("student_id", user.id).order("due_date",{ascending:false}),
-    sb.from("diagnostics").select("type,form_url,result_url").is("student_id", null),
-    sb.from("student_feedback").select("*").eq("student_id", user.id).maybeSingle()
+    sb.from("diagnostics").select("type,form_url,result_url").is("student_id", null)
   ]);
 
   if(p.error && p.error.code !== "PGRST116"){ showToast("Erro ao carregar perfil: " + p.error.message); console.error("profiles", p.error); }
@@ -585,7 +627,6 @@ async function loadData(){
   if(d.error){ showToast("Erro ao carregar diagnóstico: " + d.error.message); console.error("diagnostics", d.error); }
   if(pay.error){ showToast("Erro ao carregar financeiro: " + pay.error.message); console.error("payments", pay.error); }
   if(cfg?.error){ console.warn("diagnostics config", cfg.error); }
-  if(fb?.error && fb.error.code !== "PGRST116"){ console.warn("student_feedback", fb.error); }
 
   profile = p.data || { full_name:user.email, email:user.email, level:"—", nivel:"—" };
   if(!profile.elos_url) profile.elos_url = "https://elos.vc/sala/teacherdebora";
@@ -594,9 +635,8 @@ async function loadData(){
   diagnostics = d.data || [];
   payments = pay.data || [];
   diagConfig = cfg?.data || [];
-  studentFeedback = fb?.data || null;
 
-  console.log("PORTAL DATA", {user:user.id, profile, materials, classes, diagnostics, payments, diagConfig, studentFeedback});
+  console.log("PORTAL DATA", {user:user.id, profile, materials, classes, diagnostics, payments, diagConfig});
 }
 
 function renderAll(){
@@ -615,15 +655,19 @@ function renderProfile(){
   const name = profile.full_name || user.email || "Aluna";
   const first = name.split(" ")[0];
   const diag = getDiagnosisProgress();
+  const savedProfile = getSavedProfileResult();
+  const savedLevel = getSavedLevelResult();
+  const savedFocus = getSavedFocusResult();
+
   $("studentName").textContent = first;
-  $("studentLevel").textContent = `Aulas individuais • nível ${profile.nivel || profile.level || "—"}`;
-  $("studentFocus").textContent = profile.focus || profile.objetivo || "trilha ativa";
+  $("studentLevel").textContent = `Aulas individuais • nível ${savedLevel === "Ainda não definido" ? "—" : savedLevel}`;
+  $("studentFocus").textContent = savedFocus === "Ainda não definido" ? "trilha ativa" : savedFocus;
   $("diagBadge").textContent = diag.label;
   $("diagBadge").className = `badge ${diag.className}`;
   $("profileSummary").innerHTML = `
-    <div class="material-item"><strong>Perfil</strong><p>${esc(profile.learning_profile || "Ainda não definido")}</p></div>
-    <div class="material-item"><strong>Nível</strong><p>${esc(profile.nivel || profile.level || "Ainda não definido")}</p></div>
-    <div class="material-item"><strong>Foco atual</strong><p>${esc(profile.focus || profile.objetivo || "Ainda não definido")}</p></div>
+    <div class="material-item"><strong>Perfil</strong><p>${esc(savedProfile)}</p></div>
+    <div class="material-item"><strong>Nível</strong><p>${esc(savedLevel)}</p></div>
+    <div class="material-item"><strong>Foco atual</strong><p>${esc(savedFocus)}</p></div>
     <div class="material-item"><strong>Diagnóstico</strong><p>${diag.done}/${diag.total} testes concluídos</p></div>
   `;
 }
@@ -641,8 +685,8 @@ function getNextPendingDiagnostic(){
   const order = ["profile", "level", "interests"];
   const labels = { profile: "Quem é você no grupinho do inglês?", level: "Teste de nivelamento", interests: "Área de interesses" };
   const pendingType = order.find(type => {
-    const item = diagnostics.find(d => d.type === type);
-    return !item || item.status !== "done";
+    const item = getLatestDiagnostic(type);
+    return !isDiagnosticDone(item);
   });
   return pendingType ? labels[pendingType] : "Diagnóstico completo";
 }
@@ -661,14 +705,11 @@ function daysUntil(dateStr){
 }
 
 function renderMiniFeedback(){
-  const title = studentFeedback?.feedback_title || "Observação da professora";
-  const text = studentFeedback?.feedback_text || getLatestFeedback();
-  const focus = studentFeedback?.weekly_focus || "Foco da semana ainda não definido";
-
+  const text = getLatestFeedback();
   $("miniFeedbackBox").innerHTML = `
-    <strong>${esc(title)}</strong>
+    <strong>Observação da professora</strong>
     <p class="feedback-note">${esc(text)}</p>
-    <div class="feedback-focus">${studentFeedback?.weekly_focus ? "Foco da semana: " : ""}${esc(focus)}</div>
+    <div class="feedback-focus">Foco da semana: clareza + vocabulário ativo</div>
   `;
 }
 
@@ -678,7 +719,7 @@ function renderDiagnosisProgress(){
   const next = getNextPendingDiagnostic();
   const stepClass = (type, index) => {
     const item = diagnostics.find(d => d.type === type);
-    if(isDiagnosticDone(item)) return "done";
+    if(item?.status === "done") return "done";
     if(index === diag.done) return "current";
     return "";
   };
@@ -785,7 +826,7 @@ function renderDiagnostics(){
   ];
 
   const merged = baseDiagnostics.map(base => {
-    const db = diagnostics.find(d => d.type === base.type);
+    const db = getLatestDiagnostic(base.type);
     const cfg = diagConfig.find(c => c.type === base.type);
     const done = isDiagnosticDone(db);
     return { ...base, db, done, form_url: db?.form_url || cfg?.form_url || base.defaultUrl, result_url: db?.result_url || cfg?.result_url || null };
