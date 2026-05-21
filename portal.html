@@ -5,17 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Portal da Aluna | help.debs</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-function openNewTrailFull(){
-  window.location.href = "helpdebs_trilha_dynamic_lessons.html";
-}
 
-/* override da trilha antiga */
-renderTrail = function(){
-  const frame = document.querySelector(".external-trail-frame");
-  if(frame && !frame.getAttribute("src")){
-    frame.setAttribute("src", "helpdebs_trilha_dynamic_lessons.html");
-  }
-};
+
+
 
 </script>
   <style>
@@ -283,6 +275,14 @@ renderTrail = function(){
     @media(max-width:900px){.trail-map{grid-template-columns:repeat(3,minmax(0,1fr))}.activity-top{flex-direction:column}.trail-day{min-height:86px}}
     @media(max-width:560px){.trail-map{grid-template-columns:repeat(2,minmax(0,1fr))}}
   
+    .external-trail-frame{
+        height:86vh;
+        min-height:760px;
+        border-radius:22px;
+      }
+    }
+
+  
     /* ─── TRILHA NOVA EMBUTIDA ─── */
     .external-trail-shell{
       display:grid;
@@ -499,14 +499,14 @@ renderTrail = function(){
               <div>
                 <span class="badge diagnosis-green">trilha nova</span>
                 <h2>Trilha personalizada de 21 dias</h2>
-                <p>Acesse a nova experiência visual da trilha. As lições agora abrem em <strong>lesson.html?day=...</strong>.</p>
+                <p>Acesse sua trilha diária personalizada dentro do portal.</p>
               </div>
               <button class="btn btn-primary" onclick="openNewTrailFull()">Abrir em tela cheia</button>
             </div>
 
             <iframe
               class="external-trail-frame"
-              src="helpdebs_trilha_dynamic_lessons.html"
+              src="helpdebs_trilha_portal_funcional.html"
               title="Trilha HelpDebs de 21 dias"
               loading="lazy">
             </iframe>
@@ -798,55 +798,15 @@ function renderActivity(activity, index){
 }
 
 function renderTrail(){
-  const el = $("trailApp");
-  if(!el) return;
-  const unlocked = areDiagnosticsComplete();
-  const level = normalizeTrailLevel();
-  const interest = getPrimaryInterest();
-  const doneCount = Array.from({length:TRAIL_ACTIVITIES_PER_DAY}, (_,i) => isTrailActivityDone(1, i)).filter(Boolean).length;
-  if(!unlocked){
-    el.innerHTML = `
-      <div class="trail-locked-box">
-        <span class="badge diagnosis-orange">trilha bloqueada</span>
-        <h3>Complete os 3 diagnósticos para liberar sua trilha.</h3>
-        <p>A trilha usa personalidade, nível e interesses para escolher atividades mais adequadas para cada aluna.</p>
-        <div class="trail-actions"><button class="btn btn-primary" onclick="goSection('diagnostico')">Ir para diagnóstico</button></div>
-      </div>
-    `;
-    return;
-  }
-  const activities = TRAIL_DAY_1_BANK[level] || TRAIL_DAY_1_BANK.A1;
-  el.innerHTML = `
-    <div class="trail-hero">
-      <div class="trail-status-row">
-        <span class="badge diagnosis-green">trilha liberada</span>
-        <span class="badge">nível ${esc(level)}</span>
-        <span class="badge">tema: ${esc(interest)}</span>
-      </div>
-      <div>
-        <h2>Sua trilha de 21 dias</h2>
-        <p>Este é o MVP: o Dia 1 já funciona com 5 atividades personalizadas. Os outros dias aparecem no mapa para a estrutura ficar pronta no portal.</p>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" style="width:${Math.round((doneCount/TRAIL_ACTIVITIES_PER_DAY)*100)}%"></div></div>
-      <p class="dash-muted">Dia 1: ${doneCount} de ${TRAIL_ACTIVITIES_PER_DAY} atividades concluídas.</p>
-    </div>
-    <div class="panel materials-card">
-      <div class="section-title"><h3>Mapa da trilha</h3></div>
-      <div class="trail-map">
-        ${Array.from({length:TRAIL_TOTAL_DAYS}, (_,i) => {
-          const day = i + 1;
-          const cls = day === 1 ? (isTrailDayDone(1) ? "done" : "current") : "locked";
-          const status = day === 1 ? (isTrailDayDone(1) ? "concluído" : "liberado") : "em breve";
-          return `<button class="trail-day ${cls}" onclick="${day === 1 ? "document.getElementById('trailLesson').scrollIntoView({behavior:'smooth'})" : "showToast('Esse dia fica para a próxima etapa')"}"><strong>Dia ${day}</strong><span>${esc(TRAIL_DAY_TITLES[i] || "Lição")}</span><span>${status}</span></button>`;
-        }).join("")}
-      </div>
-    </div>
-    <div class="trail-lesson" id="trailLesson">
-      ${activities.map(renderActivity).join("")}
-    </div>
-  `;
+  const frame = document.querySelector(".external-trail-frame");
+  if(frame) frame.setAttribute("src", "helpdebs_trilha_portal_funcional.html");
 }
 
+
+
+function openNewTrailFull(){
+  window.location.href = "helpdebs_trilha_portal_funcional.html";
+}
 
 document.addEventListener("DOMContentLoaded", async () => {
   sb = window.supabase.createClient(SB_URL, SB_ANON);
@@ -1408,17 +1368,9 @@ function goSection(target){
   }
 }
 
-function openNewTrailFull(){
-  window.location.href = "helpdebs_trilha_dynamic_lessons.html";
-}
 
-/* override da trilha antiga */
-renderTrail = function(){
-  const frame = document.querySelector(".external-trail-frame");
-  if(frame && !frame.getAttribute("src")){
-    frame.setAttribute("src", "helpdebs_trilha_dynamic_lessons.html");
-  }
-};
+
+
 
 </script>
 </body>
