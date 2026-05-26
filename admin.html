@@ -196,12 +196,30 @@ async function startApp(user){
   await refreshAll();
 }
 
-async function refreshAll(){await Promise.all([loadStudents(),loadMaterials(),loadClasses(),loadPayments(),loadNotifications(),loadDiagnosticAnswers(),loadFeedbacks(),loadStudentFeedback()]);fillSelects();fillFeedbackSelect();fillClassSelects($("matStudent")?.value || "");renderAll()}async function loadStudents(){const {data,error}=await sb.from("profiles").select("*").order("created_at",{ascending:false});if(error){toast("Erro ao carregar perfis: "+error.message);STUDENTS=[];return}STUDENTS=data||[]}async function loadMaterials(){const {data}=await sb.from("materials").select("*").order("created_at",{ascending:false});MATERIALS=data||[]}async function loadClasses(){const {data}=await sb.from("classes").select("*").order("class_date",{ascending:true});CLASSES=data||[]}async function loadPayments(){const {data}=await sb.from("payments").select("*").order("due_date",{ascending:false});PAYMENTS=data||[]}async function loadFeedbacks(){const {data,error}=await sb.from("student_feedback").select("*").order("updated_at",{ascending:false});if(error){console.warn("student_feedback",error);FEEDBACKS=[];return}FEEDBACKS=data||[];STUDENT_FEEDBACK=FEEDBACKS}async function loadNotifications(){
+async function refreshAll(){await Promise.all([loadStudents(),loadMaterials(),loadClasses(),loadPayments(),loadNotifications(),loadDiagnosticAnswers(),loadFeedbacks(),loadStudentFeedback()]);fillSelects();fillFeedbackSelect();fillClassSelects($("matStudent")?.value || "");renderAll()}async function loadStudents(){const {data,error}=await sb.from("profiles").select("*").order("created_at",{ascending:false});if(error){toast("Erro ao carregar perfis: "+error.message);STUDENTS=[];return}STUDENTS=data||[]}async function loadMaterials(){const {data}=await sb.from("materials").select("*").order("created_at",{ascending:false});MATERIALS=data||[]}async function loadClasses(){const {data}=await sb.from("classes").select("*").order("class_date",{ascending:true});CLASSES=data||[]}async function loadPayments(){const {data}=await sb.from("payments").select("*").order("due_date",{ascending:false});PAYMENTS=data||[]}async function loadFeedbacks(){const {data,error}=await sb.from("student_feedback").select("*").order("updated_at",{ascending:false});if(error){console.warn("student_feedback",error);FEEDBACKS=[];return}FEEDBACKS=data||[];STUDENT_FEEDBACK=FEEDBACKS}const NOTIFICATION_HIDDEN_KEY = "helpdebs_admin_hidden_notifications";
+
+function getHiddenNotificationIds(){
+  try{
+    return JSON.parse(localStorage.getItem(NOTIFICATION_HIDDEN_KEY) || "[]");
+  }catch(e){
+    return [];
+  }
+}
+
+function hideNotificationsLocally(ids){
+  const current = new Set(getHiddenNotificationIds());
+  ids.filter(Boolean).forEach(id => current.add(id));
+  localStorage.setItem(NOTIFICATION_HIDDEN_KEY, JSON.stringify([...current]));
+}
+
+async function loadNotifications(){
+  const hiddenIds = new Set(getHiddenNotificationIds());
+
   const { data, error } = await sb
     .from("notifications")
     .select("*")
     .order("created_at", { ascending:false })
-    .limit(20);
+    .limit(50);
 
   if(error){
     console.error("Erro ao carregar notificações:", error);
@@ -211,7 +229,9 @@ async function refreshAll(){await Promise.all([loadStudents(),loadMaterials(),lo
     return;
   }
 
-  NOTIFICATIONS = data || [];
+  // A dashboard mostra apenas notificações ativas.
+  // Se a notificação foi lida/limpa/apagada, ela não volta depois do F5.
+  NOTIFICATIONS = (data || []).filter(n => n.is_read !== true && !hiddenIds.has(n.id));
 }
 async function loadDiagnosticAnswers(){
   const { data, error } = await sb.from("diagnostic_answers").select("*").order("created_at",{ascending:false});
@@ -520,21 +540,54 @@ function renderTipsPage(){
 async function markNotificationUnread(id){
   const {error}=await sb.from("notifications").update({is_read:false}).eq("id",id);
   if(error){toast("Erro ao marcar como não lida: "+error.message);return;}
-  NOTIFICATIONS=NOTIFICATIONS.map(n=>n.id===id?{...n,is_read:false}:n);renderNotifications();
+  NOTIFICATIONS=NOTIFICATIONS.map(n=>n.id===id?{...n,is_read:false}:n);
+  renderNotifications();
 }
+
 async function deleteNotification(id){
   if(!confirm("Excluir notificação?"))return;
+
+  // Esconde imediatamente e salva no navegador para não voltar no F5,
+  // mesmo se o Supabase bloquear DELETE por política/RLS.
+  hideNotificationsLocally([id]);
+  NOTIFICATIONS=NOTIFICATIONS.filter(n=>n.id!==id);
+  renderNotifications();
+
   const {error}=await sb.from("notifications").delete().eq("id",id);
-  if(error){toast(error.message);return;}
-  NOTIFICATIONS=NOTIFICATIONS.filter(n=>n.id!==id);renderNotifications();toast("Notificação removida.");
+  if(error){
+    console.warn("DELETE notification falhou; mantive oculta localmente:", error);
+    toast("Notificação removida da dashboard.");
+    return;
+  }
+
+  toast("Notificação removida.");
 }
+
 async function clearAllNotifications(){
   if(!confirm("Limpar todas as notificações da dashboard?"))return;
+
   const ids=NOTIFICATIONS.map(n=>n.id);
   if(!ids.length){toast("Nenhuma notificação.");return;}
-  const {error}=await sb.from("notifications").delete().in("id",ids);
-  if(error){toast(error.message);return;}
-  NOTIFICATIONS=[];renderNotifications();toast("Dashboard limpa.");
+
+  // Persistência dupla:
+  // 1) marca como lida no Supabase
+  // 2) guarda os IDs ocultos no navegador para não reaparecerem no F5
+  hideNotificationsLocally(ids);
+  NOTIFICATIONS=[];
+  renderNotifications();
+
+  const {error}=await sb
+    .from("notifications")
+    .update({is_read:true})
+    .in("id",ids);
+
+  if(error){
+    console.warn("UPDATE notifications falhou; mantive ocultas localmente:", error);
+    toast("Dashboard limpa neste navegador.");
+    return;
+  }
+
+  toast("Dashboard limpa.");
 }
 function setCalendarView(view){calendarView=view;renderCalendar();}
 function renderWeekCalendar(){
@@ -554,13 +607,18 @@ async function markNotificationRead(id){
     .update({ is_read:true })
     .eq("id", id);
 
+  // Mesmo se a atualização falhar por RLS, não deixa a notificação voltar no F5.
+  hideNotificationsLocally([id]);
+  NOTIFICATIONS = NOTIFICATIONS.filter(n => n.id !== id);
+  renderNotifications();
+
   if(error){
-    toast("Erro ao marcar como lida: " + error.message);
+    console.warn("UPDATE notification falhou; mantive oculta localmente:", error);
+    toast("Notificação removida da dashboard.");
     return;
   }
 
-  NOTIFICATIONS = NOTIFICATIONS.map(n => n.id === id ? {...n, is_read:true} : n);
-  renderNotifications();
+  toast("Notificação marcada como lida.");
 }
 
 function renderNotifications(){
