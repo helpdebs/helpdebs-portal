@@ -1442,6 +1442,50 @@ body{ font-size:14px; }
   opacity: .9;
 }
 
+
+/* ============================================================
+   SIDEBAR I18N FIX — textos EN curtos + sem overflow horizontal
+   ============================================================ */
+.sidebar,
+.sidebar-shell{
+  overflow-x:hidden;
+}
+
+.nav-btn{
+  min-width:0;
+}
+
+.nav-main{
+  flex:1 1 auto;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.nav-sub,
+.nav-btn small{
+  flex:0 0 auto;
+  max-width:82px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  opacity:.72;
+}
+
+.student-top > div:not(.student-avatar){
+  min-width:0;
+}
+
+.student-name,
+.student-level,
+.student-badges .badge{
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
   </style>
 </head>
 <body>
@@ -1499,15 +1543,42 @@ body{ font-size:14px; }
         </div>
         <nav class="nav" id="portalNav">
           <div class="nav-label">menu</div>
-          <button class="nav-btn active" data-section="inicio">Início <small>dashboard</small></button>
-          <button class="nav-btn" data-section="diagnostico">Diagnóstico <small>perfil e nível</small></button>
-          <button class="nav-btn" data-section="trilha">Trilha <small>21 dias</small></button>
-          <button class="nav-btn" data-section="materiais">Materiais <small>PDFs e resumos</small></button>
-          <button class="nav-btn" data-section="calendario">Calendário <small>aulas marcadas</small></button>
-          <button class="nav-btn" data-section="ao-vivo">Aula ao vivo <small>link do Elos</small></button>
-          <button class="nav-btn" data-section="dicas">Dicas <small>conteúdo rápido</small></button>
-          <button class="nav-btn" data-section="videoaulas">Videoaulas <small>biblioteca</small></button>
-          <button class="nav-btn" data-section="financeiro">Financeiro <small>pagamentos</small></button>
+          <button class="nav-btn active" data-section="inicio">
+            <span class="nav-main">Início</span>
+            <small class="nav-sub">dashboard</small>
+          </button>
+          <button class="nav-btn" data-section="diagnostico">
+            <span class="nav-main">Diagnóstico</span>
+            <small class="nav-sub">perfil e nível</small>
+          </button>
+          <button class="nav-btn" data-section="trilha">
+            <span class="nav-main">Trilha</span>
+            <small class="nav-sub">21 dias</small>
+          </button>
+          <button class="nav-btn" data-section="materiais">
+            <span class="nav-main">Materiais</span>
+            <small class="nav-sub">PDFs e resumos</small>
+          </button>
+          <button class="nav-btn" data-section="calendario">
+            <span class="nav-main">Calendário</span>
+            <small class="nav-sub">aulas marcadas</small>
+          </button>
+          <button class="nav-btn" data-section="ao-vivo">
+            <span class="nav-main">Aula ao vivo</span>
+            <small class="nav-sub">link do Elos</small>
+          </button>
+          <button class="nav-btn" data-section="dicas">
+            <span class="nav-main">Dicas</span>
+            <small class="nav-sub">conteúdo rápido</small>
+          </button>
+          <button class="nav-btn" data-section="videoaulas">
+            <span class="nav-main">Videoaulas</span>
+            <small class="nav-sub">biblioteca</small>
+          </button>
+          <button class="nav-btn" data-section="financeiro">
+            <span class="nav-main">Financeiro</span>
+            <small class="nav-sub">pagamentos</small>
+          </button>
         </nav>
         <button class="nav-logout" id="logoutBtn">Sair da conta</button>
       </div>
@@ -2702,21 +2773,21 @@ function goSection(target){
     "Início": "Home",
     "dashboard": "dashboard",
     "Diagnóstico": "Assessment",
-    "perfil e nível": "profile and level",
+    "perfil e nível": "profile",
     "Trilha": "Journey",
     "21 dias": "21 days",
-    "Materiais": "Materials",
-    "PDFs e resumos": "PDFs and summaries",
+    "Materiais": "Lessons",
+    "PDFs e resumos": "PDFs",
     "Calendário": "Calendar",
-    "aulas marcadas": "scheduled classes",
-    "Aula ao vivo": "Live class",
+    "aulas marcadas": "classes",
+    "Aula ao vivo": "Live",
     "link do Elos": "Elos link",
     "Dicas": "Tips",
-    "conteúdo rápido": "quick content",
-    "Videoaulas": "Video lessons",
+    "conteúdo rápido": "quick",
+    "Videoaulas": "Videos",
     "biblioteca": "library",
-    "Financeiro": "Payments",
-    "pagamentos": "payments",
+    "Financeiro": "Billing",
+    "pagamentos": "billing",
     "Seu próximo passo": "Your next step",
     "Sua prática de hoje": "Today's practice",
     "Continue seu diagnóstico": "Continue your assessment",
@@ -2873,7 +2944,7 @@ function goSection(target){
     "2. Nível": "2. Level",
     "3. Interesses": "3. Interests",
     "trilha ativa": "active journey",
-    "Aulas individuais • nível": "Private classes • level"
+    "Aulas individuais • nível": "Classes • level"
   };
 
   const EN_TO_PT = Object.fromEntries(Object.entries(PT_TO_EN).map(([pt,en]) => [en,pt]));
@@ -2960,6 +3031,59 @@ function goSection(target){
     });
   }
 
+  function applySidebarTranslations(lang){
+    const labels = {
+      pt: {
+        inicio:["Início","dashboard"],
+        diagnostico:["Diagnóstico","perfil e nível"],
+        trilha:["Trilha","21 dias"],
+        materiais:["Materiais","PDFs e resumos"],
+        calendario:["Calendário","aulas marcadas"],
+        "ao-vivo":["Aula ao vivo","link do Elos"],
+        dicas:["Dicas","conteúdo rápido"],
+        videoaulas:["Videoaulas","biblioteca"],
+        financeiro:["Financeiro","pagamentos"]
+      },
+      en: {
+        inicio:["Home","dashboard"],
+        diagnostico:["Assessment","profile"],
+        trilha:["Journey","21 days"],
+        materiais:["Lessons","PDFs"],
+        calendario:["Calendar","classes"],
+        "ao-vivo":["Live","Elos"],
+        dicas:["Tips","quick"],
+        videoaulas:["Videos","library"],
+        financeiro:["Billing","billing"]
+      }
+    };
+
+    document.querySelectorAll(".nav-btn[data-section]").forEach(btn => {
+      const pair = labels[lang]?.[btn.dataset.section];
+      if(!pair) return;
+
+      let main = btn.querySelector(".nav-main");
+      let sub = btn.querySelector(".nav-sub");
+
+      if(!main){
+        const textNodes = Array.from(btn.childNodes).filter(n => n.nodeType === Node.TEXT_NODE && n.nodeValue.trim());
+        main = document.createElement("span");
+        main.className = "nav-main";
+        main.textContent = textNodes[0]?.nodeValue.trim() || pair[0];
+        btn.insertBefore(main, btn.firstChild);
+        textNodes.forEach(n => n.remove());
+      }
+
+      if(!sub){
+        sub = btn.querySelector("small") || document.createElement("small");
+        sub.className = "nav-sub";
+        if(!sub.parentElement) btn.appendChild(sub);
+      }
+
+      main.textContent = pair[0];
+      sub.textContent = pair[1];
+    });
+  }
+
   function applyLanguage(lang = getLang()){
     if(applying) return;
     applying = true;
@@ -2969,6 +3093,7 @@ function goSection(target){
       walkAndTranslate(document.body, lang);
       syncButtons(lang);
       syncInputs(lang);
+      applySidebarTranslations(lang);
       if(observer) observer.observe(document.body, { childList:true, subtree:true, characterData:true });
     } finally {
       applying = false;
@@ -3029,4 +3154,4 @@ function goSection(target){
 </script>
 
 </body>
-</html> 
+</html>  
