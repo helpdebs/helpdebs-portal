@@ -1032,13 +1032,64 @@
   <script>
     const SB_URL = "https://pgdanuifukzisyyummpz.supabase.co";
     const SB_ANON = "sb_publishable_81NM6F08rsXXSCgjWl4iSg_v99cdVpo";
-    const sb = window.supabase.createClient(SB_URL, SB_ANON, { auth: { storageKey: 'helpdebs-portal-auth', persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+    const sb = window.supabase.createClient(SB_URL, SB_ANON);
     let authUser = null;
     let testBlocked = false;
 
+    function getPortalReturnUrl(){
+      const params = new URLSearchParams(window.location.search);
+      return params.get("return_url") || "portal.html";
+    }
+
+    function goBackToPortal(){
+      window.location.href = getPortalReturnUrl();
+    }
+
+    function readPortalAccessBridge(){
+      const params = new URLSearchParams(window.location.search);
+      const fromUrl = {
+        id: params.get("student_id") || "",
+        email: params.get("student_email") || params.get("email") || "",
+        name: params.get("student_name") || "",
+        diagnostic_type: params.get("diagnostic_type") || "interests"
+      };
+
+      const keys = ["helpdebs_portal_access", "helpdebs_current_student", "helpdebs_student"];
+      let fromStorage = {};
+      for(const key of keys){
+        try{
+          const parsed = JSON.parse(localStorage.getItem(key) || "{}");
+          if(parsed && (parsed.student_id || parsed.id || parsed.email || parsed.student_email)){
+            fromStorage = parsed;
+            break;
+          }
+        }catch(e){}
+      }
+
+      const id = fromUrl.id || fromStorage.student_id || fromStorage.id || localStorage.getItem("student_id") || "";
+      const email = fromUrl.email || fromStorage.student_email || fromStorage.email || localStorage.getItem("student_email") || "";
+      const name = fromUrl.name || fromStorage.full_name || fromStorage.name || localStorage.getItem("student_name") || email || "Aluna";
+
+      if(!id && !email) return null;
+
+      return {
+        id,
+        email,
+        user_metadata: { full_name: name, name },
+        bridge_access: true
+      };
+    }
+
     async function initStudentAccess(){
       const { data: { session } } = await sb.auth.getSession();
-      if(!session || !session.user){
+      const bridgeUser = readPortalAccessBridge();
+
+      if(session && session.user){
+        authUser = session.user;
+      }else if(bridgeUser && bridgeUser.id){
+        authUser = bridgeUser;
+        console.warn("Acesso aos interesses usando ponte do portal/localStorage.");
+      }else{
         testBlocked = true;
         document.querySelector('.form-card').innerHTML = `
           <div class="step active" style="display:block;text-align:center;min-height:360px">
@@ -1046,19 +1097,23 @@
               <span class="step-kicker">Acesso necessário</span>
               <h2>Entre pelo portal antes de responder.</h2>
               <p class="step-subtitle" style="margin:0 auto 20px">Assim consigo vincular suas respostas à sua conta.</p>
-              <button type="button" class="primary" onclick="window.location.href='portal.html'">Voltar ao portal</button>
+              <button type="button" class="primary" onclick="goBackToPortal()">Voltar ao portal</button>
             </div>
           </div>`;
         return;
       }
-      authUser = session.user;
 
-      const { data } = await sb
+      const { data, error } = await sb
         .from('diagnostics')
         .select('*')
         .eq('student_id', authUser.id)
         .eq('type', 'interests')
         .maybeSingle();
+
+      if(error){
+        console.warn("Não consegui verificar interesses. Vou permitir responder e tentar salvar no envio:", error);
+        return;
+      }
 
       if(data && data.status && data.status !== 'pending'){
         testBlocked = true;
@@ -1068,7 +1123,7 @@
               <span class="step-kicker">Questionário já enviado</span>
               <h2>Suas respostas de interesse já foram salvas.</h2>
               <p class="step-subtitle" style="margin:0 auto 20px">Elas já podem ser usadas para personalizar suas aulas e materiais.</p>
-              <button type="button" class="primary" onclick="window.location.href='portal.html'">Voltar ao portal</button>
+              <button type="button" class="primary" onclick="goBackToPortal()">Voltar ao portal</button>
             </div>
           </div>`;
       }
@@ -1244,7 +1299,7 @@
         toast.querySelector('strong').textContent = 'Questionário salvo ✨';
         toast.querySelector('p').textContent = 'Suas respostas foram salvas e já podem ser usadas na personalização.';
         toast.classList.add('show');
-        setTimeout(() => { window.location.href = 'portal.html'; }, 1400);
+        setTimeout(() => { goBackToPortal(); }, 1400);
       }catch(err){
         console.error(err);
         alert('Erro ao salvar respostas: ' + (err.message || 'tente novamente.'));
@@ -1257,4 +1312,4 @@
     updateStep();
   </script>
 </body>
-</html>
+</html> 
