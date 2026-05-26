@@ -2675,4 +2675,358 @@ function goSection(target){
 
 </script>
 
+<script>
+(function(){
+  const LANG_KEY = "helpdebs_language";
+  let applying = false;
+  let observer = null;
+  let debounce = null;
+
+  const PT_TO_EN = {
+    "Portal da aluna": "Student Portal",
+    "área da aluna": "student area",
+    "Entre com o e-mail e senha cadastrados para ver seus materiais, aulas e próximos passos.": "Log in with your registered email and password to view your materials, classes, and next steps.",
+    "Entrar": "Log in",
+    "Entrando...": "Logging in...",
+    "Preencha email e senha.": "Fill in your email and password.",
+    "Login não retornou usuário.": "Login did not return a user.",
+    "Erro inesperado no login.": "Unexpected login error.",
+    "Ver materiais": "View materials",
+    "Entrar na aula ao vivo": "Join live class",
+    "Sair da conta": "Log out",
+    "Carregando...": "Loading...",
+    "Aulas individuais": "Private classes",
+    "trilha ativa": "active journey",
+    "diagnóstico": "assessment",
+    "menu": "menu",
+    "Início": "Home",
+    "dashboard": "dashboard",
+    "Diagnóstico": "Assessment",
+    "perfil e nível": "profile and level",
+    "Trilha": "Journey",
+    "21 dias": "21 days",
+    "Materiais": "Materials",
+    "PDFs e resumos": "PDFs and summaries",
+    "Calendário": "Calendar",
+    "aulas marcadas": "scheduled classes",
+    "Aula ao vivo": "Live class",
+    "link do Elos": "Elos link",
+    "Dicas": "Tips",
+    "conteúdo rápido": "quick content",
+    "Videoaulas": "Video lessons",
+    "biblioteca": "library",
+    "Financeiro": "Payments",
+    "pagamentos": "payments",
+    "Seu próximo passo": "Your next step",
+    "Sua prática de hoje": "Today's practice",
+    "Continue seu diagnóstico": "Continue your assessment",
+    "Comece sua trilha personalizada": "Start your personalized journey",
+    "Complete as etapas iniciais para liberar uma experiência mais personalizada dentro do portal.": "Complete the first steps to unlock a more personalized experience inside the portal.",
+    "Sua base já foi mapeada. Agora o portal pode organizar a prática de acordo com seu perfil, nível e interesses.": "Your starting point has been mapped. The portal can now organize practice based on your profile, level, and interests.",
+    "Continuar agora": "Continue now",
+    "Abrir trilha": "Open journey",
+    "Leva poucos minutos.": "It only takes a few minutes.",
+    "Prática guiada em 21 dias.": "Guided practice in 21 days.",
+    "Próxima aula": "Next class",
+    "Nenhuma aula marcada": "No scheduled class",
+    "Nenhuma aula futura cadastrada.": "No upcoming class registered.",
+    "Quando houver uma aula futura cadastrada, ela aparece aqui.": "When an upcoming class is registered, it will appear here.",
+    "Sua próxima aula já está no calendário.": "Your next class is already on the calendar.",
+    "Ver calendário": "View calendar",
+    "Mini feedback": "Mini feedback",
+    "Observação da professora": "Teacher's note",
+    "Assim que sua professora registrar um feedback no admin, ele aparece aqui.": "As soon as your teacher adds feedback in the admin panel, it will appear here.",
+    "Nenhum feedback registrado ainda": "No feedback registered yet",
+    "Foco da semana:": "Weekly focus:",
+    "Visão geral": "Overview",
+    "Materiais disponíveis": "Available materials",
+    "Diagnósticos pendentes": "Pending assessments",
+    "Status da trilha": "Journey status",
+    "bloqueada": "locked",
+    "liberada": "unlocked",
+    "Acesso rápido": "Quick access",
+    "Continuar diagnóstico": "Continue assessment",
+    "Começar trilha": "Start journey",
+    "Material mais recente": "Latest material",
+    "Nenhum material ainda": "No material yet",
+    "Nenhum material com link": "No material with a link",
+    "Sem cobrança ativa": "No active charge",
+    "sem cobrança ativa": "no active charge",
+    "acessar": "access",
+    "abrir": "open",
+    "ver": "view",
+    "pagar": "pay",
+    "Status financeiro": "Financial status",
+    "Nenhum pagamento cadastrado ainda.": "No payment registered yet.",
+    "Status": "Status",
+    "Sem pendências": "No pending payments",
+    "Forma": "Method",
+    "Pix": "Pix",
+    "Cobrança": "Charge",
+    "Cobrança ativa": "Active charge",
+    "Pagamento registrado": "Payment registered",
+    "Aguardando pagamento": "Awaiting payment",
+    "Pix disponível": "Pix available",
+    "Pix ainda não configurado": "Pix not configured yet",
+    "Ver histórico": "View history",
+    "Pagar agora": "Pay now",
+    "pago": "paid",
+    "pendente": "pending",
+    "concluído": "completed",
+    "Concluído ✓": "Completed ✓",
+    "Em breve": "Coming soon",
+    "Teste ainda não conectado": "Test not connected yet",
+    "Ver resultado": "View result",
+    "Resultado salvo": "Saved result",
+    "Perfil": "Profile",
+    "Nível": "Level",
+    "Foco atual": "Current focus",
+    "Ainda não definido": "Not defined yet",
+    "testes concluídos": "tests completed",
+    "Quem é você no grupinho do inglês?": "Who are you in the English group chat?",
+    "Teste de personalidade aplicado ao seu jeito de aprender inglês.": "A personality test based on the way you learn English.",
+    "Fazer teste": "Take test",
+    "Teste de nivelamento": "Placement test",
+    "Mapeamento do seu nível atual para ajustar melhor as aulas.": "A mapping of your current level to better adjust your classes.",
+    "Fazer nivelamento": "Take placement test",
+    "Área de interesses": "Interests area",
+    "Objetivos, rotina, gostos e contextos em que você quer usar inglês.": "Goals, routine, interests, and contexts where you want to use English.",
+    "Responder interesses": "Answer interests",
+    "trilha nova": "new journey",
+    "Trilha personalizada de 21 dias": "Personalized 21-day journey",
+    "Acesse sua trilha diária personalizada dentro do portal.": "Access your personalized daily journey inside the portal.",
+    "Abrir em tela cheia": "Open full screen",
+    "Aulas e materiais": "Classes and materials",
+    "Nenhum material cadastrado ainda.": "No material registered yet.",
+    "Material da aula": "Class material",
+    "Material sem aula vinculada": "Material without linked class",
+    "Abrir material": "Open material",
+    "Resumo da aula": "Class summary",
+    "Resumo ainda não cadastrado.": "Summary not registered yet.",
+    "Chunks usados": "Chunks used",
+    "Chunks ainda não cadastrados.": "Chunks not registered yet.",
+    "Miniatura do PDF": "PDF thumbnail",
+    "material": "material",
+    "Aula": "Class",
+    "Aula marcada": "Scheduled class",
+    "dom": "Sun",
+    "seg": "Mon",
+    "ter": "Tue",
+    "qua": "Wed",
+    "qui": "Thu",
+    "sex": "Fri",
+    "sáb": "Sat",
+    "Janeiro": "January",
+    "Fevereiro": "February",
+    "Março": "March",
+    "Abril": "April",
+    "Maio": "May",
+    "Junho": "June",
+    "Julho": "July",
+    "Agosto": "August",
+    "Setembro": "September",
+    "Outubro": "October",
+    "Novembro": "November",
+    "Dezembro": "December",
+    "Link para acessar a aula ao vivo": "Link to access the live class",
+    "Abrir sala": "Open room",
+    "Prompts e recursos": "Prompts and resources",
+    "Nenhuma dica cadastrada ainda.": "No tips registered yet.",
+    "Nenhum prompt/recurso cadastrado ainda.": "No prompt/resource registered yet.",
+    "Nenhuma videoaula cadastrada ainda.": "No video lesson registered yet.",
+    "Clique para copiar o Pix": "Click to copy Pix",
+    "Pagamento ainda não configurado": "Payment not configured yet",
+    "Pix copiado! Abra seu banco e cole.": "Pix copied! Open your bank app and paste it.",
+    "Não consegui copiar automaticamente.": "I couldn't copy it automatically.",
+    "Cobrança não encontrada.": "Charge not found.",
+    "Forma de pagamento ainda não configurada.": "Payment method not configured yet.",
+    "vence": "due",
+    "vencimento não informado": "due date not provided",
+    "vence hoje": "due today",
+    "vencido há": "overdue by",
+    "dia(s)": "day(s)",
+    "Pix copia e cola:": "Pix copy and paste:",
+    "Copiar Pix": "Copy Pix",
+    "Abrir QR Code": "Open QR Code",
+    "QR Code Pix": "Pix QR Code",
+    "checklist mensal": "monthly checklist",
+    "Checklist de vocabulário da aula": "Class vocabulary checklist",
+    "Revise as estruturas, chunks e combinações mais importantes do mês em uma página interativa feita para praticar sem ficar perdida.": "Review the most important structures, chunks, and combinations of the month in an interactive page made for practice without feeling lost.",
+    "Abrir checklist": "Open checklist",
+    "Ver dentro do portal": "View inside the portal",
+    "Seção não encontrada": "Section not found",
+    "Link ainda não configurado": "Link not configured yet",
+    "Carreguei o portal em modo seguro. Confira as permissões do Supabase.": "Loaded the portal in safe mode. Check Supabase permissions.",
+    "Não encontrei perfil completo. Carreguei a conta pelo e-mail.": "I couldn't find a complete profile. Loaded the account by email.",
+    "Não consegui salvar ponte de acesso para diagnóstico": "I couldn't save the assessment access bridge",
+    "começar diagnóstico": "start assessment",
+    "trilha bloqueada": "journey locked",
+    "trilha liberada": "journey unlocked",
+    "começar": "start",
+    "Começar": "Start",
+    "Continuar": "Continue",
+    "Ver diagnóstico": "View assessment",
+    "Progresso do diagnóstico": "Assessment progress",
+    "Próximo passo:": "Next step:",
+    "Diagnóstico completo": "Assessment complete",
+    "1. Perfil": "1. Profile",
+    "2. Nível": "2. Level",
+    "3. Interesses": "3. Interests",
+    "trilha ativa": "active journey",
+    "Aulas individuais • nível": "Private classes • level"
+  };
+
+  const EN_TO_PT = Object.fromEntries(Object.entries(PT_TO_EN).map(([pt,en]) => [en,pt]));
+
+  function getLang(){ return localStorage.getItem(LANG_KEY) || "pt"; }
+
+  function translateText(text, lang){
+    if(!text || !text.trim()) return text;
+    const leading = text.match(/^\s*/)?.[0] || "";
+    const trailing = text.match(/\s*$/)?.[0] || "";
+    let core = text.trim();
+    const map = lang === "en" ? PT_TO_EN : EN_TO_PT;
+    const entries = Object.entries(map).sort((a,b)=>b[0].length-a[0].length);
+
+    if(map[core]) core = map[core];
+    else {
+      for(const [from,to] of entries){
+        if(core.includes(from)) core = core.split(from).join(to);
+      }
+    }
+
+    if(lang === "en"){
+      core = core.replace(/Faltam (\d+) etapa\(s\) para liberar uma experiência mais personalizada dentro do portal\./g, "$1 step(s) left to unlock a more personalized experience inside the portal.");
+      core = core.replace(/(\d+) pendente\(s\)/g, "$1 pending");
+      core = core.replace(/(\d+) de (\d+) etapas concluídas/g, "$1 of $2 steps completed");
+      core = core.replace(/vence em (\d+) day\(s\)/g, "due in $1 day(s)");
+      core = core.replace(/vencido há (\d+) day\(s\)/g, "overdue by $1 day(s)");
+      core = core.replace(/R\$ ([0-9.,]+) • due/g, "R$ $1 • due");
+      core = core.replace(/Aula •/g, "Class •");
+    } else {
+      core = core.replace(/(\d+) pending/g, "$1 pendente(s)");
+      core = core.replace(/(\d+) of (\d+) steps completed/g, "$1 de $2 etapas concluídas");
+      core = core.replace(/due in (\d+) day\(s\)/g, "vence em $1 dia(s)");
+      core = core.replace(/overdue by (\d+) day\(s\)/g, "vencido há $1 dia(s)");
+      core = core.replace(/Class •/g, "Aula •");
+    }
+
+    return leading + core + trailing;
+  }
+
+  function shouldSkip(el){
+    if(!el) return true;
+    const tag = el.nodeName;
+    return ["SCRIPT","STYLE","NOSCRIPT","IFRAME","TEXTAREA"].includes(tag) || el.closest?.("script,style,noscript,iframe,textarea");
+  }
+
+  function walkAndTranslate(root, lang){
+    if(!root || shouldSkip(root)) return;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode(node){
+        if(!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        if(shouldSkip(node.parentElement)) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    const nodes = [];
+    while(walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(node => {
+      const translated = translateText(node.nodeValue, lang);
+      if(translated !== node.nodeValue) node.nodeValue = translated;
+    });
+  }
+
+  function syncButtons(lang){
+    document.querySelectorAll(".hd-lang-toggle").forEach(btn => {
+      btn.classList.toggle("active", lang === "en");
+      btn.setAttribute("aria-pressed", lang === "en" ? "true" : "false");
+      btn.textContent = lang === "en" ? "Português ON" : "English ON";
+    });
+  }
+
+  function syncInputs(lang){
+    document.querySelectorAll("input[placeholder]").forEach(input => {
+      const ph = input.getAttribute("placeholder");
+      if(lang === "en"){
+        if(ph === "Senha") input.setAttribute("placeholder", "Password");
+        if(ph === "Digite a frase em ordem") input.setAttribute("placeholder", "Type the sentence in order");
+        if(ph === "Escreva sua resposta") input.setAttribute("placeholder", "Write your answer");
+      } else {
+        if(ph === "Password") input.setAttribute("placeholder", "Senha");
+        if(ph === "Type the sentence in order") input.setAttribute("placeholder", "Digite a frase em ordem");
+        if(ph === "Write your answer") input.setAttribute("placeholder", "Escreva sua resposta");
+      }
+    });
+  }
+
+  function applyLanguage(lang = getLang()){
+    if(applying) return;
+    applying = true;
+    try{
+      document.documentElement.lang = lang === "en" ? "en" : "pt-BR";
+      if(observer) observer.disconnect();
+      walkAndTranslate(document.body, lang);
+      syncButtons(lang);
+      syncInputs(lang);
+      if(observer) observer.observe(document.body, { childList:true, subtree:true, characterData:true });
+    } finally {
+      applying = false;
+    }
+  }
+
+  function setLanguage(lang){
+    localStorage.setItem(LANG_KEY, lang);
+    applyLanguage(lang);
+    setTimeout(()=>applyLanguage(lang), 0);
+    setTimeout(()=>applyLanguage(lang), 80);
+    setTimeout(()=>applyLanguage(lang), 250);
+  }
+
+  function toggleLanguage(){ setLanguage(getLang() === "en" ? "pt" : "en"); }
+
+  document.addEventListener("click", function(e){
+    const btn = e.target.closest?.(".hd-lang-toggle");
+    if(!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    toggleLanguage();
+  }, true);
+
+  function wrapRender(name){
+    const original = window[name];
+    if(typeof original !== "function" || original.__i18nWrapped) return;
+    const wrapped = function(...args){
+      const result = original.apply(this,args);
+      setTimeout(()=>applyLanguage(getLang()), 0);
+      setTimeout(()=>applyLanguage(getLang()), 120);
+      return result;
+    };
+    wrapped.__i18nWrapped = true;
+    window[name] = wrapped;
+  }
+
+  function setup(){
+    observer = new MutationObserver(()=>{
+      if(applying || getLang() !== "en") return;
+      clearTimeout(debounce);
+      debounce = setTimeout(()=>applyLanguage("en"), 40);
+    });
+    observer.observe(document.body, { childList:true, subtree:true, characterData:true });
+    ["renderAll","renderProfile","renderDashboard","renderDiagnostics","renderFeaturedChecklist","renderMaterials","renderCalendar","renderTips","renderVideos","renderPayments","renderTrail","renderMiniFeedback","renderDiagnosisProgress","renderFinanceDashboard","goSection"].forEach(wrapRender);
+    applyLanguage(getLang());
+    setTimeout(()=>applyLanguage(getLang()), 300);
+    setTimeout(()=>applyLanguage(getLang()), 900);
+  }
+
+  window.HD_I18N_APPLY = applyLanguage;
+  window.HD_I18N_SET = setLanguage;
+  window.HD_I18N_GET = getLang;
+
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", setup);
+  else setup();
+})();
+</script>
+
+</body>
 </html> 
