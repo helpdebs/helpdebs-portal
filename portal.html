@@ -1,1367 +1,2231 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Gestão Elétrica</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #eef1f4;
-    --surface: #ffffff;
-    --surface2: #f3f6f9;
-    --surface3: #e6ebf1;
-    --border: #aeb8c4;
-    --border-strong: #6f7d8c;
-    --text: #111827;
-    --text-dim: #3f4b5a;
-    --text-soft: #5f6b7a;
-    --industrial-blue: #0b4f8a;
-    --industrial-blue-strong: #073b68;
-    --industrial-blue-soft: #dceaf7;
-    --alta: #b42318;
-    --alta-bg: #fde7e4;
-    --media: #a15c00;
-    --media-bg: #fff0d6;
-    --baixa: #0b4f8a;
-    --baixa-bg: #dceaf7;
-    --concluida: #147a4f;
-    --concluida-bg: #dff3ea;
-    --accent: #0b4f8a;
-    --radius: 10px;
-    --shadow-card: 0 2px 8px rgba(17, 24, 39, 0.10);
-    --shadow-strong: 0 6px 18px rgba(17, 24, 39, 0.18);
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal da Aluna | help.debs</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+
+
+
+
+</script>
+  <style>
+@import url("https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css");
+
+/* ============================================================
+   HELPDEBS PORTAL — CSS CORRIGIDO
+   Substitua o bloco <style> inteiro pelo conteúdo abaixo.
+
+   FIXES INCLUÍDOS:
+   C1 — Breadcrumb de seção visível no mobile topbar
+   C2 — Estado vazio real no mini feedback (via classe .empty-state)
+   C3 — Hierarquia de botões primário vs soft
+   C4 — Border-radius tokenizado (3 valores fixos)
+   W1 — Proporção padding interno / gap externo corrigida
+   W2 — Sidebar com scroll em telas baixas
+   W3 — Font-weight 900 restrito a valores de destaque
+   W4 — Toast responsivo sem nowrap
+   W5 — Breakpoint intermediário 900px no dashboard
+   M1 — Skeleton de loading no student card
+   M2 — Ícones Tabler na navegação (via data-icon)
+   M3 — Label percentual na progress bar
+   ============================================================ */
+
+/* ─── 1. TOKENS ─── */
+:root {
+  /* Cores */
+  --bg:          #f6f4ff;
+  --bg-soft:     #fcfbff;
+  --panel:       rgba(255,255,255,.86);
+  --panel-strong:#fff;
+  --text:        #1d1630;
+  --muted:       #746b92;
+  --line:        rgba(119,92,255,.14);
+  --primary:     #7a5cff;
+  --primary-2:   #ab96ff;
+  --accent:      #dbff66;
+  --danger:      #ff7896;
+  --success:     #5f9f36;
+  --shadow:      0 18px 44px rgba(63,37,128,.12);
+
+  /* C4 FIX — 3 tokens de border-radius (era 6+ valores soltos) */
+  --r-sm:  12px;   /* badges, botões, inputs, mini-cards internos */
+  --r-md:  18px;   /* subcards, itens de lista, cells */
+  --r-lg:  26px;   /* cards principais, painéis, sidebar shell */
+
+  --max: 1440px;
+}
+
+/* ─── 2. RESET & BASE ─── */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  /* W3 FIX — font-weight base 400, não 900 */
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-weight: 400;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left,  rgba(122,92,255,.12), transparent 22%),
+    radial-gradient(circle at top right, rgba(219,255,102,.18), transparent 18%),
+    linear-gradient(180deg, var(--bg) 0%, #f8f7ff 48%, var(--bg-soft) 100%);
+  min-height: 100vh;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font: inherit; }
+
+/* ─── 3. LOGIN ─── */
+.login-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 430px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 32px;
+  box-shadow: var(--shadow);
+}
+
+.logo, .brand-logo {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: white;
+  /* W3 FIX */
+  font-weight: 700;
+  box-shadow: 0 14px 28px rgba(122,92,255,.24);
+}
+
+.logo {
+  width: 52px; height: 52px;
+  border-radius: 17px;
+  margin-bottom: 20px;
+}
+
+.login-card h1 {
+  margin: 0 0 8px;
+  font-size: 1.7rem;
+  letter-spacing: -.04em;
+  /* W3 FIX */
+  font-weight: 700;
+}
+
+.login-card p { margin: 0 0 20px; color: var(--muted); line-height: 1.55; }
+
+input {
+  width: 100%;
+  border: 1px solid var(--line);
+  background: white;
+  color: var(--text);
+  /* C4 FIX */
+  border-radius: var(--r-sm);
+  padding: 14px 15px;
+  font-size: .95rem;
+  outline: none;
+  margin-bottom: 10px;
+}
+input:focus { border-color: var(--primary); }
+
+/* ─── 4. BOTÕES — C3 FIX (hierarquia visual clara) ─── */
+.btn {
+  border: none;
+  cursor: pointer;
+  /* C4 FIX */
+  border-radius: var(--r-sm);
+  font-weight: 700;
+  transition: .18s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.btn:hover { transform: translateY(-1px); }
+
+/* C3 FIX — primário com mais padding e peso visual */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: white;
+  box-shadow: 0 14px 28px rgba(122,92,255,.22);
+  padding: 14px 22px;    /* era 14px 18px — agora mais destaque */
+  font-size: .93rem;
+}
+
+/* C3 FIX — soft menor, claramente secundário */
+.btn-soft {
+  background: rgba(255,255,255,.88);
+  color: var(--text);
+  border: 1px solid var(--line);
+  padding: 12px 16px;    /* era igual ao primário */
+  font-size: .88rem;
+}
+
+.btn-danger {
+  background: rgba(255,120,150,.10);
+  color: #b44b67;
+  border: 1px solid rgba(255,120,150,.16);
+  padding: 12px 16px;
+}
+
+/* ─── 5. MENSAGENS ─── */
+.msg { display: none; margin-top: 12px; padding: 12px 14px; border-radius: var(--r-sm); font-size: .87rem; font-weight: 600; }
+.msg.show { display: block; }
+.error { background: rgba(255,120,150,.12); color: #b44b67; border: 1px solid rgba(255,120,150,.20); }
+.info  { background: rgba(122,92,255,.10);  color: var(--primary); border: 1px solid rgba(122,92,255,.14); }
+
+/* ─── 6. LAYOUT APP ─── */
+.app { display: none; min-height: 100vh; grid-template-columns: 284px 1fr; }
+
+/* ─── 7. SIDEBAR ─── */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding: 18px;
+  background: rgba(255,255,255,.42);
+  backdrop-filter: blur(16px);
+  border-right: 1px solid rgba(119,92,255,.08);
+}
+
+/* W2 FIX — sidebar com scroll quando conteúdo ultrapassa viewport */
+.sidebar-shell {
+  height: 100%;
+  /* C4 FIX */
+  border-radius: var(--r-lg);
+  padding: 16px;
+  background: rgba(255,255,255,.28);
+  border: 1px solid rgba(255,255,255,.52);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  /* W2 FIX */
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.brand { display: flex; align-items: center; gap: 12px; padding: 8px 8px 10px; }
+.brand-logo { width: 46px; height: 46px; border-radius: 16px; flex: 0 0 auto; }
+.brand strong { display: block; font-size: 1rem; letter-spacing: -.03em; font-weight: 700; }
+.brand span   { display: block; margin-top: 4px; color: var(--muted); font-size: .86rem; }
+
+/* ─── 8. STUDENT CARD ─── */
+.student-card, .panel {
+  /* C4 FIX */
+  border-radius: var(--r-lg);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.student-card { padding: 16px; display: grid; gap: 12px; }
+
+.student-top { display: flex; align-items: center; gap: 12px; }
+
+.student-avatar {
+  width: 50px; height: 50px;
+  /* C4 FIX */
+  border-radius: var(--r-md);
+  display: grid; place-items: center;
+  font-size: 1.2rem;
+  background: linear-gradient(135deg, rgba(122,92,255,.16), rgba(219,255,102,.35));
+  border: 1px solid rgba(122,92,255,.08);
+  flex: 0 0 auto;
+}
+
+/* W3 FIX — nome como dado primário, level como suporte */
+.student-name  { font-size: .98rem; font-weight: 700; letter-spacing: -.02em; }
+.student-level { margin-top: 4px; color: var(--muted); font-size: .84rem; font-weight: 400; }
+
+.student-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* M1 FIX — skeleton de loading */
+.student-card.loading .student-name,
+.student-card.loading .student-level {
+  background: linear-gradient(90deg, rgba(122,92,255,.08) 25%, rgba(122,92,255,.16) 50%, rgba(122,92,255,.08) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s infinite;
+  border-radius: var(--r-sm);
+  color: transparent;
+  user-select: none;
+}
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ─── 9. BADGES & MICRO LABELS ─── */
+.badge, .mini-badge, .eyebrow {
+  width: fit-content;
+  /* C4 FIX */
+  border-radius: 999px;
+  font-size: .76rem;
+  /* W3 FIX */
+  font-weight: 600;
+}
+
+.badge {
+  padding: 7px 10px;
+  color: var(--primary);
+  background: rgba(122,92,255,.08);
+  border: 1px solid rgba(122,92,255,.10);
+}
+
+/* ─── 10. NAVEGAÇÃO — M2 FIX (ícones Tabler) ─── */
+.nav { display: grid; gap: 6px; }
+
+/* W3 FIX — label de seção mais sutil */
+.nav-label {
+  padding: 0 10px;
+  font-size: .72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-weight: 600;
+}
+
+.nav-btn {
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 12px 14px;
+  /* C4 FIX */
+  border-radius: var(--r-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--text);
+  font-size: .91rem;
+  /* W3 FIX — peso reduzido */
+  font-weight: 600;
+  cursor: pointer;
+  transition: .18s ease;
+}
+
+/* M2 FIX — ícone via pseudo-elemento usando data-icon */
+.nav-btn::before {
+  font-family: 'tabler-icons';
+  font-size: 16px;
+  opacity: .6;
+  flex-shrink: 0;
+  transition: opacity .18s ease;
+}
+
+/* Mapeamento de ícones por seção */
+.nav-btn[data-section="inicio"]::before     { content: "\ea77"; } /* ti-home */
+.nav-btn[data-section="diagnostico"]::before{ content: "\eca3"; } /* ti-chart-bar */
+.nav-btn[data-section="trilha"]::before     { content: "\eb72"; } /* ti-map */
+.nav-btn[data-section="materiais"]::before  { content: "\eae9"; } /* ti-file-text */
+.nav-btn[data-section="calendario"]::before { content: "\ea53"; } /* ti-calendar */
+.nav-btn[data-section="ao-vivo"]::before    { content: "\ef52"; } /* ti-video */
+.nav-btn[data-section="dicas"]::before      { content: "\ebb3"; } /* ti-bulb */
+.nav-btn[data-section="videoaulas"]::before { content: "\ed3b"; } /* ti-player-play */
+.nav-btn[data-section="financeiro"]::before { content: "\ea7a"; } /* ti-credit-card */
+
+.nav-btn:hover {
+  background: rgba(122,92,255,.06);
+  transform: translateX(2px);
+}
+.nav-btn:hover::before { opacity: 1; }
+
+.nav-btn.active {
+  background: linear-gradient(135deg, rgba(122,92,255,.12), rgba(171,150,255,.18));
+  color: var(--primary);
+  border: 1px solid rgba(122,92,255,.10);
+}
+.nav-btn.active::before { opacity: 1; }
+
+.nav-btn small {
+  color: var(--muted);
+  font-size: .74rem;
+  /* W3 FIX */
+  font-weight: 500;
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+.nav-logout {
+  margin-top: auto;
+  width: 100%;
+  border: none;
+  background: rgba(255,120,150,.08);
+  color: #b44b67;
+  text-align: left;
+  padding: 11px 14px;
+  /* C4 FIX */
+  border-radius: var(--r-sm);
+  font-size: .88rem;
+  /* W3 FIX */
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid rgba(255,120,150,.12);
+  transition: .18s ease;
+}
+.nav-logout:hover { background: rgba(255,120,150,.14); }
+
+/* ─── 11. MAIN & TOPBAR ─── */
+.main { padding: 20px; }
+.shell { max-width: var(--max); margin: 0 auto; display: grid; gap: 20px; }
+
+.topbar {
+  min-height: 76px;
+  padding: 8px 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+}
+
+/* C4 + W3 + hierarquia de título corrigida */
+.headline h1 {
+  margin: 0;
+  /* C3/hierarquia FIX — título de página menor, mais equilibrado */
+  font-size: clamp(1.4rem, 2vw, 2rem);
+  line-height: 1;
+  letter-spacing: -.04em;
+  font-weight: 700;
+}
+
+.top-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+/* ─── 12. SEÇÕES ─── */
+.portal-section { display: none; }
+.portal-section.active {
+  display: block;
+  animation: fadeIn .22s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── 13. DASHBOARD GRID ─── */
+/* W1 FIX — gap 20px, padding interno 22px (proporção mais equilibrada) */
+.dashboard-v2 { display: grid; gap: 20px; min-height: calc(100vh - 150px); }
+
+.dashboard-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: stretch; }
+.dashboard-row-2 { display: grid; grid-template-columns: 1.05fr .95fr; gap: 20px; align-items: stretch; }
+
+.dash-card {
+  /* W1 FIX — padding reduzido de 26px para 22px */
+  padding: 22px;
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+}
+.dash-card.compact { min-height: 250px; }
+
+.dash-card h3 {
+  margin: 0 0 14px;
+  font-size: 1rem;
+  letter-spacing: -.03em;
+  /* W3 FIX */
+  font-weight: 700;
+}
+
+.dash-muted { color: var(--muted); font-size: .91rem; line-height: 1.55; margin: 0; }
+
+/* ─── 14. MINI STATS ─── */
+.mini-stats { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 4px; }
+
+.mini-stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  /* C4 FIX */
+  border-radius: var(--r-md);
+  background: rgba(255,255,255,.74);
+  border: 1px solid rgba(122,92,255,.10);
+}
+
+/* W3 FIX — valor em destaque, label suave */
+.mini-stat strong { font-size: 1.05rem; letter-spacing: -.02em; font-weight: 700; }
+.mini-stat span   { font-size: .82rem; color: var(--muted); font-weight: 400; }
+
+/* ─── 15. QUICK LINKS ─── */
+.quick-links { display: grid; gap: 10px; }
+
+.quick-link {
+  min-height: 68px;
+  padding: 14px 16px;
+  /* C4 FIX */
+  border-radius: var(--r-md);
+  background: rgba(255,255,255,.82);
+  border: 1px solid rgba(122,92,255,.10);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+}
+
+/* W3 FIX */
+.quick-link strong { display: block; font-size: .93rem; font-weight: 700; letter-spacing: -.02em; margin-bottom: 4px; }
+.quick-link p      { margin: 0; color: var(--muted); line-height: 1.55; font-size: .88rem; font-weight: 400; }
+.quick-link a      { color: var(--primary); font-size: .82rem; font-weight: 600; white-space: nowrap; }
+
+/* ─── 16. MINI FEEDBACK — C2 FIX (estado vazio real) ─── */
+.feedback-box {
+  padding: 16px;
+  /* C4 FIX */
+  border-radius: var(--r-md);
+  background: linear-gradient(180deg, rgba(122,92,255,.08), rgba(255,255,255,.72));
+  border: 1px solid rgba(122,92,255,.12);
+  display: grid;
+  gap: 10px;
+  flex: 1;
+}
+
+.feedback-box strong { display: block; font-weight: 700; }
+.feedback-note { font-size: .9rem; color: var(--muted); line-height: 1.55; font-weight: 400; }
+
+.feedback-focus {
+  padding: 10px 12px;
+  /* C4 FIX */
+  border-radius: var(--r-sm);
+  background: rgba(219,255,102,.22);
+  border: 1px solid rgba(219,255,102,.34);
+  font-size: .84rem;
+  font-weight: 600;
+  color: #5b6f10;
+}
+
+/* C2 FIX — estado vazio explícito */
+.feedback-box.empty-state {
+  background: rgba(255,255,255,.52);
+  border-style: dashed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+  min-height: 100px;
+}
+.feedback-box.empty-state .empty-icon { font-size: 1.4rem; opacity: .5; }
+.feedback-box.empty-state p { font-size: .86rem; color: var(--muted); font-weight: 400; max-width: 22ch; }
+
+/* ─── 17. PROGRESS CARD — M3 FIX ─── */
+.progress-card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  flex: 1;
+}
+
+/* M3 FIX — wrapper para posicionar label percentual */
+.progress-bar-wrap { position: relative; margin: 12px 0 6px; }
+
+.progress-bar {
+  width: 100%;
+  height: 14px;
+  /* C4 FIX */
+  border-radius: 999px;
+  background: rgba(122,92,255,.10);
+  overflow: hidden;
+  border: 1px solid rgba(122,92,255,.10);
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  transition: width .35s ease;
+  position: relative;
+}
+
+/* M3 FIX — label percentual na ponta da barra */
+.progress-fill::after {
+  content: attr(data-pct);
+  position: absolute;
+  right: -1px;
+  top: -22px;
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--primary);
+  white-space: nowrap;
+}
+
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.progress-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.progress-step {
+  padding: 10px;
+  /* C4 FIX */
+  border-radius: var(--r-sm);
+  background: rgba(255,255,255,.70);
+  border: 1px solid rgba(122,92,255,.10);
+  font-size: .8rem;
+  /* W3 FIX */
+  font-weight: 600;
+  color: var(--muted);
+}
+.progress-step.done    { color: #53710d; background: rgba(219,255,102,.38); border-color: rgba(219,255,102,.48); }
+.progress-step.current { color: var(--primary); background: rgba(122,92,255,.10); border-color: rgba(122,92,255,.18); }
+
+/* ─── 18. FINANCE DASHBOARD ─── */
+.finance-status  { display: grid; gap: 14px; flex: 1; }
+.finance-amount  { font-size: 1.55rem; font-weight: 700; letter-spacing: -.04em; }
+
+.finance-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 0;
+  border-top: 1px solid rgba(122,92,255,.10);
+}
+.finance-row span   { color: var(--muted); font-size: .86rem; font-weight: 400; }
+.finance-row strong { font-size: .93rem; font-weight: 600; }
+
+.finance-pill {
+  width: fit-content;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: .74rem;
+  font-weight: 600;
+}
+.finance-pill.pending { color: #b44b67; background: rgba(255,120,150,.12); border: 1px solid rgba(255,120,150,.16); }
+.finance-pill.paid    { color: #53710d; background: rgba(219,255,102,.52); border: 1px solid rgba(219,255,102,.58); }
+.finance-pill.empty   { color: var(--primary); background: rgba(122,92,255,.09); border: 1px solid rgba(122,92,255,.12); }
+
+/* ─── 19. SEÇÃO TITLES ─── */
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.section-title h3 { font-size: 1rem; font-weight: 700; letter-spacing: -.03em; }
+
+/* ─── 20. EYEBROW / KICKER ─── */
+.eyebrow {
+  padding: 8px 12px;
+  background: rgba(122,92,255,.08);
+  color: var(--primary);
+  border: 1px solid rgba(122,92,255,.10);
+}
+
+/* ─── 21. ITENS DE LISTA (materials, tips, videos, payments) ─── */
+.stat, .material-item, .diag-item, .tip-item, .video-item, .live-box, .payment-item {
+  /* C4 FIX */
+  border-radius: var(--r-md);
+  background: rgba(255,255,255,.82);
+  border: 1px solid rgba(122,92,255,.10);
+}
+
+.stat {
+  padding: 16px;
+  display: grid;
+  gap: 6px;
+  min-height: 108px;
+  align-content: start;
+}
+.stat strong { font-size: 1.3rem; letter-spacing: -.04em; font-weight: 700; }
+.stat span   { color: var(--muted); font-size: .84rem; line-height: 1.45; font-weight: 400; }
+
+.material-item, .tip-item, .video-item, .live-box, .payment-item { padding: 15px 16px; }
+
+/* W3 FIX — títulos de item com peso correto */
+.material-item strong, .diag-item strong, .tip-item strong,
+.video-item strong, .live-box strong, .payment-item strong {
+  display: block;
+  font-size: .93rem;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  margin-bottom: 4px;
+}
+
+.material-item p, .diag-item p, .tip-item p, .video-item p, .live-box p, .payment-item p {
+  margin: 0; color: var(--muted); line-height: 1.6; font-size: .91rem; font-weight: 400;
+}
+
+/* ─── 22. MINI BUTTONS ─── */
+.mini-btn {
+  border: none;
+  cursor: pointer;
+  padding: 9px 12px;
+  /* C4 FIX */
+  border-radius: var(--r-sm);
+  font-size: .79rem;
+  /* W3 FIX */
+  font-weight: 600;
+  background: rgba(122,92,255,.08);
+  color: var(--primary);
+  transition: .15s ease;
+}
+.mini-btn:hover { background: rgba(122,92,255,.14); }
+.mini-btn.secondary { background: rgba(255,255,255,.90); color: var(--text); border: 1px solid rgba(122,92,255,.10); }
+.mini-btn.done-btn  { background: rgba(219,255,102,.35); color: #53710d; border: 1px solid rgba(219,255,102,.55); cursor: default; }
+
+.item-actions { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 8px; }
+
+/* ─── 23. STATUS BADGES ─── */
+.mini-badge { padding: 5px 9px; color: var(--primary); background: rgba(122,92,255,.08); border: 1px solid rgba(122,92,255,.08); }
+.status-done    { color: #53710d; background: rgba(219,255,102,.50); border-color: rgba(219,255,102,.56); }
+.status-pending { color: #b44b67; background: rgba(255,120,150,.12); border-color: rgba(255,120,150,.12); }
+.status-paid    { color: #53710d; background: rgba(219,255,102,.50); }
+.status-overdue { color: #b44b67; background: rgba(255,120,150,.12); }
+
+/* ─── 24. DIAGNÓSTICO ─── */
+.diag-list, .materials-list, .tips-list, .videos-list, .payments-list, .quick-links { display: grid; gap: 12px; }
+
+.badge.diagnosis-red    { background: rgba(239,68,68,.12);  color: #ef4444; border-color: rgba(239,68,68,.22); }
+.badge.diagnosis-orange { background: rgba(245,158,11,.15); color: #d97706; border-color: rgba(245,158,11,.24); }
+.badge.diagnosis-green  { background: rgba(34,197,94,.14);  color: #16a34a; border-color: rgba(34,197,94,.24); }
+
+.diag-item { padding: 16px; }
+.diag-item.locked { opacity: .82; }
+.diag-icon {
+  width: 40px; height: 40px;
+  /* C4 FIX */
+  border-radius: 13px;
+  display: grid; place-items: center;
+  background: rgba(122,92,255,.09);
+  border: 1px solid rgba(122,92,255,.12);
+  font-size: 1.1rem;
+  flex: 0 0 auto;
+}
+.diag-head { display: flex; gap: 12px; align-items: flex-start; }
+.item-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+.diag-item-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+/* ─── 25. GRID-2 ─── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+/* ─── 26. CALENDAR ─── */
+.hero-card, .quick-card, .calendar-card, .materials-card,
+.diagnostic-card, .tips-card, .videos-card, .live-card { padding: 22px; }
+
+.hero-card {
+  min-height: 340px;
+  display: grid; gap: 22px;
+  align-content: space-between;
+  background:
+    radial-gradient(circle at top right, rgba(219,255,102,.18), transparent 24%),
+    radial-gradient(circle at bottom left, rgba(122,92,255,.10), transparent 28%),
+    linear-gradient(180deg, rgba(255,255,255,.92), rgba(248,245,255,.96));
+}
+.hero-card h2 { margin: 0; letter-spacing: -.05em; font-weight: 700; font-size: clamp(1.6rem, 2.2vw, 2.4rem); line-height: 1; max-width: 16ch; }
+.hero-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+
+.calendar-card { min-height: auto; }
+.student-calendar-shell { display: grid; gap: 16px; }
+
+.calendar-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+.calendar-header strong { font-size: 1rem; letter-spacing: -.03em; font-weight: 700; }
+.calendar-month { color: var(--muted); font-size: .86rem; font-weight: 500; }
+
+.calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+
+.day-name {
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted); font-size: .74rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .06em;
+  padding: 10px;
+  /* C4 FIX */
+  border-radius: var(--r-sm);
+}
+
+.calendar-day {
+  min-height: 80px;
+  display: grid; align-content: space-between;
+  gap: 8px;
+  padding: 10px;
+  /* C4 FIX */
+  border-radius: var(--r-md);
+  background: rgba(255,255,255,.82);
+  border: 1px solid rgba(122,92,255,.08);
+}
+.calendar-day.muted       { opacity: .38; }
+.calendar-day.has-class   { background: linear-gradient(180deg, rgba(122,92,255,.10), rgba(255,255,255,.90)); border-color: rgba(122,92,255,.18); }
+.calendar-day.today       { outline: 2px solid rgba(219,255,102,.9); outline-offset: -2px; }
+
+.day-number { font-size: .86rem; font-weight: 700; }
+.mini-class {
+  /* C4 FIX */
+  border-radius: var(--r-sm);
+  padding: 7px;
+  background: rgba(122,92,255,.10);
+  color: var(--primary);
+  font-size: .71rem;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.student-calendar-list { display: grid; gap: 10px; margin-top: 16px; }
+.student-class-card {
+  padding: 14px 16px;
+  /* C4 FIX */
+  border-radius: var(--r-md);
+  background: rgba(255,255,255,.78);
+  border: 1px solid rgba(122,92,255,.10);
+}
+.student-class-card strong { display: block; margin-bottom: 4px; font-weight: 700; }
+.student-class-card p { margin: 0; color: var(--muted); line-height: 1.5; font-size: .88rem; font-weight: 400; }
+
+/* ─── 27. LIVE / AO VIVO ─── */
+.live-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.live-link-box { display: grid; gap: 10px; }
+.live-url { word-break: break-all; color: var(--muted); font-size: .88rem; }
+.section-card-content { display: grid; gap: 12px; margin-top: 14px; }
+
+/* ─── 28. FEATURED CHECKLIST ─── */
+.featured-checklist {
+  position: relative;
+  overflow: hidden;
+  /* C4 FIX */
+  border-radius: var(--r-lg);
+  padding: 22px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(122,92,255,.18);
+  background:
+    radial-gradient(circle at 92% 18%, rgba(219,255,102,.44), transparent 28%),
+    radial-gradient(circle at 8% 0%, rgba(122,92,255,.20), transparent 32%),
+    linear-gradient(135deg, rgba(255,255,255,.96), rgba(247,244,255,.92));
+  box-shadow: 0 20px 60px rgba(63,37,128,.14);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 18px;
+  align-items: center;
+}
+.featured-checklist::before {
+  content: "";
+  position: absolute;
+  inset: -80px auto auto 55%;
+  width: 260px; height: 260px;
+  border-radius: 999px;
+  background: rgba(122,92,255,.10);
+  filter: blur(4px);
+}
+.featured-checklist > * { position: relative; z-index: 1; }
+
+.checklist-kicker {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 11px;
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 600;
+  color: var(--primary);
+  background: rgba(122,92,255,.09);
+  border: 1px solid rgba(122,92,255,.12);
+  margin-bottom: 12px;
+}
+.featured-checklist h3 {
+  margin: 0 0 8px;
+  font-size: clamp(1.15rem, 1.8vw, 1.6rem);
+  letter-spacing: -.05em;
+  line-height: 1.05;
+  font-weight: 700;
+}
+.featured-checklist p { margin: 0; color: var(--muted); line-height: 1.55; max-width: 62ch; font-size: .93rem; }
+.checklist-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; align-items: center; }
+
+.checklist-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  text-decoration: none; border: none;
+  /* C4 FIX */
+  border-radius: var(--r-sm);
+  padding: 12px 16px;
+  cursor: pointer;
+  font-size: .86rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: white;
+  box-shadow: 0 14px 30px rgba(122,92,255,.22);
+  white-space: nowrap;
+}
+.checklist-btn.secondary {
+  color: var(--text);
+  background: rgba(255,255,255,.78);
+  border: 1px solid rgba(122,92,255,.12);
+  box-shadow: none;
+}
+
+.checklist-embed { display: none; margin: 16px 0; border-radius: var(--r-lg); overflow: hidden; border: 1px solid rgba(122,92,255,.14); background: white; box-shadow: 0 20px 60px rgba(63,37,128,.12); }
+.checklist-embed.show { display: block; }
+.checklist-embed iframe { display: block; width: 100%; height: 78vh; border: none; background: white; }
+
+/* ─── 29. LESSONS (materiais) ─── */
+.lesson-list { display: grid; gap: 16px; }
+.lesson-card {
+  padding: 18px;
+  /* C4 FIX */
+  border-radius: var(--r-lg);
+  background: rgba(255,255,255,.84);
+  border: 1px solid rgba(122,92,255,.12);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 14px;
+}
+.lesson-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.lesson-title { display: grid; gap: 4px; }
+.lesson-title strong { font-size: .98rem; letter-spacing: -.03em; font-weight: 700; }
+.lesson-title span   { font-size: .82rem; color: var(--muted); font-weight: 400; }
+
+.lesson-body { display: grid; grid-template-columns: 130px 1fr 1fr; gap: 14px; align-items: start; }
+
+.pdf-thumb {
+  height: 116px;
+  /* C4 FIX */
+  border-radius: var(--r-md);
+  background: linear-gradient(135deg, rgba(122,92,255,.14), rgba(219,255,102,.28));
+  border: 1px solid rgba(122,92,255,.12);
+  display: grid; place-items: center;
+  text-align: center;
+  padding: 12px;
+  color: var(--primary);
+  font-weight: 700;
+  font-size: .82rem;
+  overflow: hidden;
+}
+.pdf-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--r-sm); }
+
+.lesson-block {
+  padding: 13px;
+  /* C4 FIX */
+  border-radius: var(--r-md);
+  background: rgba(255,255,255,.78);
+  border: 1px solid rgba(122,92,255,.08);
+}
+.lesson-block h4 {
+  margin: 0 0 7px;
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--primary);
+  font-weight: 700;
+}
+.lesson-block p { margin: 0; color: var(--muted); line-height: 1.6; font-size: .88rem; white-space: pre-line; font-weight: 400; }
+
+/* ─── 30. TRILHA ─── */
+.external-trail-shell { display: grid; gap: 16px; }
+
+.external-trail-top {
+  display: flex; justify-content: space-between; align-items: center; gap: 18px;
+  padding: 22px;
+  /* C4 FIX */
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(circle at 90% 8%, rgba(219,255,102,.42), transparent 26%),
+    radial-gradient(circle at 0% 0%, rgba(122,92,255,.18), transparent 32%),
+    linear-gradient(135deg, rgba(255,255,255,.96), rgba(247,244,255,.94));
+  border: 1px solid rgba(122,92,255,.16);
+  box-shadow: var(--shadow);
+}
+.external-trail-top h2 {
+  margin: 12px 0 6px;
+  font-size: clamp(1.4rem, 2vw, 2.2rem);
+  line-height: 1;
+  letter-spacing: -.05em;
+  font-weight: 700;
+}
+.external-trail-top p { margin: 0; color: var(--muted); line-height: 1.55; max-width: 70ch; font-weight: 400; }
+
+.external-trail-frame {
+  width: 100%;
+  height: 82vh;
+  min-height: 680px;
+  border: 1px solid rgba(122,92,255,.14);
+  /* C4 FIX */
+  border-radius: var(--r-lg);
+  background: white;
+  box-shadow: var(--shadow);
+}
+
+/* ─── 31. FINANCEIRO ─── */
+.payment-item { position: relative; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.payment-item.clickable-payment { cursor: pointer; }
+.payment-item.clickable-payment:hover {
+  transform: translateY(-2px);
+  border-color: rgba(122,92,255,.28);
+  box-shadow: 0 18px 44px rgba(63,37,128,.16);
+}
+.payment-item.clickable-payment::after {
+  content: "Clique para copiar o Pix";
+  position: absolute; right: 16px; bottom: 12px;
+  font-size: .72rem; font-weight: 600; color: var(--primary); opacity: .7;
+}
+.payment-item.no-payment-action::after {
+  content: "Pagamento ainda não configurado";
+  color: #b44b67;
+}
+.pay-actions { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 12px; }
+.qr-preview { margin: 10px 0; }
+.qr-preview img { max-width: 170px; border-radius: var(--r-md); border: 1px solid var(--line); background: white; padding: 8px; box-shadow: var(--shadow); }
+
+/* ─── 32. EMPTY STATE ─── */
+.empty {
+  padding: 20px;
+  /* C4 FIX */
+  border-radius: var(--r-md);
+  background: rgba(255,255,255,.65);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  line-height: 1.55;
+  font-weight: 400;
+}
+
+/* ─── 33. TOAST — W4 FIX (responsivo) ─── */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  background: white;
+  border: 1px solid var(--line);
+  /* C4 FIX */
+  border-radius: var(--r-sm);
+  padding: 13px 18px;
+  box-shadow: var(--shadow);
+  font-size: .88rem;
+  font-weight: 600;
+  opacity: 0;
+  transition: all .4s ease;
+  pointer-events: none;
+  z-index: 999;
+  /* W4 FIX — era nowrap, quebrava em mobile */
+  white-space: normal;
+  text-align: center;
+  max-width: calc(100vw - 32px);
+  /* W4 FIX — largura máxima razoável em desktop */
+  width: max-content;
+  max-width: min(400px, calc(100vw - 32px));
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ─── 34. MOBILE TOPBAR — C1 FIX ─── */
+.mobile-topbar, .mobile-top-actions { display: none; }
+
+/* ─── 35. RESPONSIVO ─── */
+
+/* W5 FIX — breakpoint intermediário 900px (era direto para 1 coluna em 1180px) */
+@media (max-width: 1180px) {
+  .dashboard-row-2 { grid-template-columns: 1fr; }
+}
+
+/* W5 FIX — grid-2 e dashboard-row-3 em 2 colunas entre 900–1180px */
+@media (max-width: 1180px) and (min-width: 901px) {
+  .dashboard-row-3 {
+    grid-template-columns: 1fr 1fr;
   }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'Barlow', sans-serif;
-    background: linear-gradient(180deg, #f7f9fb 0%, var(--bg) 100%);
-    color: var(--text);
-    min-height: 100vh;
-    max-width: 480px;
-    margin: 0 auto;
-    position: relative;
-    border-left: 1px solid #d2d8df;
-    border-right: 1px solid #d2d8df;
+  .dashboard-row-3 > *:last-child {
+    grid-column: 1 / -1;
   }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+}
 
-  .header {
-    background: #ffffff;
-    border-bottom: 2px solid var(--border-strong);
-    padding: 16px 20px;
+@media (max-width: 900px) {
+  .dashboard-row-3 { grid-template-columns: 1fr; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .live-grid { grid-template-columns: 1fr; }
+  .dash-card, .dash-card.compact { min-height: auto; }
+}
+
+@media (max-width: 768px) {
+  .app { grid-template-columns: 1fr; }
+
+  /* C1 FIX — mobile topbar com breadcrumb visível */
+  .mobile-topbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 14px;
+    padding: 13px 16px 10px;
+    background: rgba(246,244,255,.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(119,92,255,.08);
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 2px 10px rgba(17, 24, 39, 0.12);
   }
 
-  .header-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 800;
-    font-size: 24px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--industrial-blue-strong);
+  .mobile-brand { display: flex; align-items: center; gap: 10px; }
+  .mobile-brand-logo {
+    width: 34px; height: 34px;
+    border-radius: 11px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-2));
+    color: white; font-weight: 700; font-size: .8rem;
+    display: grid; place-items: center;
   }
-
-  .header-date {
-    font-size: 12px;
-    color: var(--text-dim);
+  /* C1 FIX — nome da seção como breadcrumb principal */
+  .mobile-brand-name {
+    font-size: .88rem;
     font-weight: 700;
-    background: #eef3f8;
-    border: 1px solid #c4ced9;
-    padding: 5px 8px;
-    border-radius: 6px;
-    white-space: nowrap;
-  }
-
-  .page { display: none; padding: 18px 18px 120px; }
-  .page.active { display: block; }
-
-  .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: min(100vw, 480px);
-    max-width: 480px;
-    height: 78px;
-    background: #ffffff;
-    border-top: 2px solid var(--border-strong);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    z-index: 999;
-    box-shadow: 0 -4px 14px rgba(17, 24, 39, 0.10);
-  }
-
-  .bottom-item {
-    flex: 1;
-    height: 100%;
-    border: none;
-    background: transparent;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-    color: var(--text-soft);
-    font-family: 'Barlow', sans-serif;
-    font-weight: 700;
-  }
-
-  .bottom-item.active { color: var(--industrial-blue-strong); background: #edf4fb; }
-  .bottom-icon { font-size: 21px; line-height: 1; }
-  .bottom-icon-main {
-    background: var(--industrial-blue);
-    color: white;
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid var(--industrial-blue-strong);
-    box-shadow: 0 4px 10px rgba(7, 59, 104, 0.18);
-  }
-  .bottom-label { font-size: 11px; text-transform: uppercase; letter-spacing: .4px; }
-
-  /* TOAST */
-  .toast {
-    position: fixed;
-    top: 80px;
-    left: 50%;
-    transform: translateX(-50%) translateY(-20px);
-    background: #1e293b;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 700;
-    z-index: 9999;
-    opacity: 0;
-    transition: all 0.3s;
-    max-width: 90vw;
-    text-align: center;
-    pointer-events: none;
-  }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  .toast.success { background: #147a4f; }
-  .toast.error { background: #b42318; }
-  .toast.warning { background: #a15c00; }
-
-  /* CARDS */
-  .day-banner {
-    background: linear-gradient(135deg, #ffffff 0%, #edf3f8 100%);
-    border: 2px solid var(--border-strong);
-    border-radius: var(--radius);
-    padding: 16px 18px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: var(--shadow-card);
-  }
-  .day-label { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim); font-weight: 800; }
-  .day-count { font-family: 'Barlow Condensed', sans-serif; font-size: 30px; font-weight: 800; color: var(--text); line-height: 1; }
-  .day-count span { font-size: 13px; color: var(--text-dim); font-weight: 700; }
-
-  .section-label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--industrial-blue-strong);
-    margin: 20px 0 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 800;
-  }
-  .section-label::after { content: ''; flex: 1; height: 2px; background: var(--border); }
-
-  .task-card {
-    background: var(--surface);
-    border: 2px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    position: relative;
-    overflow: hidden;
-    box-shadow: var(--shadow-card);
-  }
-  .task-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; }
-  .task-card.alta::before { background: var(--alta); }
-  .task-card.media::before { background: var(--media); }
-  .task-card.baixa::before { background: var(--baixa); }
-  .task-card.concluida::before { background: var(--concluida); }
-  .task-card:hover { border-color: var(--border-strong); transform: translateY(-1px); box-shadow: var(--shadow-strong); }
-  .task-card.concluida { opacity: 1; background: #f5f7f9; }
-
-  .priority-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; border: 2px solid #fff; outline: 1px solid var(--border-strong); }
-  .task-card.alta .priority-dot { background: var(--alta); }
-  .task-card.media .priority-dot { background: var(--media); }
-  .task-card.baixa .priority-dot { background: var(--baixa); }
-  .task-card.concluida .priority-dot { background: var(--concluida); }
-
-  .task-info { flex: 1; min-width: 0; }
-  .task-name { font-weight: 700; font-size: 16px; line-height: 1.3; margin-bottom: 5px; color: var(--text); }
-  .task-card.concluida .task-name { text-decoration: line-through; color: var(--text-dim); }
-  .task-meta { font-size: 12px; color: var(--text-dim); display: flex; gap: 10px; flex-wrap: wrap; font-weight: 600; }
-
-  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid currentColor; }
-  .tag.alta { background: var(--alta-bg); color: var(--alta); }
-  .tag.media { background: var(--media-bg); color: var(--media); }
-  .tag.baixa { background: var(--baixa-bg); color: var(--baixa); }
-  .tag.concluida { background: var(--concluida-bg); color: var(--concluida); }
-
-  .task-check { width: 32px; height: 32px; border-radius: 8px; border: 2px solid var(--border-strong); display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; transition: all 0.2s; background: #f8fafc; color: var(--industrial-blue-strong); font-size: 16px; font-weight: 800; }
-  .task-card.concluida .task-check { border-color: var(--concluida); background: var(--concluida-bg); color: var(--concluida); }
-
-  /* MODAL */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.48); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; }
-  .modal-overlay.open { display: flex; }
-  .modal { position: relative; z-index: 5001; background: #ffffff; border-radius: 18px; border: 2px solid var(--border-strong); width: 100%; max-width: 480px; max-height: calc(100vh - 40px); overflow-y: auto; padding: 24px 20px 40px; animation: slideUp 0.3s ease; box-shadow: 0 -10px 26px rgba(17, 24, 39, 0.18); }
-  @keyframes slideUp { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-  .modal-title { font-family: 'Barlow Condensed', sans-serif; font-size: 23px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; color: var(--industrial-blue-strong); }
-  .modal-close { background: #eef3f8; border: 1px solid var(--border); color: var(--text); width: 34px; height: 34px; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
-
-  /* FORMS */
-  .form-group { margin-bottom: 16px; }
-  label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--industrial-blue-strong); margin-bottom: 6px; font-weight: 800; }
-  input, textarea, select { width: 100%; background: #ffffff; border: 2px solid var(--border); border-radius: 8px; padding: 13px 14px; color: var(--text); font-family: 'Barlow', sans-serif; font-size: 16px; font-weight: 600; outline: none; transition: border-color 0.2s, box-shadow 0.2s; -webkit-appearance: none; box-shadow: inset 0 1px 2px rgba(17, 24, 39, 0.06); }
-  input::placeholder, textarea::placeholder { color: #6f7d8c; }
-  input:focus, textarea:focus, select:focus { border-color: var(--industrial-blue); box-shadow: 0 0 0 3px rgba(11, 79, 138, 0.16); }
-  textarea { resize: none; min-height: 90px; }
-
-  .priority-pills { display: flex; gap: 8px; }
-  .priority-pill { flex: 1; padding: 11px 4px; border-radius: 8px; border: 2px solid var(--border-strong); background: #ffffff; color: var(--text-dim); font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s; text-align: center; }
-  .priority-pill.alta.selected { border-color: var(--alta); background: var(--alta-bg); color: var(--alta); }
-  .priority-pill.media.selected { border-color: var(--media); background: var(--media-bg); color: var(--media); }
-  .priority-pill.baixa.selected { border-color: var(--baixa); background: var(--baixa-bg); color: var(--baixa); }
-
-  .tipo-pills { display: flex; gap: 8px; }
-  .tipo-pill { flex: 1; padding: 11px 4px; border-radius: 8px; border: 2px solid var(--border-strong); background: #ffffff; color: var(--text-dim); font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s; text-align: center; }
-  .tipo-pill.selected { border-color: var(--industrial-blue); background: var(--industrial-blue-soft); color: var(--industrial-blue-strong); }
-
-  .equipe-check { display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; }
-  .func-check-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #ffffff; border-radius: 8px; border: 2px solid var(--border); cursor: pointer; transition: border-color 0.2s, background 0.2s; }
-  .func-check-item.selected { border-color: var(--industrial-blue); background: var(--industrial-blue-soft); }
-  .func-check-item input[type=checkbox] {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 30px;
-    height: 30px;
-    flex-shrink: 0;
-    border: 2px solid var(--border);
-    border-radius: 8px;
-    background: #ffffff;
-    box-shadow: inset 0 1px 2px rgba(17, 24, 39, 0.08);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    margin: 0;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  .func-check-item input[type=checkbox]:checked {
-    background: var(--industrial-blue);
-    border-color: var(--industrial-blue-strong);
-    box-shadow: 0 2px 8px rgba(7, 59, 104, 0.20);
-  }
-  .func-check-item input[type=checkbox]:checked::after {
-    content: '✓';
-    color: #ffffff;
-    font-family: 'Barlow', sans-serif;
-    font-size: 20px;
-    font-weight: 900;
-    line-height: 1;
-  }
-  .func-check-name { font-size: 15px; font-weight: 700; color: var(--text); }
-  .func-check-tipo { font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: 800; }
-
-  .btn { width: 100%; padding: 15px; border-radius: 9px; border: none; font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s; }
-  .btn-primary { background: var(--industrial-blue); color: #ffffff; border: 2px solid var(--industrial-blue-strong); box-shadow: 0 2px 8px rgba(7, 59, 104, 0.22); }
-  .btn-primary:hover { background: var(--industrial-blue-strong); }
-  .btn-primary:disabled { background: #aeb8c4; border-color: #aeb8c4; cursor: not-allowed; }
-  .btn-danger { background: var(--alta-bg); color: var(--alta); border: 2px solid var(--alta); margin-top: 8px; }
-  .btn-secondary { background: #eef3f8; color: var(--text); border: 2px solid var(--border-strong); margin-top: 8px; }
-
-  /* FUNCIONÁRIOS PAGE */
-  .func-card { background: #ffffff; border: 2px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-card); }
-  .func-card:hover { border-color: var(--border-strong); box-shadow: var(--shadow-strong); }
-  .func-name { font-weight: 800; font-size: 16px; color: var(--text); }
-  .func-tipo-badge { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 4px 10px; border-radius: 6px; border: 1px solid currentColor; }
-  .func-tipo-badge.eletricista { background: var(--media-bg); color: var(--media); }
-  .func-tipo-badge.ajudante { background: var(--baixa-bg); color: var(--baixa); }
-
-  /* HISTÓRICO */
-  .hist-day-header {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--industrial-blue-strong);
-    padding: 16px 0 8px;
-    border-bottom: 2px solid var(--border);
-    margin-bottom: 10px;
-    font-weight: 800;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-  }
-  .hist-day-title { flex: 1; min-width: 0; }
-  .btn-rdo {
-    width: auto;
-    flex-shrink: 0;
-    border: 2px solid var(--industrial-blue-strong);
-    background: var(--industrial-blue);
-    color: #fff;
-    border-radius: 8px;
-    padding: 8px 10px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 12px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: .8px;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(7, 59, 104, 0.18);
-  }
-  .rdo-box {
-    background: #f8fafc;
-    border: 2px solid var(--border);
-    border-radius: 10px;
-    padding: 14px;
-    white-space: pre-wrap;
-    font-family: 'Barlow', sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
+    letter-spacing: -.02em;
     color: var(--text);
   }
 
-  .rdo-documento {
-    background: #ffffff;
-    border: 2px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
+  .hamburger-btn {
+    width: 38px; height: 38px;
+    border: 1px solid rgba(119,92,255,.14);
+    border-radius: var(--r-sm);
+    background: rgba(255,255,255,.82);
+    cursor: pointer;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 5px; padding: 0;
   }
+  .hamburger-btn span { display: block; width: 17px; height: 2px; background: var(--text); border-radius: 2px; transition: all .22s ease; }
+  .hamburger-btn.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger-btn.active span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .hamburger-btn.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-  .rdo-header h1 {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 24px;
-    line-height: 1.1;
-    margin-bottom: 10px;
-    color: var(--industrial-blue-strong);
-    text-transform: uppercase;
-    letter-spacing: .8px;
+  .sidebar {
+    position: fixed; top: 0; left: 0;
+    width: 84vw; max-width: 300px; height: 100vh;
+    z-index: 200;
+    transform: translateX(-100%);
+    transition: transform .28s cubic-bezier(.4, 0, .2, 1);
+    padding: 18px;
+    background: rgba(255,255,255,.96);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid rgba(119,92,255,.12);
+    box-shadow: 4px 0 32px rgba(63,37,128,.14);
   }
+  .sidebar.open { transform: translateX(0); }
 
-  .rdo-data {
-    font-size: 14px;
-    color: var(--text-dim);
-    margin-bottom: 24px;
-    font-weight: 700;
+  .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(29,22,48,.38); z-index: 199; animation: fadeOverlay .22s ease; }
+  .sidebar-overlay.show { display: block; }
+  @keyframes fadeOverlay { from { opacity: 0; } to { opacity: 1; } }
+
+  .topbar { display: none; }
+
+  .mobile-top-actions {
+    display: flex;
+    gap: 8px;
+    padding: 0 14px 12px;
+    background: rgba(246,244,255,.9);
   }
+  .mobile-top-actions .btn { flex: 1; padding: 10px 12px; font-size: .8rem; font-weight: 700; border-radius: var(--r-sm); text-align: center; }
+  .mobile-top-actions .btn-soft    { background: rgba(255,255,255,.88); border: 1px solid var(--line); }
+  .mobile-top-actions .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-2)); color: white; box-shadow: 0 6px 18px rgba(122,92,255,.22); }
 
-  .rdo-section-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 17px;
-    font-weight: 800;
-    margin-bottom: 16px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--industrial-blue-strong);
-    border-bottom: 2px solid var(--border);
-    padding-bottom: 8px;
-  }
+  .main { padding: 12px 14px 24px; }
 
-  .bloco-rdo {
-    border: 1px solid #d6dde6;
-    border-radius: 10px;
-    padding: 14px;
-    margin-bottom: 14px;
-    background: #f8fafc;
-  }
+  .diag-item .item-top       { flex-direction: row; align-items: center; gap: 10px; margin-bottom: 0; }
+  .diag-item .diag-head      { flex: 1; min-width: 0; }
+  .diag-item .item-top .mini-badge { flex-shrink: 0; }
+  .diag-item .item-actions   { padding-top: 10px; gap: 8px; }
+  .diag-item-row             { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding-top: 10px; }
 
-  .titulo-rdo {
-    font-size: 16px;
-    font-weight: 800;
-    margin-bottom: 10px;
-    color: #111827;
-  }
+  .quick-link, .item-top     { flex-direction: column; align-items: flex-start; }
 
-  .descricao-rdo {
-    font-size: 14px;
-    line-height: 1.6;
-    color: #374151;
-  }
+  .calendar-day              { min-height: 68px; padding: 8px; }
+  .calendar-grid             { gap: 5px; }
 
+  .featured-checklist        { grid-template-columns: 1fr; }
+  .checklist-actions         { justify-content: flex-start; }
+  .checklist-embed iframe    { height: 72vh; }
 
+  .external-trail-top        { flex-direction: column; align-items: flex-start; padding: 18px; }
+  .external-trail-frame      { height: 86vh; min-height: 720px; border-radius: var(--r-md); }
 
-  .rdo-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #ffffff;
-    overflow: hidden;
-    border-radius: 10px;
-  }
+  .lesson-body               { grid-template-columns: 1fr; }
+  .pdf-thumb                 { height: auto; min-height: 86px; }
 
-  .rdo-table th {
-    background: #eef3f8;
-    border: 1px solid #cbd5e1;
-    padding: 11px 10px;
-    text-align: left;
-    font-size: 13px;
-    font-weight: 800;
-    color: var(--industrial-blue-strong);
-    text-transform: uppercase;
-    letter-spacing: .6px;
-  }
+  .hero-stats                { grid-template-columns: 1fr; }
 
-  .rdo-table td {
-    border: 1px solid #cbd5e1;
-    padding: 11px 10px;
-    vertical-align: top;
-    font-size: 14px;
-    line-height: 1.45;
-  }
+  #section-dicas .grid-2     { grid-template-columns: 1fr; }
+}
 
-  .rdo-atividade {
-    width: 34%;
-    font-weight: 800;
-    color: #111827;
-  }
-
-  .rdo-descricao {
-    width: 66%;
-    color: #374151;
-  }
-
-  /* DETAIL */
-  .detail-field { margin-bottom: 16px; }
-  .detail-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--industrial-blue-strong); margin-bottom: 4px; font-weight: 800; }
-  .detail-value { font-size: 16px; color: var(--text); line-height: 1.5; font-weight: 600; }
-  .func-list-inline { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-  .func-chip { background: #eef3f8; border: 1px solid var(--border); border-radius: 6px; padding: 5px 12px; font-size: 12px; color: var(--text); font-weight: 700; }
-
-  .empty-state { text-align: center; padding: 44px 20px; color: var(--text-dim); background: rgba(255,255,255,.55); border: 1px dashed var(--border); border-radius: var(--radius); }
-  .empty-icon { font-size: 48px; margin-bottom: 12px; }
-  .empty-text { font-size: 15px; font-weight: 700; }
-  .loading { text-align: center; padding: 40px; color: var(--text-dim); font-size: 14px; font-weight: 700; }
-  .transfer-badge { font-size: 10px; background: #fff7e8; color: var(--media); padding: 3px 7px; border-radius: 6px; border: 1px solid #d99432; margin-left: 6px; font-weight: 800; }
-
-  /* DEBUG BANNER */
-  .debug-banner { background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; font-size: 12px; color: #856404; font-weight: 700; display: none; }
-  .debug-banner.show { display: block; }
-</style>
-
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0b4f8a">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Gestão Elétrica">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="apple-touch-icon" href="icon-192.png">
-
+@media (max-width: 480px) {
+  .progress-steps { grid-template-columns: 1fr; }
+  .hero-stats     { grid-template-columns: 1fr 1fr; }
+}
+  </style>
 </head>
 <body>
-
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
-
-<!-- HEADER -->
-<div class="header">
-  <div class="header-title" id="headerTitle">Atividades</div>
-  <div class="header-date" id="headerDate"></div>
-</div>
-
-<!-- PAGE: ATIVIDADES -->
-<div class="page active" id="page-atividades">
-  <div class="day-banner">
-    <div>
-      <div class="day-label">Hoje</div>
-      <div class="day-count" id="pendingCount">0 <span>pendentes</span></div>
+  <section class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <div class="logo">hd</div>
+      <h1>Portal da aluna</h1>
+      <p>Entre com o e-mail e senha cadastrados para ver seus materiais, aulas e próximos passos.</p>
+      <input id="loginEmail" type="email" placeholder="Email" autocomplete="email" />
+      <input id="loginPassword" type="password" placeholder="Senha" autocomplete="current-password" />
+      <button class="btn btn-primary" id="loginBtn" style="width:100%">Entrar</button>
+      <div class="msg" id="loginMsg"></div>
     </div>
-    <div style="text-align:right">
-      <div class="day-label">Concluídas</div>
-      <div class="day-count" id="doneCount">0 <span>hoje</span></div>
-    </div>
-  </div>
-  <div id="taskList"><div class="loading">Carregando...</div></div>
-</div>
+  </section>
 
-<!-- PAGE: NOVA ATIVIDADE -->
-<div class="page" id="page-nova">
-  <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:24px;">Nova Atividade</div>
-  <div class="debug-banner" id="debugBanner"></div>
-  <div class="form-group">
-    <label>Nome da Atividade *</label>
-    <input type="text" id="newNome" placeholder="Ex: Trocar disjuntor quadro 3">
-  </div>
-  <div class="form-group">
-    <label>Descrição / Detalhes</label>
-    <textarea id="newDescricao" placeholder="Informações adicionais..."></textarea>
-  </div>
-  <div class="form-group">
-    <label>Prioridade *</label>
-    <div class="priority-pills">
-      <button class="priority-pill alta" onclick="selectPriority('alta')">🔴 Alta</button>
-      <button class="priority-pill media" onclick="selectPriority('media')">🟠 Média</button>
-      <button class="priority-pill baixa" onclick="selectPriority('baixa')">🔵 Baixa</button>
-    </div>
-  </div>
-  <div class="form-group">
-    <label>Prazo (opcional)</label>
-    <input type="date" id="newPrazo">
-  </div>
-  <div class="form-group">
-    <label>Designar Equipe (opcional)</label>
-    <div class="equipe-check" id="funcCheckList">
-      <div style="color:var(--text-dim);font-size:13px;padding:8px 0;">Carregando membros...</div>
-    </div>
-  </div>
-  <button class="btn btn-primary" id="btnSalvarAtiv" onclick="salvarAtividade()">Salvar Atividade</button>
-</div>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
-<!-- PAGE: EQUIPE -->
-<div class="page" id="page-equipe">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:12px;">
-    <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;text-transform:uppercase;letter-spacing:1px;">Equipe</div>
-    <button class="btn btn-primary" style="width:auto;padding:12px 16px;font-size:14px;flex-shrink:0;" onclick="openModalFuncionario()">➕ Adicionar</button>
-  </div>
-  <div id="funcList"><div class="loading">Carregando...</div></div>
-</div>
+  <div class="layout app" id="app">
 
-<!-- PAGE: HISTÓRICO -->
-<div class="page" id="page-historico">
-  <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:24px;">Histórico</div>
-  <div id="histList"><div class="loading">Carregando...</div></div>
-</div>
-
-<!-- MODAL: DETALHE ATIVIDADE -->
-<div class="modal-overlay" id="modalDetalhe">
-  <div class="modal">
-    <div class="modal-title">
-      <span>Detalhes</span>
-      <button class="modal-close" onclick="closeModal('modalDetalhe')">✕</button>
-    </div>
-    <div id="modalDetalheContent"></div>
-  </div>
-</div>
-
-<!-- MODAL: RDO -->
-<div class="modal-overlay" id="modalRDO">
-  <div class="modal">
-    <div class="modal-title">
-      <span>RDO</span>
-      <button class="modal-close" onclick="closeModal('modalRDO')">✕</button>
-    </div>
-    <div id="modalRDOContent"></div>
-  </div>
-</div>
-
-<!-- MODAL: FUNCIONÁRIO -->
-<div class="modal-overlay" id="modalFuncionario">
-  <div class="modal">
-    <div class="modal-title">
-      <span id="funcModalTitle">Novo Membro</span>
-      <button class="modal-close" onclick="closeModal('modalFuncionario')">✕</button>
-    </div>
-    <div class="form-group">
-      <label>Nome *</label>
-      <input type="text" id="funcNome" placeholder="Nome completo">
-    </div>
-    <div class="form-group">
-      <label>Função *</label>
-      <div class="tipo-pills">
-        <button class="tipo-pill" id="tipoEletricista" onclick="selectTipo('eletricista')">⚡ Eletricista</button>
-        <button class="tipo-pill" id="tipoAjudante" onclick="selectTipo('ajudante')">🔧 Ajudante</button>
+    <div class="mobile-topbar" id="mobileTopbar">
+      <div class="mobile-brand">
+        <div class="mobile-brand-logo">hd</div>
+        <span class="mobile-brand-name" id="mobileSectionTitle">Portal da aluna</span>
       </div>
+      <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()" aria-label="Abrir menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
-    <div class="form-group">
-      <label>Informações Extras (opcional)</label>
-      <textarea id="funcInfo" placeholder="Especialidade, contato..."></textarea>
-    </div>
-    <button class="btn btn-primary" id="btnSalvarFunc" onclick="salvarFuncionario()">Salvar</button>
-    <button class="btn btn-danger" id="btnDeletarFunc" style="display:none" onclick="deletarFuncionario()">Excluir Membro</button>
-    <button class="btn btn-secondary" onclick="closeModal('modalFuncionario')">Cancelar</button>
-  </div>
-</div>
 
-<!-- BOTTOM NAV -->
-<nav class="bottom-nav">
-  <button class="bottom-item active" data-page="atividades" onclick="navigate('atividades')">
-    <span class="bottom-icon">📋</span>
-    <span class="bottom-label">Atividades</span>
-  </button>
-  <button class="bottom-item" data-page="nova" onclick="navigate('nova')">
-    <span class="bottom-icon bottom-icon-main">➕</span>
-    <span class="bottom-label">Nova</span>
-  </button>
-  <button class="bottom-item" data-page="equipe" onclick="navigate('equipe')">
-    <span class="bottom-icon">👷</span>
-    <span class="bottom-label">Equipe</span>
-  </button>
-  <button class="bottom-item" data-page="historico" onclick="navigate('historico')">
-    <span class="bottom-icon">📂</span>
-    <span class="bottom-label">Histórico</span>
-  </button>
-</nav>
+    <div class="mobile-top-actions" id="mobileTopActions">
+      <button class="btn btn-soft" onclick="goSection('materiais')">Ver materiais</button>
+      <button class="btn btn-primary" onclick="openElos()">Entrar na aula ao vivo</button>
+    </div>
+
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-shell">
+        <div class="brand">
+          <div class="brand-logo">hd</div>
+          <div><strong>help.debs portal</strong><span>área da aluna</span></div>
+        </div>
+        <div class="student-card loading" id="studentCard">
+          <div class="student-top">
+            <div class="student-avatar">💜</div>
+            <div>
+              <div class="student-name" id="studentName">Carregando...</div>
+              <div class="student-level" id="studentLevel">Aulas individuais</div>
+            </div>
+          </div>
+          <div class="student-badges">
+            <span class="badge" id="studentFocus">trilha ativa</span>
+            <span class="badge" id="diagBadge">diagnóstico</span>
+          </div>
+        </div>
+        <nav class="nav" id="portalNav">
+          <div class="nav-label">menu</div>
+          <button class="nav-btn active" data-section="inicio">Início <small>dashboard</small></button>
+          <button class="nav-btn" data-section="diagnostico">Diagnóstico <small>perfil e nível</small></button>
+          <button class="nav-btn" data-section="trilha">Trilha <small>21 dias</small></button>
+          <button class="nav-btn" data-section="materiais">Materiais <small>PDFs e resumos</small></button>
+          <button class="nav-btn" data-section="calendario">Calendário <small>aulas marcadas</small></button>
+          <button class="nav-btn" data-section="ao-vivo">Aula ao vivo <small>link do Elos</small></button>
+          <button class="nav-btn" data-section="dicas">Dicas <small>conteúdo rápido</small></button>
+          <button class="nav-btn" data-section="videoaulas">Videoaulas <small>biblioteca</small></button>
+          <button class="nav-btn" data-section="financeiro">Financeiro <small>pagamentos</small></button>
+        </nav>
+        <button class="nav-logout" id="logoutBtn">Sair da conta</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="shell">
+        <div class="topbar">
+          <div class="headline"><h1 id="pageTitle">Portal da aluna</h1></div>
+          <div class="top-actions">
+            <button class="btn btn-soft" onclick="goSection('materiais')">Ver materiais</button>
+            <button class="btn btn-primary" onclick="openElos()">Entrar na aula ao vivo</button>
+          </div>
+        </div>
+
+        <section class="portal-section active" id="section-inicio">
+          <div class="dashboard-v2">
+            <div class="dashboard-row-3">
+              <div class="panel dash-card compact">
+                <div class="section-title"><h3>Visão geral</h3></div>
+                <div class="mini-stats">
+                  <div class="mini-stat"><span>Próxima aula</span><strong id="nextClassStat">—</strong></div>
+                  <div class="mini-stat"><span>Materiais disponíveis</span><strong id="materialsStat">0</strong></div>
+                  <div class="mini-stat"><span>Diagnósticos pendentes</span><strong id="pendingDiagStat">3</strong></div>
+                </div>
+              </div>
+              <div class="panel dash-card compact">
+                <div class="section-title"><h3>Acesso rápido</h3></div>
+                <div class="quick-links" id="quickLinks">
+                  <div class="quick-link"><div><strong>Continuar diagnóstico</strong><p>3 pendente(s)</p></div><a href="#">acessar</a></div>
+                  <div class="quick-link"><div><strong>Material mais recente</strong><p>Checklist de vocabulário</p></div><a href="#">ver</a></div>
+                  <div class="quick-link"><div><strong>Financeiro</strong><p>Mensalidade de abril</p></div><a href="#">pagar</a></div>
+                </div>
+              </div>
+              <div class="panel dash-card compact">
+                <div class="section-title"><h3>Mini feedback</h3></div>
+                <div class="feedback-box" id="miniFeedbackBox">
+                  <strong>Observação da professora</strong>
+                  <p class="feedback-note">Você está ganhando mais velocidade para construir respostas. Agora vamos organizar melhor as ideias antes de falar.</p>
+                  <div class="feedback-focus">Foco da semana: clareza + vocabulário ativo</div>
+                </div>
+              </div>
+            </div>
+            <div class="dashboard-row-2">
+              <div class="panel dash-card">
+                <div class="section-title"><h3>Progresso do diagnóstico</h3></div>
+                <div id="diagnosisProgressBox">
+                  <div class="progress-card-body">
+                    <div>
+                      <p class="dash-muted">0 de 3 etapas concluídas</p>
+                      <div class="progress-bar-wrap"><div class="progress-bar"><div class="progress-fill" style="width:0%" data-pct="0%"></div></div></div>
+                      <div class="progress-meta">
+                        <span class="badge diagnosis-red">começar diagnóstico</span>
+                        <button class="mini-btn">Começar</button>
+                      </div>
+                    </div>
+                    <div class="progress-steps">
+                      <div class="progress-step current">1. Perfil</div>
+                      <div class="progress-step">2. Nível</div>
+                      <div class="progress-step">3. Interesses</div>
+                    </div>
+                    <p class="dash-muted">Próximo passo: Quem é você no grupinho do inglês?</p>
+                  </div>
+                </div>
+              </div>
+              <div class="panel dash-card">
+                <div class="section-title"><h3>Status financeiro</h3></div>
+                <div id="financeDashboardBox">
+                  <div class="finance-status">
+                    <span class="finance-pill pending">pendente</span>
+                    <div>
+                      <strong>Abril 2026</strong>
+                      <div class="finance-amount">R$ 297.00</div>
+                      <p class="dash-muted">vence hoje</p>
+                    </div>
+                    <div class="finance-row"><span>Status</span><strong>Aguardando pagamento</strong></div>
+                    <div class="finance-row"><span>Forma</span><strong>Pix</strong></div>
+                    <button class="mini-btn">Pagar agora</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="portal-section" id="section-diagnostico">
+          <div class="grid-2">
+            <div class="panel diagnostic-card"><div class="section-title"><h3>Diagnóstico</h3></div><div class="diag-list" id="diagnosticsList"></div></div>
+            <div class="panel materials-card"><div class="section-title"><h3>Resultado salvo</h3></div><div class="materials-list" id="profileSummary"></div></div>
+          </div>
+        </section>
+
+
+
+        <section class="portal-section" id="section-trilha">
+          <div class="external-trail-shell">
+            <div class="external-trail-top">
+              <div>
+                <span class="badge diagnosis-green">trilha nova</span>
+                <h2>Trilha personalizada de 21 dias</h2>
+                <p>Acesse sua trilha diária personalizada dentro do portal.</p>
+              </div>
+              <button class="btn btn-primary" onclick="openNewTrailFull()">Abrir em tela cheia</button>
+            </div>
+
+            <iframe
+              class="external-trail-frame"
+              src="helpdebs_trilha_dynamic_lessons.html"
+              title="Trilha HelpDebs de 21 dias"
+              loading="lazy">
+            </iframe>
+          </div>
+        </section>
+
+        <section class="portal-section" id="section-materiais">
+          <div id="featuredChecklistArea"></div>
+          <div id="checklistEmbedArea" class="checklist-embed"></div>
+          <div class="panel materials-card">
+            <div class="section-title"><h3>Aulas e materiais</h3></div>
+            <div class="lesson-list" id="lessonsList"></div>
+            <div class="materials-list" id="materialsList"></div>
+            <div class="materials-list" id="summariesList" style="display:none"></div>
+          </div>
+        </section>
+
+        <section class="portal-section" id="section-calendario">
+          <div class="panel calendar-card">
+            <div class="student-calendar-shell">
+              <div class="calendar-header">
+                <strong>Calendário</strong>
+                <span class="calendar-month" id="calendarMonth">—</span>
+              </div>
+              <div class="calendar-grid" id="calendarGrid"></div>
+              <div class="student-calendar-list" id="studentClassList"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="portal-section" id="section-ao-vivo">
+          <div class="panel live-card">
+            <div class="section-title"><h3>Aula ao vivo</h3></div>
+            <div class="live-grid">
+              <div class="live-box live-link-box">
+                <strong>Link para acessar a aula ao vivo</strong>
+                <p class="live-url" id="elosText">https://elos.vc/sala/teacherdebora</p>
+                <div class="item-actions"><button class="mini-btn" onclick="openElos()">Abrir sala</button></div>
+              </div>
+              <div class="live-box">
+                <strong>Próxima aula</strong>
+                <p id="nextClassLive">—</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="portal-section" id="section-dicas">
+          <div class="grid-2"><div class="panel tips-card"><div class="section-title"><h3>Dicas</h3></div><div class="tips-list" id="tipsList"></div></div><div class="panel tips-card"><div class="section-title"><h3>Prompts e recursos</h3></div><div class="tips-list" id="promptsList"></div></div></div>
+        </section>
+
+        <section class="portal-section" id="section-videoaulas">
+          <div class="panel videos-card"><div class="section-title"><h3>Videoaulas</h3></div><div class="videos-list" id="videosList"></div></div>
+        </section>
+
+        <section class="portal-section" id="section-financeiro">
+          <div class="panel materials-card"><div class="section-title"><h3>Financeiro</h3></div><div class="payments-list" id="paymentsList"></div></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
 
 <script>
-const SUPABASE_URL = 'https://etudmipuztkaaujqfsqn.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV0dWRtaXB1enRrYWF1anFmc3FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMjUzMDIsImV4cCI6MjA5MzcwMTMwMn0.4kTkstK_nQYwfQC0gnygLNb7Nk2AmCcUBvQk6UnIspk';
-const { createClient } = supabase;
-const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+const SB_URL = "https://pgdanuifukzisyyummpz.supabase.co";
+const SB_ANON = "sb_publishable_81NM6F08rsXXSCgjWl4iSg_v99cdVpo";
 
-let currentPage = 'atividades';
-let selectedPriority = null;
-let selectedTipo = null;
-let editingFuncId = null;
-let allFuncionarios = [];
-let selectedFuncIds = [];
+const PERSONALITY_TEST_URL = "https://helpdebs.github.io/helpdebs-portal/teste-personalidade.html";
+const LEVEL_TEST_URL = "https://helpdebs.github.io/helpdebs-portal/teste_nivelamento.html";
+const INTERESTS_TEST_URL = "https://helpdebs.github.io/helpdebs-portal/interesses.html";
+const MONTHLY_CHECKLIST_URL = "https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html";
 
-function getToday() {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
+const TRAIL_TOTAL_DAYS = 21;
+const TRAIL_ACTIVITIES_PER_DAY = 5;
+const TRAIL_DAY_TITLES = [
+  "Gostos e interesses", "Rotina real", "Opiniões", "Passado", "Planos", "Preferências", "Revisão 1",
+  "Trabalho e estudos", "Séries e filmes", "Conversas sociais", "Problemas do dia a dia", "Comparações", "Histórias curtas", "Revisão 2",
+  "Argumentos", "Listening leve", "Mensagens", "Decisões", "Situações reais", "Revisão final", "Desafio final"
+];
+
+const TRAIL_DAY_1_BANK = {
+  A1: [
+    {type:"choice", skill:"preferences", question:"Choose the best sentence:", options:["I like {interest}.", "I likes {interest}.", "I liking {interest}."], answer:"I like {interest}."},
+    {type:"complete", skill:"vocabulary", question:"Complete: I watch {interest} when I want to ____.", options:["relax", "sleeping", "hungry"], answer:"relax"},
+    {type:"order", skill:"word order", question:"Put the words in order:", words:["like", "I", "{interest}"], answer:"I like {interest}"},
+    {type:"choice", skill:"reading", question:"What does this sentence mean? ‘I like {interest}.’", options:["Eu gosto de {interest}.", "Eu odeio {interest}.", "Eu trabalho com {interest}."], answer:"Eu gosto de {interest}."},
+    {type:"write", skill:"writing", question:"Write a simple sentence with: {interest}", answer:"I like {interest}."}
+  ],
+  B1: [
+    {type:"choice", skill:"preferences", question:"Choose the most natural sentence:", options:["I usually watch {interest} when I need to relax.", "I watch usually {interest} when I need relax.", "I usually watches {interest} when I need relaxing."], answer:"I usually watch {interest} when I need to relax."},
+    {type:"complete", skill:"connection", question:"Complete: I enjoy {interest} because it helps me ____ after a long day.", options:["switch off", "switch on", "turn out"], answer:"switch off"},
+    {type:"order", skill:"word order", question:"Put the words in order:", words:["helps", "relax", "me", "{interest}", "after work"], answer:"{interest} helps me relax after work"},
+    {type:"choice", skill:"reading", question:"Which sentence sounds more natural?", options:["I’m into {interest} because the characters feel familiar.", "I’m in {interest} because characters feels familiar.", "I into {interest} because the characters familiar."], answer:"I’m into {interest} because the characters feel familiar."},
+    {type:"write", skill:"writing", question:"Write one sentence explaining why you like {interest}.", answer:"I like {interest} because it helps me relax."}
+  ],
+  B2: [
+    {type:"choice", skill:"nuance", question:"Choose the sentence with the most natural B2 tone:", options:["What makes {interest} enjoyable is how familiar and comforting it feels.", "What does {interest} enjoyable is how comfort it feels.", "{interest} is enjoyable because familiar and comfort."], answer:"What makes {interest} enjoyable is how familiar and comforting it feels."},
+    {type:"complete", skill:"expression", question:"Complete: I tend to go back to {interest} whenever I want something ____ but still engaging.", options:["comforting", "comfort", "comforted"], answer:"comforting"},
+    {type:"order", skill:"structure", question:"Put the words in order:", words:["stands out", "because", "{interest}", "the dialogue", "feels natural"], answer:"{interest} stands out because the dialogue feels natural"},
+    {type:"choice", skill:"reading", question:"Which sentence expresses a more developed opinion?", options:["What I appreciate about {interest} is the way it balances humor and emotional familiarity.", "I like {interest} because good.", "{interest} is very more better because funny."], answer:"What I appreciate about {interest} is the way it balances humor and emotional familiarity."},
+    {type:"write", skill:"writing", question:"Write a B2-style opinion sentence about {interest}.", answer:"What I appreciate about {interest} is how natural the dialogue feels."}
+  ]
+};
+
+let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[], diagConfig=[], trailProgress=[];
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+
+const $ = (id) => document.getElementById(id);
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+function showToast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2800); }
+function msg(id,text,type="info"){ const el=$(id); el.textContent=text; el.className=`msg show ${type}`; }
+function dateBR(d){ if(!d)return "—"; return new Date(d+"T12:00:00").toLocaleDateString("pt-BR",{weekday:"short",day:"numeric",month:"short"}); }
+function openLink(url){ if(!url){showToast("⚠️ Link ainda não configurado");return;} window.open(url,"_blank"); }
+
+function toggleSidebar(){
+  const sidebar = $("sidebar");
+  const overlay = $("sidebarOverlay");
+  const btn = $("hamburgerBtn");
+  const isOpen = sidebar.classList.contains("open");
+  if(isOpen){ closeSidebar(); }
+  else {
+    sidebar.classList.add("open");
+    overlay.classList.add("show");
+    btn.classList.add("active");
+    btn.setAttribute("aria-label","Fechar menu");
+  }
+}
+function closeSidebar(){
+  $("sidebar").classList.remove("open");
+  $("sidebarOverlay").classList.remove("show");
+  $("hamburgerBtn").classList.remove("active");
+  $("hamburgerBtn").setAttribute("aria-label","Abrir menu");
 }
 
-// Mantém compatibilidade com trechos antigos do código, mas sempre recalculando a data real do dia.
-Object.defineProperty(window, 'TODAY', { get: getToday });
-
-// ── DATA DISPLAY ──────────────────────────────────────────
-const days = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-
-function updateHeaderDate() {
-  const d = new Date();
-  document.getElementById('headerDate').textContent = `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]}`;
-}
-updateHeaderDate();
-setInterval(updateHeaderDate, 60 * 1000);
-
-// ── TOAST ─────────────────────────────────────────────────
-function showToast(msg, type = 'success', duration = 3000) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = `toast ${type} show`;
-  setTimeout(() => { el.className = 'toast'; }, duration);
+function isDiagnosticDone(item){
+  if(!item) return false;
+  const status = String(item.status || "").toLowerCase().trim();
+  if(["done", "completed", "concluido", "concluído"].includes(status)) return true;
+  const resultFields = [
+    item.result, item.result_data, item.result_json, item.result_text,
+    item.answer, item.answers, item.summary,
+    item.profile_result, item.level_result, item.interests_result,
+    item.completed_at, item.submitted_at
+  ];
+  return resultFields.some(field => {
+    if(field === null || field === undefined || field === "") return false;
+    if(typeof field === "object" && Object.keys(field).length === 0) return false;
+    return true;
+  });
 }
 
-// ── NAVEGAÇÃO ─────────────────────────────────────────────
-function navigate(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.bottom-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  document.querySelector(`.bottom-item[data-page="${page}"]`).classList.add('active');
-  const titles = { atividades: 'Atividades', nova: 'Nova Atividade', equipe: 'Equipe', historico: 'Histórico' };
-  document.getElementById('headerTitle').textContent = titles[page];
-  currentPage = page;
-  if (page === 'atividades') loadAtividades();
-  if (page === 'nova') { resetNovaForm(); loadFuncsForForm(); }
-  if (page === 'equipe') loadFuncionarios();
-  if (page === 'historico') loadHistorico();
+
+function normalizeDiagnosticResult(value){
+  if(value === null || value === undefined || value === "") return "";
+  if(typeof value === "string") return value;
+  if(typeof value === "number") return String(value);
+  if(typeof value === "object"){
+    return value.level || value.nivel || value.profile || value.perfil || value.result || value.label || value.title || value.name || "";
+  }
+  return String(value);
 }
 
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
-// ── SELEÇÕES ──────────────────────────────────────────────
-function selectPriority(p) {
-  selectedPriority = p;
-  document.querySelectorAll('#page-nova .priority-pill').forEach(b => b.classList.remove('selected'));
-  document.querySelector(`#page-nova .priority-pill.${p}`).classList.add('selected');
+function getLatestDiagnostic(type){
+  return diagnostics
+    .filter(d => d.type === type)
+    .sort((a,b) => String(b.updated_at || b.submitted_at || b.completed_at || "").localeCompare(String(a.updated_at || a.submitted_at || a.completed_at || "")))[0] || null;
 }
 
-function selectTipo(t) {
-  selectedTipo = t;
-  document.getElementById('tipoEletricista').classList.toggle('selected', t === 'eletricista');
-  document.getElementById('tipoAjudante').classList.toggle('selected', t === 'ajudante');
+function getDiagnosticResult(type){
+  const item = getLatestDiagnostic(type);
+  if(!item) return "";
+  return normalizeDiagnosticResult(item.result)
+    || normalizeDiagnosticResult(item.result_data)
+    || normalizeDiagnosticResult(item.result_json)
+    || normalizeDiagnosticResult(item.summary);
 }
 
-// ── FUNCIONÁRIOS NO FORMULÁRIO ────────────────────────────
-async function loadFuncsForForm() {
-  const container = document.getElementById('funcCheckList');
-  try {
-    const { data, error } = await db.from('equipe').select('*').order('nome');
-    if (error) throw error;
-    allFuncionarios = data || [];
-    selectedFuncIds = [];
+function getSavedProfileResult(){
+  return getDiagnosticResult("profile") || profile.learning_profile || "Ainda não definido";
+}
 
-    if (!allFuncionarios.length) {
-      container.innerHTML = `
-        <div style="color:var(--text-dim);font-size:13px;padding:8px 0;">
-          Nenhuma pessoa da equipe cadastrada ainda. 
-          <span style="color:var(--industrial-blue);cursor:pointer;text-decoration:underline;" onclick="navigate('equipe')">Cadastrar agora →</span>
-        </div>`;
-      return;
-    }
+function getSavedLevelResult(){
+  return getDiagnosticResult("level") || profile.nivel || profile.level || "Ainda não definido";
+}
 
-    container.innerHTML = allFuncionarios.map(f => `
-      <div class="func-check-item" id="fci-${f.id}" onclick="toggleFunc('${f.id}')">
-        <input type="checkbox" id="fc-${f.id}" onclick="event.stopPropagation(); toggleFunc('${f.id}')">
-        <div>
-          <div class="func-check-name">${f.nome}</div>
-          <div class="func-check-tipo">${f.tipo}</div>
-        </div>
-      </div>
-    `).join('');
-  } catch (err) {
-    container.innerHTML = `<div style="color:var(--alta);font-size:13px;">Erro ao carregar: ${err.message}</div>`;
+function getSavedFocusResult(){
+  const interests = getLatestDiagnostic("interests");
+  const raw = interests?.result_data || interests?.result_json || interests?.result || null;
+  if(raw && typeof raw === "object"){
+    return raw.focus || raw.foco || raw.objective || raw.objetivo || raw.goal || raw.meta || profile.focus || profile.objetivo || "Ainda não definido";
+  }
+  return profile.focus || profile.objetivo || normalizeDiagnosticResult(raw) || "Ainda não definido";
+}
+
+function getDiagnosisProgress(){
+  const totalRequired = 3;
+  const requiredTypes = ["profile", "level", "interests"];
+  const doneCount = requiredTypes.filter(type => {
+    const item = getLatestDiagnostic(type);
+    return isDiagnosticDone(item);
+  }).length;
+  if(doneCount === 0) return { label: "começar diagnóstico", className: "diagnosis-red", pending: totalRequired, done: 0, total: totalRequired };
+  if(doneCount < totalRequired) return { label: "trilha bloqueada", className: "diagnosis-orange", pending: totalRequired - doneCount, done: doneCount, total: totalRequired };
+  return { label: "trilha liberada", className: "diagnosis-green", pending: 0, done: totalRequired, total: totalRequired };
+}
+
+function areDiagnosticsComplete(){
+  return ["profile", "level", "interests"].every(type => isDiagnosticDone(getLatestDiagnostic(type)));
+}
+
+function normalizeTrailLevel(){
+  const raw = String(getSavedLevelResult() || "").toUpperCase();
+  if(raw.includes("B2") || raw.includes("C1") || raw.includes("C2")) return "B2";
+  if(raw.includes("B1")) return "B1";
+  return "A1";
+}
+
+function getPrimaryInterest(){
+  const item = getLatestDiagnostic("interests");
+  const raw = item?.result_data || item?.result_json || item?.result || profile?.interests || profile?.interesses || "";
+  let value = "your favorite topic";
+  if(Array.isArray(raw)) value = raw[0] || value;
+  else if(raw && typeof raw === "object"){
+    const possible = raw.interests || raw.interesses || raw.favorite_topics || raw.temas || raw.series || raw.movies || raw.hobbies;
+    if(Array.isArray(possible)) value = possible[0] || value;
+    else value = possible || raw.favorite || raw.interest || raw.interesse || raw.topic || value;
+  } else if(typeof raw === "string"){
+    value = raw.split(/[,;|]/).map(x => x.trim()).filter(Boolean)[0] || value;
+  }
+  return String(value || "your favorite topic").trim();
+}
+
+function fillTrailText(text){
+  return String(text ?? "").replaceAll("{interest}", getPrimaryInterest());
+}
+
+function getTrailStorageKey(){ return `helpdebs_trail_${user?.id || "guest"}`; }
+function getTrailProgress(){
+  try{return JSON.parse(localStorage.getItem(getTrailStorageKey()) || "{}");}
+  catch(e){return {};}
+}
+function setTrailProgress(progress){ localStorage.setItem(getTrailStorageKey(), JSON.stringify(progress)); }
+function isTrailActivityDone(day, index){ return !!getTrailProgress()?.[`day_${day}_activity_${index}`]; }
+function isTrailDayDone(day){
+  if(day !== 1) return false;
+  return Array.from({length:TRAIL_ACTIVITIES_PER_DAY}, (_,i) => isTrailActivityDone(day, i)).every(Boolean);
+}
+
+function checkTrailAnswer(activityIndex, expected, selected){
+  const input = $(`trailInput${activityIndex}`);
+  const feedback = $(`trailFeedback${activityIndex}`);
+  const expectedText = fillTrailText(expected).trim().toLowerCase().replace(/[.!?]/g, "");
+  const selectedText = String(selected ?? input?.value ?? "").trim().toLowerCase().replace(/[.!?]/g, "");
+  const ok = selectedText === expectedText || (input && selectedText.length >= 8);
+  if(feedback) feedback.textContent = ok ? "Certo! Atividade registrada ✓" : "Ainda não. Tenta de novo.";
+  if(ok){
+    const progress = getTrailProgress();
+    progress[`day_1_activity_${activityIndex}`] = { done:true, completed_at:new Date().toISOString() };
+    setTrailProgress(progress);
+    showToast("Atividade concluída ✨");
+    renderTrail();
   }
 }
 
-function toggleFunc(id) {
-  const idx = selectedFuncIds.indexOf(id);
-  const el = document.getElementById('fci-' + id);
-  const cb = document.getElementById('fc-' + id);
-  if (idx === -1) {
-    selectedFuncIds.push(id);
-    el.classList.add('selected');
-    cb.checked = true;
+function renderActivity(activity, index){
+  const done = isTrailActivityDone(1, index);
+  const badge = done ? `<span class="mini-badge status-done">concluída</span>` : `<span class="mini-badge status-pending">pendente</span>`;
+  let body = "";
+  if(activity.type === "choice" || activity.type === "complete"){
+    body = `<div class="activity-options">${activity.options.map(opt => `<button class="activity-option" onclick="checkTrailAnswer(${index}, '${esc(fillTrailText(activity.answer))}', '${esc(fillTrailText(opt))}')">${esc(fillTrailText(opt))}</button>`).join("")}</div>`;
+  } else if(activity.type === "order"){
+    body = `<div class="activity-options">${activity.words.map(w => `<span class="activity-option">${esc(fillTrailText(w))}</span>`).join("")}</div><input class="activity-input" id="trailInput${index}" placeholder="Digite a frase em ordem" /><button class="mini-btn" onclick="checkTrailAnswer(${index}, '${esc(fillTrailText(activity.answer))}')">Conferir</button>`;
   } else {
-    selectedFuncIds.splice(idx, 1);
-    el.classList.remove('selected');
-    cb.checked = false;
+    body = `<input class="activity-input" id="trailInput${index}" placeholder="Escreva sua resposta" /><button class="mini-btn" onclick="checkTrailAnswer(${index}, '${esc(fillTrailText(activity.answer))}')">Salvar resposta</button>`;
   }
-}
-
-// ── SALVAR ATIVIDADE ──────────────────────────────────────
-async function salvarAtividade() {
-  const nome = document.getElementById('newNome').value.trim();
-  if (!nome) { showToast('Coloca o nome da atividade!', 'warning'); return; }
-  if (!selectedPriority) { showToast('Seleciona a prioridade!', 'warning'); return; }
-
-  const btn = document.getElementById('btnSalvarAtiv');
-  btn.disabled = true;
-  btn.textContent = 'Salvando...';
-
-  try {
-    const payload = {
-      nome,
-      descricao: document.getElementById('newDescricao').value.trim() || null,
-      prioridade: selectedPriority,
-      prazo: document.getElementById('newPrazo').value || null,
-      data_criacao: getToday(),
-      status: 'pendente'
-    };
-
-    const { data: ativ, error } = await db.from('atividades').insert(payload).select().single();
-    if (error) throw error;
-
-    if (selectedFuncIds.length) {
-      const links = selectedFuncIds.map(fid => ({ atividade_id: ativ.id, funcionario_id: fid }));
-      const { error: linkErr } = await db.from('atividade_equipe').insert(links);
-      if (linkErr) console.warn('Erro ao vincular membros:', linkErr.message);
-    }
-
-    showToast('✅ Atividade salva com sucesso!', 'success');
-    resetNovaForm();
-    setTimeout(() => navigate('atividades'), 800);
-  } catch (err) {
-    showToast('❌ Erro: ' + err.message, 'error', 5000);
-    console.error('Erro salvarAtividade:', err);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Salvar Atividade';
-  }
-}
-
-function resetNovaForm() {
-  document.getElementById('newNome').value = '';
-  document.getElementById('newDescricao').value = '';
-  document.getElementById('newPrazo').value = '';
-  document.querySelectorAll('#page-nova .priority-pill').forEach(b => b.classList.remove('selected'));
-  selectedPriority = null;
-  selectedFuncIds = [];
-}
-
-
-function getLinkEquipeId(link) {
-  return link.equipe_id || link.funcionario_id || link.func_id || link.membro_id || link.pessoa_id || null;
-}
-
-function getAtividadeId(link) {
-  return link.atividade_id || link.ativ_id || null;
-}
-
-async function getEquipeMap() {
-  const { data, error } = await db.from('equipe').select('*').order('nome');
-  if (error) throw error;
-  const map = {};
-  (data || []).forEach(p => { map[p.id] = p; });
-  return { lista: data || [], map };
-}
-
-async function getLinksAtividades() {
-  const { data, error } = await db.from('atividade_equipe').select('*');
-  if (error) throw error;
-  return data || [];
-}
-
-function equipeDaAtividade(atividadeId, links, equipeMap) {
-  return (links || [])
-    .filter(l => getAtividadeId(l) === atividadeId)
-    .map(l => equipeMap[getLinkEquipeId(l)])
-    .filter(Boolean);
-}
-
-
-// ── LOAD ATIVIDADES ───────────────────────────────────────
-async function loadAtividades() {
-  const container = document.getElementById('taskList');
-  container.innerHTML = '<div class="loading">Carregando...</div>';
-
-  try {
-    const hoje = getToday();
-
-    // Dashboard mostra somente pendentes: atividades de hoje + atividades antigas não concluídas.
-    // Concluídas ficam apenas no Histórico/RDO.
-    const { data: todas, error: e1 } = await db
-      .from('atividades')
-      .select('*')
-      .neq('status', 'concluida')
-      .lte('data_criacao', hoje)
-      .order('criado_em', { ascending: true });
-    if (e1) throw e1;
-
-    const { data: concluidasHoje, error: e2 } = await db
-      .from('atividades')
-      .select('id')
-      .eq('status', 'concluida')
-      .eq('data_conclusao', hoje);
-    if (e2) throw e2;
-
-    const { map: equipeMap } = await getEquipeMap();
-    const links = await getLinksAtividades();
-
-    const pendentes = todas || [];
-    const priorityOrder = { alta: 0, media: 1, baixa: 2 };
-    pendentes.sort((a, b) => (priorityOrder[a.prioridade] ?? 9) - (priorityOrder[b.prioridade] ?? 9));
-
-    document.getElementById('pendingCount').innerHTML = `${pendentes.length} <span>pendentes</span>`;
-    document.getElementById('doneCount').innerHTML = `${(concluidasHoje || []).length} <span>hoje</span>`;
-
-    const prioLabels = { alta: 'Alta', media: 'Média', baixa: 'Baixa' };
-    let htmlOut = '';
-
-    if (!pendentes.length) {
-      htmlOut = '<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-text">Nenhuma atividade pendente hoje!</div></div>';
-    }
-
-    if (pendentes.length) {
-      htmlOut += '<div class="section-label">Pendentes</div>';
-      htmlOut += pendentes.map(t => {
-        const funcs = equipeDaAtividade(t.id, links, equipeMap).map(p => p.nome).filter(Boolean);
-        const transferida = t.data_criacao < hoje;
-        return `
-          <div class="task-card ${t.prioridade}" onclick="openDetalhe('${t.id}')">
-            <div class="priority-dot"></div>
-            <div class="task-info">
-              <div class="task-name">${t.nome}${transferida ? '<span class="transfer-badge">↩ transferida</span>' : ''}</div>
-              <div class="task-meta">
-                <span class="tag ${t.prioridade}">${prioLabels[t.prioridade] || t.prioridade || 'Prioridade'}</span>
-                ${t.prazo ? `<span>📅 ${formatDate(t.prazo)}</span>` : ''}
-                ${funcs.length ? `<span>👷 ${funcs.join(', ')}</span>` : ''}
-              </div>
-            </div>
-            <div class="task-check" onclick="event.stopPropagation();concluirAtividade('${t.id}')">✓</div>
-          </div>`;
-      }).join('');
-    }
-
-    container.innerHTML = htmlOut;
-  } catch (err) {
-    container.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Erro ao carregar: ${err.message}</div></div>`;
-    console.error('loadAtividades:', err);
-  }
-}
-
-async function concluirAtividade(id) {
-  try {
-    const { error } = await db.from('atividades').update({ status: 'concluida', data_conclusao: getToday() }).eq('id', id);
-    if (error) throw error;
-    showToast('✅ Atividade concluída!', 'success');
-    loadAtividades();
-  } catch (err) {
-    showToast('❌ Erro: ' + err.message, 'error');
-  }
-}
-
-// ── DETALHE ATIVIDADE ─────────────────────────────────────
-async function openDetalhe(id) {
-  try {
-    const { data: t, error } = await db
-      .from('atividades')
-      .select('*')
-      .eq('id', id)
-      .single();
-    if (error) throw error;
-
-    const { map: equipeMap } = await getEquipeMap();
-    const links = await getLinksAtividades();
-    const funcs = equipeDaAtividade(t.id, links, equipeMap);
-    const prioLabels = { alta: 'Alta', media: 'Média', baixa: 'Baixa' };
-
-    document.getElementById('modalDetalheContent').innerHTML = `
-      <div class="detail-field">
-        <div class="detail-label">Atividade</div>
-        <div class="detail-value" style="font-size:18px;">${t.nome}</div>
-      </div>
-      <div class="detail-field">
-        <div class="detail-label">Prioridade</div>
-        <span class="tag ${t.prioridade}">${prioLabels[t.prioridade] || t.prioridade || 'Prioridade'}</span>
-      </div>
-      ${t.descricao ? `<div class="detail-field"><div class="detail-label">Descrição</div><div class="detail-value">${t.descricao}</div></div>` : ''}
-      ${t.prazo ? `<div class="detail-field"><div class="detail-label">Prazo</div><div class="detail-value">📅 ${formatDate(t.prazo)}</div></div>` : ''}
-      <div class="detail-field">
-        <div class="detail-label">Status</div>
-        <span class="tag ${t.status === 'concluida' ? 'concluida' : t.prioridade}">${t.status === 'concluida' ? 'Concluída' : 'Pendente'}</span>
-      </div>
-      <div class="detail-field">
-        <div class="detail-label">Criada em</div>
-        <div class="detail-value">${formatDate(t.data_criacao)}</div>
-      </div>
-      ${funcs.length ? `
-        <div class="detail-field">
-          <div class="detail-label">Equipe</div>
-          <div class="func-list-inline">
-            ${funcs.map(f => `<span class="func-chip">👷 ${f.nome} <span style="opacity:.6;font-size:10px">(${f.tipo || ''})</span></span>`).join('')}
-          </div>
-        </div>` : ''}
-      <div style="margin-top:20px;display:flex;flex-direction:column;gap:8px">
-        ${t.status !== 'concluida' ? `<button class="btn btn-primary" onclick="concluirAtividade('${t.id}');closeModal('modalDetalhe')">✓ Marcar como Concluída</button>` : ''}
-        <button class="btn btn-secondary" onclick="closeModal('modalDetalhe');editarPrioridade('${t.id}','${t.prioridade}')">✏️ Editar Prioridade</button>
-        <button class="btn btn-danger" onclick="deletarAtividade('${t.id}')">🗑 Excluir Atividade</button>
-      </div>`;
-    openModal('modalDetalhe');
-  } catch (err) {
-    showToast('❌ Erro ao abrir detalhes: ' + err.message, 'error');
-  }
-}
-
-async function editarPrioridade(id, atual) {
-  const nova = prompt(`Prioridade atual: ${atual}\nDigite a nova:\n- alta\n- media\n- baixa`);
-  if (nova && ['alta','media','baixa'].includes(nova.toLowerCase().trim())) {
-    const { error } = await db.from('atividades').update({ prioridade: nova.toLowerCase().trim() }).eq('id', id);
-    if (error) { showToast('❌ Erro: ' + error.message, 'error'); return; }
-    showToast('✅ Prioridade atualizada!', 'success');
-    loadAtividades();
-  }
-}
-
-async function deletarAtividade(id) {
-  if (!confirm('Excluir esta atividade?')) return;
-  try {
-    await db.from('atividade_equipe').delete().eq('atividade_id', id);
-    const { error } = await db.from('atividades').delete().eq('id', id);
-    if (error) throw error;
-    showToast('🗑 Atividade excluída', 'success');
-    closeModal('modalDetalhe');
-    loadAtividades();
-  } catch (err) {
-    showToast('❌ Erro: ' + err.message, 'error');
-  }
-}
-
-// ── FUNCIONÁRIOS ──────────────────────────────────────────
-async function loadFuncionarios() {
-  const container = document.getElementById('funcList');
-  container.innerHTML = '<div class="loading">Carregando...</div>';
-  try {
-    const { data, error } = await db.from('equipe').select('*').order('nome');
-    if (error) throw error;
-
-    if (!data?.length) {
-      container.innerHTML = `<div class="empty-state"><div class="empty-icon">👷</div><div class="empty-text">Nenhuma pessoa da equipe cadastrada ainda</div></div>`;
-      return;
-    }
-
-    const eletricistas = data.filter(f => f.tipo === 'eletricista');
-    const ajudantes = data.filter(f => f.tipo === 'ajudante');
-    let html = '';
-    if (eletricistas.length) {
-      html += '<div class="section-label">Eletricistas</div>';
-      html += eletricistas.map(f => funcCard(f)).join('');
-    }
-    if (ajudantes.length) {
-      html += '<div class="section-label">Ajudantes</div>';
-      html += ajudantes.map(f => funcCard(f)).join('');
-    }
-    container.innerHTML = html;
-  } catch (err) {
-    container.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Erro: ${err.message}</div></div>`;
-    console.error('loadFuncionarios:', err);
-  }
-}
-
-function funcCard(f) {
   return `
-    <div class="func-card" onclick="editarFuncionario('${f.id}','${escapeQ(f.nome)}','${f.tipo}','${escapeQ(f.info_extra||'')}')">
-      <div>
-        <div class="func-name">${f.nome}</div>
-        ${f.info_extra ? `<div style="font-size:12px;color:var(--text-dim);margin-top:2px">${f.info_extra}</div>` : ''}
+    <div class="activity-card">
+      <div class="activity-top">
+        <div><h3>Atividade ${index + 1}</h3><p>${esc(activity.skill)} • ${esc(activity.type)}</p></div>
+        ${badge}
       </div>
-      <span class="func-tipo-badge ${f.tipo}">${f.tipo}</span>
-    </div>`;
+      <div class="activity-question">${esc(fillTrailText(activity.question))}</div>
+      ${body}
+      <div class="trail-feedback" id="trailFeedback${index}">${done ? "Já concluída ✓" : ""}</div>
+    </div>
+  `;
 }
 
-function escapeQ(s) { return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
-
-function openModalFuncionario() {
-  editingFuncId = null;
-  document.getElementById('funcModalTitle').textContent = 'Novo Membro';
-  document.getElementById('funcNome').value = '';
-  document.getElementById('funcInfo').value = '';
-  document.getElementById('btnDeletarFunc').style.display = 'none';
-  document.getElementById('btnSalvarFunc').textContent = 'Salvar';
-  document.getElementById('btnSalvarFunc').disabled = false;
-  selectedTipo = null;
-  document.getElementById('tipoEletricista').classList.remove('selected');
-  document.getElementById('tipoAjudante').classList.remove('selected');
-  openModal('modalFuncionario');
+function renderTrail(){
+  const frame = document.querySelector(".external-trail-frame");
+  if(frame) frame.setAttribute("src", "helpdebs_trilha_portal_funcional.html");
 }
 
-function editarFuncionario(id, nome, tipo, info) {
-  editingFuncId = id;
-  document.getElementById('funcModalTitle').textContent = 'Editar Membro';
-  document.getElementById('funcNome').value = nome;
-  document.getElementById('funcInfo').value = info;
-  document.getElementById('btnDeletarFunc').style.display = 'block';
-  document.getElementById('btnSalvarFunc').textContent = 'Salvar Alterações';
-  document.getElementById('btnSalvarFunc').disabled = false;
-  selectedTipo = tipo;
-  document.getElementById('tipoEletricista').classList.toggle('selected', tipo === 'eletricista');
-  document.getElementById('tipoAjudante').classList.toggle('selected', tipo === 'ajudante');
-  openModal('modalFuncionario');
+
+
+function openNewTrailFull(){
+  window.location.href = "helpdebs_trilha_dynamic_lessons.html";
 }
 
-async function salvarFuncionario() {
-  const nome = document.getElementById('funcNome').value.trim();
-  if (!nome) { showToast('Coloca o nome da pessoa!', 'warning'); return; }
-  if (!selectedTipo) { showToast('Seleciona a função (Eletricista ou Ajudante)!', 'warning'); return; }
+document.addEventListener("DOMContentLoaded", async () => {
+  sb = window.supabase.createClient(SB_URL, SB_ANON);
+  $("loginBtn").addEventListener("click", login);
+  $("loginPassword").addEventListener("keydown", e => { if(e.key === "Enter") login(); });
+  $("logoutBtn").addEventListener("click", logout);
+  document.querySelectorAll(".nav-btn").forEach(btn =>
+    btn.addEventListener("click", () => { goSection(btn.dataset.section); closeSidebar(); })
+  );
+  const { data: { session } } = await sb.auth.getSession();
+  if(session) await startPortal(session.user);
+});
 
-  const btn = document.getElementById('btnSalvarFunc');
-  btn.disabled = true;
-  btn.textContent = 'Salvando...';
+async function login(){
+  const email = $("loginEmail").value.trim();
+  const password = $("loginPassword").value;
+  if(!email || !password){ msg("loginMsg","Preencha email e senha.","error"); return; }
+  $("loginBtn").disabled = true;
+  $("loginBtn").textContent = "Entrando...";
+  try{
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+    if(error){ msg("loginMsg", error.message, "error"); return; }
+    if(!data.user){ msg("loginMsg","Login não retornou usuário.","error"); return; }
+    await startPortal(data.user);
+  }catch(e){
+    console.error(e);
+    msg("loginMsg", e.message || "Erro inesperado no login.","error");
+  }finally{
+    $("loginBtn").disabled = false;
+    $("loginBtn").textContent = "Entrar";
+  }
+}
 
-  try {
-    const payload = {
-      nome,
-      tipo: selectedTipo,
-      info_extra: document.getElementById('funcInfo').value.trim() || null
+async function logout(){ await sb.auth.signOut(); location.reload(); }
+
+async function startPortal(authUser){
+  user = authUser;
+  $("loginScreen").style.display = "none";
+  $("app").style.display = "grid";
+  await loadData();
+  renderAll();
+}
+
+async function loadData(){
+  const [p, m, c, d, pay, cfg] = await Promise.all([
+    sb.from("profiles").select("*").eq("id", user.id).single(),
+    sb.from("materials").select("*").eq("student_id", user.id).order("created_at",{ascending:false}),
+    sb.from("classes").select("*").eq("student_id", user.id).order("class_date",{ascending:true}),
+    sb.from("diagnostics").select("*").eq("student_id", user.id).order("updated_at",{ascending:false}),
+    sb.from("payments").select("*").eq("student_id", user.id).order("due_date",{ascending:false}),
+    sb.from("diagnostics").select("type,form_url,result_url").is("student_id", null)
+  ]);
+
+  if(p.error && p.error.code !== "PGRST116"){ showToast("Erro ao carregar perfil: " + p.error.message); console.error("profiles", p.error); }
+  if(m.error){ showToast("Erro ao carregar materiais: " + m.error.message); console.error("materials", m.error); }
+  if(c.error){ showToast("Erro ao carregar calendário: " + c.error.message); console.error("classes", c.error); }
+  if(d.error){ showToast("Erro ao carregar diagnóstico: " + d.error.message); console.error("diagnostics", d.error); }
+  if(pay.error){ showToast("Erro ao carregar financeiro: " + pay.error.message); console.error("payments", pay.error); }
+  if(cfg?.error){ console.warn("diagnostics config", cfg.error); }
+
+  profile = p.data || { full_name:user.email, email:user.email, level:"—", nivel:"—" };
+  if(!profile.elos_url) profile.elos_url = "https://elos.vc/sala/teacherdebora";
+  materials = m.data || [];
+  classes = c.data || [];
+  diagnostics = d.data || [];
+  payments = pay.data || [];
+  diagConfig = cfg?.data || [];
+
+  console.log("PORTAL DATA", {user:user.id, profile, materials, classes, diagnostics, payments, diagConfig});
+}
+
+function renderAll(){
+  renderProfile();
+  renderDashboard();
+  renderDiagnostics();
+  renderFeaturedChecklist();
+  renderMaterials();
+  renderCalendar();
+  renderTips();
+  renderVideos();
+  renderPayments();
+  renderTrail();
+}
+
+function renderProfile(){
+  const name = profile.full_name || user.email || "Aluna";
+  const first = name.split(" ")[0];
+  const diag = getDiagnosisProgress();
+  const savedProfile = getSavedProfileResult();
+  const savedLevel = getSavedLevelResult();
+  const savedFocus = getSavedFocusResult();
+
+  $("studentName").textContent = first;
+  $("studentLevel").textContent = `Aulas individuais • nível ${savedLevel === "Ainda não definido" ? "—" : savedLevel}`;
+  $("studentFocus").textContent = savedFocus === "Ainda não definido" ? "trilha ativa" : savedFocus;
+  $("diagBadge").textContent = diag.label;
+  $("diagBadge").className = `badge ${diag.className}`;
+  $("profileSummary").innerHTML = `
+    <div class="material-item"><strong>Perfil</strong><p>${esc(savedProfile)}</p></div>
+    <div class="material-item"><strong>Nível</strong><p>${esc(savedLevel)}</p></div>
+    <div class="material-item"><strong>Foco atual</strong><p>${esc(savedFocus)}</p></div>
+    <div class="material-item"><strong>Diagnóstico</strong><p>${diag.done}/${diag.total} testes concluídos</p></div>
+  `;
+  $("studentCard")?.classList.remove("loading");
+}
+
+function getLatestFeedback(){
+  const feedbackTypes = ["feedback", "summary"];
+  const byType = materials.find(m => feedbackTypes.includes((m.type || "").toLowerCase()) && m.description);
+  if(byType){
+    return {
+      hasData: true,
+      note: byType.description,
+      focus: byType.focus || byType.foco || byType.week_focus || ""
     };
-
-    let error;
-    if (editingFuncId) {
-      ({ error } = await db.from('equipe').update(payload).eq('id', editingFuncId));
-    } else {
-      ({ error } = await db.from('equipe').insert(payload));
-    }
-
-    if (error) throw error;
-
-    showToast(editingFuncId ? '✅ Membro atualizado!' : '✅ Membro cadastrado!', 'success');
-    closeModal('modalFuncionario');
-    loadFuncionarios();
-  } catch (err) {
-    showToast('❌ Erro ao salvar: ' + err.message, 'error', 6000);
-    console.error('salvarFuncionario:', err);
-    btn.disabled = false;
-    btn.textContent = editingFuncId ? 'Salvar Alterações' : 'Salvar';
   }
+
+  const classWithNotes = [...classes].reverse().find(c => c.notes);
+  if(classWithNotes){
+    return {
+      hasData: true,
+      note: classWithNotes.notes,
+      focus: classWithNotes.focus || classWithNotes.foco || ""
+    };
+  }
+
+  return {
+    hasData: false,
+    note: "Assim que sua professora registrar um resumo ou observação da aula, ele aparece aqui.",
+    focus: ""
+  };
 }
 
-async function deletarFuncionario() {
-  if (!confirm('Excluir este membro?')) return;
-  try {
-    const { error } = await db.from('equipe').delete().eq('id', editingFuncId);
-    if (error) throw error;
-    showToast('🗑 Membro excluído', 'success');
-    closeModal('modalFuncionario');
-    loadFuncionarios();
-  } catch (err) {
-    showToast('❌ Erro: ' + err.message, 'error');
-  }
+function getNextPendingDiagnostic(){
+  const order = ["profile", "level", "interests"];
+  const labels = { profile: "Quem é você no grupinho do inglês?", level: "Teste de nivelamento", interests: "Área de interesses" };
+  const pendingType = order.find(type => {
+    const item = getLatestDiagnostic(type);
+    return !isDiagnosticDone(item);
+  });
+  return pendingType ? labels[pendingType] : "Diagnóstico completo";
 }
 
-// ── HISTÓRICO ─────────────────────────────────────────────
-let historicoAgrupadoAtual = {};
-
-async function loadHistorico() {
-  const container = document.getElementById('histList');
-  container.innerHTML = '<div class="loading">Carregando...</div>';
-  try {
-    const { data, error } = await db
-      .from('atividades')
-      .select('*')
-      .eq('status', 'concluida')
-      .order('data_conclusao', { ascending: false });
-    if (error) throw error;
-
-    if (!data?.length) {
-      container.innerHTML = '<div class="empty-state"><div class="empty-icon">📂</div><div class="empty-text">Nenhuma atividade concluída ainda</div></div>';
-      historicoAgrupadoAtual = {};
-      return;
-    }
-
-    const { map: equipeMap } = await getEquipeMap();
-    const links = await getLinksAtividades();
-
-    const grouped = {};
-    data.forEach(t => {
-      const key = t.data_conclusao || t.data_criacao || 'sem-data';
-      if (!grouped[key]) grouped[key] = [];
-      grouped[key].push(t);
-    });
-    historicoAgrupadoAtual = grouped;
-
-    let htmlOut = '';
-    Object.keys(grouped).sort().reverse().forEach(date => {
-      htmlOut += `
-        <div class="hist-day-header">
-          <span class="hist-day-title">📅 ${formatDate(date)} — ${grouped[date].length} atividade(s)</span>
-          <button class="btn-rdo" onclick="event.stopPropagation();criarRDO('${date}')">Criar RDO</button>
-        </div>`;
-
-      grouped[date].forEach(t => {
-        const funcs = equipeDaAtividade(t.id, links, equipeMap).map(p => p.nome).filter(Boolean);
-        htmlOut += `
-          <div class="task-card concluida" style="margin-bottom:8px" onclick="openDetalhe('${t.id}')">
-            <div class="priority-dot"></div>
-            <div class="task-info">
-              <div class="task-name">${t.nome}</div>
-              <div class="task-meta">
-                ${t.descricao ? `<span>📝 ${escapeHtml(t.descricao).slice(0, 60)}${t.descricao.length > 60 ? '...' : ''}</span>` : ''}
-                ${funcs.length ? `<span>👷 ${funcs.join(', ')}</span>` : ''}
-              </div>
-            </div>
-            <div class="task-check" style="border-color:var(--concluida);background:var(--concluida-bg);color:var(--concluida)">✓</div>
-          </div>`;
-      });
-    });
-    container.innerHTML = htmlOut;
-  } catch (err) {
-    container.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">Erro: ${err.message}</div></div>`;
-  }
+function getCurrentPayment(){
+  const pending = payments.find(p => p.status !== "paid");
+  if(pending) return pending;
+  return payments[0] || null;
 }
 
-async function criarRDO(date) {
-  try {
-    const atividades = historicoAgrupadoAtual[date] || [];
+function daysUntil(dateStr){
+  if(!dateStr) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const due = new Date(dateStr + "T12:00:00"); due.setHours(0,0,0,0);
+  return Math.ceil((due - today) / (1000 * 60 * 60 * 24));
+}
 
-    if (!atividades.length) {
-      showToast('Nenhuma atividade encontrada para esta data.', 'warning');
-      return;
-    }
-
-    const linhasTabela = atividades.map((t) => {
-      return `
-        <tr>
-          <td class="rdo-atividade">${escapeHtml(t.nome)}</td>
-          <td class="rdo-descricao">${escapeHtml(t.descricao || 'Sem descrição cadastrada.')}</td>
-        </tr>
-      `;
-    }).join('');
-
-    const html = `
-      <div class="rdo-documento" id="rdoTexto">
-        <div class="rdo-header">
-          <h1>Relatório Diário de Obra (RDO)</h1>
-          <div class="rdo-data">Data: ${formatDate(date)}</div>
-        </div>
-
-        <div class="rdo-section-title">Atividades concluídas</div>
-
-        <table class="rdo-table">
-          <thead>
-            <tr>
-              <th>Atividade</th>
-              <th>Descrição</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${linhasTabela}
-          </tbody>
-        </table>
-      </div>
-
-      <button class="btn btn-primary" style="margin-top:14px" onclick="copiarRDO()">Copiar RDO</button>
-      <button class="btn btn-secondary" onclick="imprimirRDO()">Imprimir / Salvar PDF</button>
+function renderMiniFeedback(){
+  const feedback = getLatestFeedback();
+  if(!feedback.hasData){
+    $("miniFeedbackBox").className = "feedback-box empty-state";
+    $("miniFeedbackBox").innerHTML = `
+      <div class="empty-icon">💬</div>
+      <strong>Nenhum feedback registrado ainda</strong>
+      <p>${esc(feedback.note)}</p>
     `;
-
-    document.getElementById('modalRDOContent').innerHTML = html;
-    openModal('modalRDO');
-
-  } catch (err) {
-    showToast('❌ Erro ao criar RDO: ' + err.message, 'error');
-  }
-}
-
-function copiarRDO() {
-  const txt = document.getElementById('rdoTexto')?.innerText || '';
-  navigator.clipboard.writeText(txt)
-    .then(() => showToast('📋 RDO copiado!', 'success'))
-    .catch(() => showToast('Não consegui copiar automaticamente.', 'warning'));
-}
-
-function imprimirRDO() {
-  const container = document.getElementById('rdoTexto');
-  if (!container) {
-    showToast('Não encontrei o conteúdo do RDO para imprimir.', 'warning');
     return;
   }
 
-  const conteudo = container.innerHTML;
-  const win = window.open('', '_blank');
-
-  win.document.write(`
-    <html>
-      <head>
-        <title>RDO</title>
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            padding: 40px;
-            color: #111;
-          }
-
-          h1 {
-            font-size: 22px;
-            margin: 0 0 8px;
-            text-transform: uppercase;
-          }
-
-          .rdo-data {
-            margin-bottom: 28px;
-            font-size: 14px;
-          }
-
-          .rdo-section-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 16px;
-            text-transform: uppercase;
-          }
-
-          table {
-            width: 100%;
-            border-collapse: collapse;
-          }
-
-          th {
-            background: #f1f5f9;
-            border: 1px solid #cbd5e1;
-            padding: 12px;
-            text-align: left;
-            font-size: 14px;
-          }
-
-          td {
-            border: 1px solid #cbd5e1;
-            padding: 12px;
-            vertical-align: top;
-            font-size: 14px;
-            line-height: 1.5;
-          }
-
-          .rdo-atividade {
-            width: 32%;
-            font-weight: bold;
-          }
-
-          .rdo-descricao {
-            width: 68%;
-          }
-        </style>
-      </head>
-      <body>
-        ${conteudo}
-      </body>
-    </html>
-  `);
-
-  win.document.close();
-  win.focus();
-  win.print();
+  $("miniFeedbackBox").className = "feedback-box";
+  $("miniFeedbackBox").innerHTML = `
+    <strong>Observação da professora</strong>
+    <p class="feedback-note">${esc(feedback.note)}</p>
+    ${feedback.focus ? `<div class="feedback-focus">Foco da semana: ${esc(feedback.focus)}</div>` : ""}
+  `;
 }
 
-function labelPrioridade(p) {
-  const labels = { alta: 'Alta', media: 'Média', baixa: 'Baixa' };
-  return labels[p] || p || 'Não informada';
+function renderDiagnosisProgress(){
+  const diag = getDiagnosisProgress();
+  const pct = Math.min(100, Math.round((diag.done / diag.total) * 100));
+  const next = getNextPendingDiagnostic();
+  const stepClass = (type, index) => {
+    const item = getLatestDiagnostic(type);
+    if(isDiagnosticDone(item)) return "done";
+    if(index === diag.done) return "current";
+    return "";
+  };
+  $("diagnosisProgressBox").innerHTML = `
+    <div class="progress-card-body">
+      <div>
+        <p class="dash-muted">${diag.done} de ${diag.total} etapas concluídas</p>
+        <div class="progress-bar-wrap"><div class="progress-bar"><div class="progress-fill" style="width:${pct}%" data-pct="${pct}%"></div></div></div>
+        <div class="progress-meta">
+          <span class="badge ${diag.className}">${esc(diag.label)}</span>
+          <button class="mini-btn" onclick="goSection('diagnostico')">${diag.done === diag.total ? "Ver diagnóstico" : "Continuar"}</button>
+        </div>
+      </div>
+      <div class="progress-steps">
+        <div class="progress-step ${stepClass("profile",0)}">1. Perfil</div>
+        <div class="progress-step ${stepClass("level",1)}">2. Nível</div>
+        <div class="progress-step ${stepClass("interests",2)}">3. Interesses</div>
+      </div>
+      <p class="dash-muted">Próximo passo: ${esc(next)}</p>
+    </div>
+  `;
 }
 
-// Corrige o erro específico informado: atividades concluídas em 25/05/2026
-// que ficaram registradas no histórico como 26/05/2026.
-async function corrigirHistorico25Maio() {
-  const migrationKey = 'gestao_eletrica_fix_25_05_2026_v1';
-  if (localStorage.getItem(migrationKey)) return;
+function renderFinanceDashboard(){
+  const p = getCurrentPayment();
+  if(!p){
+    $("financeDashboardBox").innerHTML = `
+      <div class="finance-status">
+        <span class="finance-pill empty">sem cobrança ativa</span>
+        <p class="dash-muted">Nenhum pagamento cadastrado ainda.</p>
+        <div class="finance-row"><span>Status</span><strong>Sem pendências</strong></div>
+        <div class="finance-row"><span>Forma</span><strong>Pix</strong></div>
+      </div>
+    `;
+    return;
+  }
+  const diff = daysUntil(p.due_date);
+  let dueText = "vencimento não informado";
+  if(diff !== null){
+    if(diff > 0) dueText = `vence em ${diff} dia(s)`;
+    if(diff === 0) dueText = "vence hoje";
+    if(diff < 0) dueText = `vencido há ${Math.abs(diff)} dia(s)`;
+  }
+  const paid = p.status === "paid";
+  const statusText = paid ? "Pagamento registrado" : "Aguardando pagamento";
+  $("financeDashboardBox").innerHTML = `
+    <div class="finance-status">
+      <span class="finance-pill ${paid ? "paid" : "pending"}">${paid ? "pago" : "pendente"}</span>
+      <div>
+        <strong>${esc(p.reference || "Cobrança")}</strong>
+        <div class="finance-amount">R$ ${Number(p.amount || 0).toFixed(2)}</div>
+        <p class="dash-muted">${paid ? "Pagamento registrado." : dueText}</p>
+      </div>
+      <div class="finance-row"><span>Status</span><strong>${statusText}</strong></div>
+      <div class="finance-row"><span>Forma</span><strong>${p.pix_code || p.pix_qr_url ? "Pix disponível" : "Pix ainda não configurado"}</strong></div>
+      <button class="mini-btn" onclick="goSection('financeiro')">${paid ? "Ver histórico" : "Pagar agora"}</button>
+    </div>
+  `;
+}
 
-  try {
-    const { error } = await db
-      .from('atividades')
-      .update({ data_conclusao: '2026-05-25' })
-      .eq('status', 'concluida')
-      .eq('data_conclusao', '2026-05-26')
-      .lte('data_criacao', '2026-05-25');
+function renderDashboard(){
+  const today = new Date().toISOString().slice(0,10);
+  const next = classes.find(c => c.class_date >= today);
+  const diag = getDiagnosisProgress();
+  const latest = materials[0];
+  const currentPayment = getCurrentPayment();
 
-    if (error) throw error;
+  $("nextClassStat").textContent = next ? `${dateBR(next.class_date)} • ${String(next.class_time||"").slice(0,5)}` : "—";
+  $("nextClassLive").textContent = next ? `${dateBR(next.class_date)} às ${String(next.class_time||"").slice(0,5)}${next.notes ? " • " + next.notes : ""}` : "Nenhuma aula futura cadastrada.";
+  if($("elosText")) $("elosText").textContent = profile.elos_url || "https://elos.vc/sala/teacherdebora";
+  $("materialsStat").textContent = materials.length;
+  $("pendingDiagStat").textContent = diag.pending;
+  $("diagBadge").textContent = diag.label;
+  $("diagBadge").className = `badge ${diag.className}`;
 
-    localStorage.setItem(migrationKey, 'ok');
-    console.log('Correção 25/05/2026 aplicada ao histórico.');
-  } catch (err) {
-    console.warn('Não foi possível aplicar a correção automática do histórico:', err.message);
+  $("quickLinks").innerHTML = `
+    <div class="quick-link">
+      <div><strong>${diag.pending ? "Continuar diagnóstico" : "Começar trilha"}</strong><p>${diag.pending ? diag.pending+" pendente(s)" : "Trilha de 21 dias liberada"}</p></div>
+      <a href="#" onclick="goSection('${diag.pending ? "diagnostico" : "trilha"}');return false;">${diag.pending ? "acessar" : "abrir"}</a>
+    </div>
+    <div class="quick-link">
+      <div><strong>Material mais recente</strong><p>${latest ? esc(latest.title) : "Nenhum material ainda"}</p></div>
+      <a href="#" onclick="${latest?.url ? `openLink('${latest.url}')` : `showToast('Nenhum material com link')`};return false;">ver</a>
+    </div>
+    <div class="quick-link">
+      <div><strong>Financeiro</strong><p>${currentPayment ? esc(currentPayment.reference || "Cobrança ativa") : "Sem cobrança ativa"}</p></div>
+      <a href="#" onclick="goSection('financeiro');return false;">${currentPayment?.status === "paid" ? "ver" : "pagar"}</a>
+    </div>
+  `;
+
+  renderMiniFeedback();
+  renderDiagnosisProgress();
+  renderFinanceDashboard();
+}
+
+function renderDiagnostics(){
+  const el = $("diagnosticsList");
+  if(!el) return;
+
+  const baseDiagnostics = [
+    { type:"profile", icon:"💜", title:"Quem é você no grupinho do inglês?", description:"Teste de personalidade aplicado ao seu jeito de aprender inglês.", actionLabel:"Fazer teste", defaultUrl:"https://helpdebs.github.io/helpdebs-portal/teste-personalidade.html" },
+    { type:"level", icon:"📊", title:"Teste de nivelamento", description:"Mapeamento do seu nível atual para ajustar melhor as aulas.", actionLabel:"Fazer nivelamento", defaultUrl:LEVEL_TEST_URL },
+    { type:"interests", icon:"✨", title:"Área de interesses", description:"Objetivos, rotina, gostos e contextos em que você quer usar inglês.", actionLabel:"Responder interesses", defaultUrl:INTERESTS_TEST_URL }
+  ];
+
+  const merged = baseDiagnostics.map(base => {
+    const db = getLatestDiagnostic(base.type);
+    const cfg = diagConfig.find(c => c.type === base.type);
+    const done = isDiagnosticDone(db);
+    return { ...base, db, done, form_url: db?.form_url || cfg?.form_url || base.defaultUrl, result_url: db?.result_url || cfg?.result_url || null };
+  });
+
+  el.innerHTML = merged.map(d => {
+    const hasLink = !!d.form_url;
+    const actionBtn = d.done
+      ? `<button class="mini-btn done-btn" type="button" disabled>Concluído ✓</button>`
+      : hasLink
+        ? `<button class="mini-btn" type="button" onclick="openLink('${esc(d.form_url)}')">${esc(d.actionLabel)}</button>`
+        : `<button class="mini-btn secondary" type="button" onclick="showToast('Teste ainda não conectado')">Em breve</button>`;
+    const resultBtn = d.result_url ? `<button class="mini-btn secondary" type="button" onclick="openLink('${esc(d.result_url)}')">Ver resultado</button>` : "";
+    return `
+      <div class="diag-item ${hasLink || d.done ? "" : "locked"}">
+        <div class="item-top">
+          <div class="diag-head">
+            <div class="diag-icon">${d.icon}</div>
+            <div><strong>${esc(d.title)}</strong><p>${esc(d.description)}</p></div>
+          </div>
+          <span class="mini-badge ${d.done ? "status-done" : "status-pending"}">${d.done ? "concluído" : "pendente"}</span>
+        </div>
+        <div class="diag-item-row">${actionBtn}${resultBtn}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderFeaturedChecklist(){
+  const area = $("featuredChecklistArea");
+  if(!area) return;
+  area.innerHTML = `
+    <div class="featured-checklist">
+      <div>
+        <span class="checklist-kicker">✨ checklist mensal</span>
+        <h3>Checklist de vocabulário da aula</h3>
+        <p>Revise as estruturas, chunks e combinações mais importantes do mês em uma página interativa feita para praticar sem ficar perdida.</p>
+      </div>
+      <div class="checklist-actions">
+        <a class="checklist-btn" href="${MONTHLY_CHECKLIST_URL}" target="_blank" rel="noopener noreferrer"
+           onclick="event.preventDefault(); event.stopPropagation(); window.open('${MONTHLY_CHECKLIST_URL}', '_blank', 'noopener,noreferrer'); return false;">
+          Abrir checklist
+        </a>
+        <button type="button" class="checklist-btn secondary"
+                onclick="event.preventDefault(); event.stopPropagation(); toggleChecklistEmbed(); return false;">
+          Ver dentro do portal
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function openMonthlyChecklist(){ window.open(MONTHLY_CHECKLIST_URL, "_blank", "noopener,noreferrer"); }
+
+function toggleChecklistEmbed(){
+  const box = $("checklistEmbedArea");
+  if(!box) return;
+  const isOpen = box.classList.contains("show");
+  if(isOpen){ box.classList.remove("show"); box.innerHTML = ""; return; }
+  box.innerHTML = `<iframe src="${MONTHLY_CHECKLIST_URL}" title="Checklist mensal"></iframe>`;
+  box.classList.add("show");
+  box.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+// ─────────────────────────────────────────────────────────────
+// renderMaterials — CORRIGIDO
+// Resumo e chunks agora lidos do próprio registro do material
+// (campo description para resumo, campo chunks para chunks)
+// além de suportar registros separados por type
+// ─────────────────────────────────────────────────────────────
+function renderMaterials(){
+  const el = $("lessonsList") || $("materialsList");
+  if(!el) return;
+
+  const visibleMaterials = materials.filter(m => {
+    const type = (m.type || "").toLowerCase();
+    return ["pdf","checklist","resource","vocabulary","summary","chunks"].includes(type);
+  });
+
+  if(!visibleMaterials.length){
+    el.innerHTML = `<div class="empty">Nenhum material cadastrado ainda.</div>`;
+    return;
+  }
+
+  const groups = [];
+
+  const classIdsWithMaterial = [...new Set(
+    visibleMaterials.filter(m => m.class_id).map(m => m.class_id)
+  )];
+
+  classIdsWithMaterial.forEach(classId => {
+    const classItem = classes.find(c => c.id === classId) || null;
+    const related = visibleMaterials.filter(m => m.class_id === classId);
+    groups.push({ classItem, materials: related });
+  });
+
+  const looseMaterials = visibleMaterials.filter(m => !m.class_id);
+  looseMaterials.forEach(m => { groups.push({ classItem: null, materials: [m] }); });
+
+  groups.sort((a,b) => {
+    const aDate = a.classItem?.class_date || a.materials[0]?.created_at || "";
+    const bDate = b.classItem?.class_date || b.materials[0]?.created_at || "";
+    return String(bDate).localeCompare(String(aDate));
+  });
+
+  el.innerHTML = groups.map(group => {
+    const c = group.classItem;
+    const items = group.materials || [];
+
+    // Busca registros dedicados por type
+    const pdfItem     = items.find(m => ["pdf","checklist","resource","vocabulary"].includes((m.type || "").toLowerCase())) || items.find(m => m.url);
+    const summaryItem = items.find(m => (m.type || "").toLowerCase() === "summary");
+    const chunksItem  = items.find(m => (m.type || "").toLowerCase() === "chunks");
+
+    const main = pdfItem || summaryItem || chunksItem || items[0];
+
+    // CORREÇÃO: pega description e chunks do próprio registro principal
+    // se não houver registros separados de type summary/chunks
+    const resumoText = summaryItem?.description
+      || main?.description
+      || "";
+
+    const chunksText = chunksItem?.chunks
+      || chunksItem?.description
+      || main?.chunks
+      || "";
+
+    const title = main?.title || "Material da aula";
+    const date = c
+      ? `${dateBR(c.class_date)} • ${String(c.class_time || "").slice(0,5)}`
+      : (main?.month || "Material sem aula vinculada");
+
+    const thumb = pdfItem?.thumbnail_url
+      ? `<img src="${esc(pdfItem.thumbnail_url)}" alt="Miniatura do PDF">`
+      : `<div>PDF<br><small>${esc(pdfItem?.type || main?.type || "material")}</small></div>`;
+
+    return `
+      <div class="lesson-card">
+        <div class="lesson-head">
+          <div class="lesson-title">
+            <strong>${esc(title)}</strong>
+            <span>${esc(date)}</span>
+          </div>
+          ${pdfItem?.url ? `<button class="mini-btn" onclick="openLink('${esc(pdfItem.url)}')">Abrir material</button>` : ""}
+        </div>
+
+        <div class="lesson-body">
+          <div class="pdf-thumb">${thumb}</div>
+
+          <div class="lesson-block">
+            <h4>Resumo da aula</h4>
+            <p>${esc(resumoText || "Resumo ainda não cadastrado.")}</p>
+          </div>
+
+          <div class="lesson-block">
+            <h4>Chunks usados</h4>
+            <p>${esc(chunksText || "Chunks ainda não cadastrados.")}</p>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderCalendar(){
+  const calendarGrid = $("calendarGrid");
+  const calendarMonthEl = $("calendarMonth");
+  const classListEl = $("studentClassList");
+  if(!calendarGrid || !calendarMonthEl) return;
+
+  const months = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+  calendarMonthEl.textContent = `${months[calMonth]} ${calYear}`;
+
+  const days = ["dom","seg","ter","qua","qui","sex","sáb"];
+  let html = days.map(d => `<div class="day-name">${d}</div>`).join("");
+
+  const first = new Date(calYear, calMonth, 1).getDay();
+  const total = new Date(calYear, calMonth + 1, 0).getDate();
+  const prevTotal = new Date(calYear, calMonth, 0).getDate();
+  const today = new Date();
+
+  for(let i=0;i<first;i++){
+    html += `<div class="calendar-day muted"><div class="day-number">${prevTotal-first+i+1}</div></div>`;
+  }
+  for(let d=1; d<=total; d++){
+    const date = `${calYear}-${String(calMonth+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const dayClasses = classes.filter(c => c.class_date === date);
+    const isToday = today.getFullYear()===calYear && today.getMonth()===calMonth && today.getDate()===d;
+    html += `
+      <div class="calendar-day ${dayClasses.length ? "has-class" : ""} ${isToday ? "today" : ""}">
+        <div class="day-number">${d}</div>
+        ${dayClasses.map(c => `<div class="mini-class">Aula • ${String(c.class_time || "").slice(0,5)}</div>`).join("")}
+      </div>
+    `;
+  }
+  calendarGrid.innerHTML = html;
+
+  if(classListEl){
+    const upcoming = classes.filter(c => c.class_date >= new Date().toISOString().slice(0,10)).slice(0,5);
+    classListEl.innerHTML = upcoming.length
+      ? upcoming.map(c => `
+          <div class="student-class-card">
+            <strong>${dateBR(c.class_date)} • ${String(c.class_time || "").slice(0,5)}</strong>
+            <p>${esc(c.notes || "Aula marcada")}</p>
+          </div>`).join("")
+      : `<div class="empty">Nenhuma aula futura cadastrada.</div>`;
   }
 }
 
-// ── UTILS ─────────────────────────────────────────────────
-function formatDate(d) {
-  if (!d || d === 'sem-data') return 'Sem data';
-  const [y, m, day] = d.split('-');
-  return `${day}/${m}/${y}`;
+function materialCard(m){
+  return `
+    <div class="material-item">
+      <strong>${esc(m.title || "Material")}</strong>
+      <p>${esc(m.description || "")}</p>
+      ${m.url ? `<div class="item-actions"><button class="mini-btn" onclick="openLink('${esc(m.url)}')">Abrir</button></div>` : ""}
+    </div>
+  `;
 }
 
-function escapeHtml(value) {
-  return String(value || '')
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#039;');
+function renderTips(){
+  const tips = materials.filter(m => m.type === "tip");
+  $("tipsList").innerHTML = tips.length ? tips.map(materialCard).join("") : `<div class="empty">Nenhuma dica cadastrada ainda.</div>`;
+  const prompts = materials.filter(m => m.type === "prompt" || m.type === "resource");
+  $("promptsList").innerHTML = prompts.length ? prompts.map(materialCard).join("") : `<div class="empty">Nenhum prompt/recurso cadastrado ainda.</div>`;
 }
 
-// ── INIT ──────────────────────────────────────────────────
-corrigirHistorico25Maio().finally(() => loadAtividades());
+function renderVideos(){
+  const videos = materials.filter(m => m.type === "video");
+  $("videosList").innerHTML = videos.length ? videos.map(materialCard).join("") : `<div class="empty">Nenhuma videoaula cadastrada ainda.</div>`;
+}
+
+async function copyPix(code){
+  try{ await navigator.clipboard.writeText(code); showToast("Pix copiado! Abra seu banco e cole."); }
+  catch(e){ showToast("Não consegui copiar automaticamente."); }
+}
+
+function paymentAction(id){
+  const p = payments.find(item => item.id === id);
+  if(!p){ showToast("Cobrança não encontrada."); return; }
+  if(p.pix_code){ copyPix(p.pix_code); return; }
+  if(p.pix_qr_url){ openLink(p.pix_qr_url); return; }
+  showToast("Forma de pagamento ainda não configurada.");
+}
+
+function renderPayments(){
+  const list = $("paymentsList");
+  if(!list) return;
+  if(!payments.length){ list.innerHTML = `<div class="empty">Nenhum pagamento cadastrado ainda.</div>`; return; }
+  list.innerHTML = payments.map(p => {
+    const pixCode = p.pix_code || "";
+    const pixQr = p.pix_qr_url || "";
+    const hasAction = pixCode || pixQr;
+    return `
+    <div class="payment-item ${hasAction ? "clickable-payment" : "no-payment-action"}" onclick="paymentAction('${esc(p.id)}')">
+      <div class="item-top">
+        <div>
+          <strong>${esc(p.reference || "Cobrança")}</strong>
+          <p>R$ ${Number(p.amount || 0).toFixed(2)} • vence ${dateBR(p.due_date)}</p>
+        </div>
+        <span class="mini-badge ${p.status === "paid" ? "status-paid" : p.status === "overdue" ? "status-overdue" : "status-pending"}">${esc(p.status || "pending")}</span>
+      </div>
+      ${p.notes ? `<p>${esc(p.notes)}</p>` : ""}
+      ${pixQr ? `<div class="qr-preview"><img src="${esc(pixQr)}" alt="QR Code Pix"></div>` : ""}
+      ${pixCode ? `<p style="word-break:break-all;font-size:.82rem;margin-top:10px"><b>Pix copia e cola:</b> ${esc(pixCode)}</p>` : ""}
+      <div class="pay-actions" onclick="event.stopPropagation()">
+        ${pixCode ? `<button class="mini-btn" onclick="copyPix('${esc(pixCode)}')">Copiar Pix</button>` : ""}
+        ${pixQr ? `<button class="mini-btn secondary" onclick="openLink('${esc(pixQr)}')">Abrir QR Code</button>` : ""}
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function openElos(){
+  const url = profile.elos_url || "https://elos.vc/sala/teacherdebora";
+  openLink(url);
+}
+
+const sectionMeta = {inicio:"Portal da aluna",diagnostico:"Diagnóstico",trilha:"Trilha",materiais:"Materiais",calendario:"Calendário","ao-vivo":"Aula ao vivo",dicas:"Dicas",videoaulas:"Videoaulas",financeiro:"Financeiro"};
+
+function goSection(target){
+  document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.section === target));
+  document.querySelectorAll(".portal-section").forEach(section => section.classList.remove("active"));
+  const section = $(`section-${target}`);
+  if(!section){ showToast("Seção não encontrada"); return; }
+  section.classList.add("active");
+  $("pageTitle").textContent = sectionMeta[target] || target;
+  if($("mobileSectionTitle")) $("mobileSectionTitle").textContent = sectionMeta[target] || target;
+  if(target === "calendario") renderCalendar();
+  if(target === "materiais"){ renderFeaturedChecklist(); renderMaterials(); }
+  if(target === "diagnostico") renderDiagnostics();
+  if(target === "financeiro") renderPayments();
+  if(target === "trilha") renderTrail();
+  if(target === "ao-vivo"){
+    const next = classes.find(c => c.class_date >= new Date().toISOString().slice(0,10));
+    $("nextClassLive").textContent = next
+      ? `${dateBR(next.class_date)} às ${String(next.class_time || "").slice(0,5)}${next.notes ? " • " + next.notes : ""}`
+      : "Nenhuma aula futura cadastrada.";
+    $("elosText").textContent = profile.elos_url || "https://elos.vc/sala/teacherdebora";
+  }
+}
+
+
+
+
+
 </script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js')
-      .then(() => console.log('Service Worker registrado'))
-      .catch(err => console.error('Erro no Service Worker:', err));
-  });
-}
-</script>
-
 </body>
 </html> 
