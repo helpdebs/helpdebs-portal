@@ -920,7 +920,7 @@
 <script>
   const SB_URL = "https://pgdanuifukzisyyummpz.supabase.co";
   const SB_ANON = "sb_publishable_81NM6F08rsXXSCgjWl4iSg_v99cdVpo";
-  const sb = window.supabase.createClient(SB_URL, SB_ANON, { auth: { storageKey: 'helpdebs-portal-auth', persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+  const sb = window.supabase.createClient(SB_URL, SB_ANON);
 
   let authUser = null;
   let levelDiagnostic = null;
@@ -942,27 +942,81 @@
             <div class="confirm-icon">✅</div>
             <h2>${title}</h2>
             <p>${text}</p>
-            <button class="btn-secondary" onclick="window.location.href='portal.html'">${buttonText}</button>
+            <button class="btn-secondary" onclick="goBackToPortal()">${buttonText}</button>
           </div>
         </div>
       </main>
     `;
   }
 
+  function getPortalReturnUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("return_url") || "portal.html";
+  }
+
+  function goBackToPortal() {
+    window.location.href = getPortalReturnUrl();
+  }
+
+  function readPortalAccessBridge() {
+    const params = new URLSearchParams(window.location.search);
+    const fromUrl = {
+      id: params.get("student_id") || "",
+      email: params.get("student_email") || params.get("email") || "",
+      name: params.get("student_name") || "",
+      diagnostic_type: params.get("diagnostic_type") || "level"
+    };
+
+    const keys = ["helpdebs_portal_access", "helpdebs_current_student", "helpdebs_student"];
+    let fromStorage = {};
+    for (const key of keys) {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(key) || "{}");
+        if (parsed && (parsed.student_id || parsed.id || parsed.email || parsed.student_email)) {
+          fromStorage = parsed;
+          break;
+        }
+      } catch(e) {}
+    }
+
+    const id = fromUrl.id || fromStorage.student_id || fromStorage.id || localStorage.getItem("student_id") || "";
+    const email = fromUrl.email || fromStorage.student_email || fromStorage.email || localStorage.getItem("student_email") || "";
+    const name = fromUrl.name || fromStorage.full_name || fromStorage.name || localStorage.getItem("student_name") || email || "Aluna";
+
+    if (!id && !email) return null;
+
+    return {
+      id,
+      email,
+      user_metadata: { full_name: name, name },
+      bridge_access: true
+    };
+  }
+
   async function initStudentAccess() {
     const { data: { session } } = await sb.auth.getSession();
+    const bridgeUser = readPortalAccessBridge();
 
-    if (!session || !session.user) {
+    if (session && session.user) {
+      authUser = session.user;
+    } else if (bridgeUser && bridgeUser.id) {
+      authUser = bridgeUser;
+      console.warn("Acesso ao nivelamento usando ponte do portal/localStorage.");
+    } else {
       testBlocked = true;
       renderStateScreen(
         "Acesso necessário",
-        "Você precisa entrar no portal da aluna antes de responder o nivelamento.",
+        "Entre pelo portal da aluna e abra o nivelamento por lá para vincular o teste à sua conta.",
         "Entrar no portal"
       );
       return;
     }
 
-    authUser = session.user;
+    const nameInput = document.getElementById("nameInput");
+    const emailInput = document.getElementById("emailInput");
+    const displayName = authUser.user_metadata?.full_name || authUser.user_metadata?.name || authUser.email || "";
+    if (nameInput && displayName) nameInput.value = displayName;
+    if (emailInput && authUser.email) emailInput.value = authUser.email;
 
     const localKey = `helpdebs_level_submitted_${authUser.id}`;
     if (localStorage.getItem(localKey) === "yes") {
@@ -983,13 +1037,8 @@
       .maybeSingle();
 
     if (error) {
-      console.error("Erro ao verificar diagnóstico:", error);
-      testBlocked = true;
-      renderStateScreen(
-        "Erro ao carregar",
-        "Não consegui verificar o status do seu nivelamento. Volte ao portal e tente novamente.",
-        "Voltar ao portal"
-      );
+      console.warn("Não consegui verificar diagnóstico. Vou permitir o teste e tentar salvar no envio:", error);
+      levelDiagnostic = null;
       return;
     }
 
@@ -1518,7 +1567,7 @@
 
   document.getElementById('restartBtn').textContent = 'Voltar ao portal';
   document.getElementById('restartBtn').addEventListener('click', () => {
-    window.location.href = 'portal.html';
+    goBackToPortal();
   });
 
   // ─── INIT ────────────────────────────────────────────────────────────────────
