@@ -1436,7 +1436,7 @@ const TRAIL_DAY_1_BANK = {
   ]
 };
 
-let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[], diagConfig=[], trailProgress=[];
+let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[], feedbacks=[], diagConfig=[], trailProgress=[];
 let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth();
 
@@ -1445,7 +1445,55 @@ const esc = (v) => String(v ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&
 function showToast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2800); }
 function msg(id,text,type="info"){ const el=$(id); el.textContent=text; el.className=`msg show ${type}`; }
 function dateBR(d){ if(!d)return "—"; return new Date(d+"T12:00:00").toLocaleDateString("pt-BR",{weekday:"short",day:"numeric",month:"short"}); }
-function openLink(url){ if(!url){showToast("⚠️ Link ainda não configurado");return;} window.open(url,"_blank"); }
+function openLink(url){
+  if(!url){ showToast("⚠️ Link ainda não configurado"); return; }
+  window.open(url,"_blank","noopener,noreferrer");
+}
+
+function getProfileDisplayName(){
+  return profile?.full_name || profile?.name || user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email || "Aluna";
+}
+
+function buildStudentUrl(url, type=""){
+  const parsed = new URL(url, window.location.href);
+  parsed.searchParams.set("student_id", user?.id || "");
+  parsed.searchParams.set("student_email", user?.email || "");
+  parsed.searchParams.set("email", user?.email || "");
+  parsed.searchParams.set("student_name", getProfileDisplayName());
+  parsed.searchParams.set("diagnostic_type", type);
+  parsed.searchParams.set("from", "portal");
+  parsed.searchParams.set("access", "portal");
+  parsed.searchParams.set("return_url", window.location.href.split("#")[0]);
+  return parsed.toString();
+}
+
+function savePortalAccessBridge(type=""){
+  const payload = {
+    id: user?.id || "",
+    student_id: user?.id || "",
+    email: user?.email || "",
+    student_email: user?.email || "",
+    name: getProfileDisplayName(),
+    full_name: getProfileDisplayName(),
+    diagnostic_type: type,
+    from: "portal",
+    updated_at: new Date().toISOString()
+  };
+  try{
+    localStorage.setItem("helpdebs_portal_access", JSON.stringify(payload));
+    localStorage.setItem("helpdebs_current_student", JSON.stringify(payload));
+    localStorage.setItem("helpdebs_student", JSON.stringify(payload));
+    localStorage.setItem("student_id", payload.student_id);
+    localStorage.setItem("student_email", payload.student_email);
+    localStorage.setItem("student_name", payload.name);
+  }catch(e){ console.warn("Não consegui salvar ponte de acesso para diagnóstico", e); }
+}
+
+function openDiagnosticTest(url, type=""){
+  if(!url){ showToast("Teste ainda não conectado"); return; }
+  savePortalAccessBridge(type);
+  window.location.href = buildStudentUrl(url, type);
+}
 
 function toggleSidebar(){
   const sidebar = $("sidebar");
@@ -1675,33 +1723,81 @@ async function startPortal(authUser){
 }
 
 async function loadData(){
-  const [p, m, c, d, pay, cfg] = await Promise.all([
-    sb.from("profiles").select("*").eq("id", user.id).single(),
-    sb.from("materials").select("*").eq("student_id", user.id).order("created_at",{ascending:false}),
-    sb.from("classes").select("*").eq("student_id", user.id).order("class_date",{ascending:true}),
-    sb.from("diagnostics").select("*").eq("student_id", user.id).order("updated_at",{ascending:false}),
-    sb.from("payments").select("*").eq("student_id", user.id).order("due_date",{ascending:false}),
-    sb.from("diagnostics").select("type,form_url,result_url").is("student_id", null)
-  ]);
+  const fallbackProfile = {
+    id: user.id,
+    full_name: user.user_metadata?.full_name || user.user_metadata?.name || user.email || "Aluna",
+    email: user.email,
+    level: "—",
+    nivel: "—",
+    elos_url: "https://elos.vc/sala/teacherdebora"
+  };
 
-  if(p.error && p.error.code !== "PGRST116"){ showToast("Erro ao carregar perfil: " + p.error.message); console.error("profiles", p.error); }
-  if(m.error){ showToast("Erro ao carregar materiais: " + m.error.message); console.error("materials", m.error); }
-  if(c.error){ showToast("Erro ao carregar calendário: " + c.error.message); console.error("classes", c.error); }
-  if(d.error){ showToast("Erro ao carregar diagnóstico: " + d.error.message); console.error("diagnostics", d.error); }
-  if(pay.error){ showToast("Erro ao carregar financeiro: " + pay.error.message); console.error("payments", pay.error); }
-  if(cfg?.error){ console.warn("diagnostics config", cfg.error); }
+  const safeArray = (res, label) => {
+    if(res?.error){ console.warn(label, res.error); return []; }
+    return Array.isArray(res?.data) ? res.data : [];
+  };
 
-  profile = p.data || { full_name:user.email, email:user.email, level:"—", nivel:"—" };
-  if(!profile.elos_url) profile.elos_url = "https://elos.vc/sala/teacherdebora";
-  materials = m.data || [];
-  classes = c.data || [];
-  diagnostics = d.data || [];
-  payments = pay.data || [];
-  diagConfig = cfg?.data || [];
+  try{
+    const profileById = await sb.from("profiles").select("*").eq("id", user.id).maybeSingle();
+    let profileResult = profileById;
 
-  console.log("PORTAL DATA", {user:user.id, profile, materials, classes, diagnostics, payments, diagConfig});
+    if((!profileById.data || profileById.error) && user.email){
+      const profileByEmail = await sb.from("profiles").select("*").eq("email", user.email).maybeSingle();
+      if(profileByEmail.data) profileResult = profileByEmail;
+    }
+
+    if(profileResult?.error && profileResult.error.code !== "PGRST116"){
+      console.warn("profiles", profileResult.error);
+      showToast("Não encontrei perfil completo. Carreguei a conta pelo e-mail.");
+    }
+
+    profile = { ...fallbackProfile, ...(profileResult?.data || {}) };
+    if(!profile.full_name) profile.full_name = fallbackProfile.full_name;
+    if(!profile.email) profile.email = user.email;
+    if(!profile.elos_url) profile.elos_url = "https://elos.vc/sala/teacherdebora";
+
+    // Busca principal por id da conta. Mantém tudo isolado por aluna.
+    const [m, c, d, pay, cfg] = await Promise.all([
+      sb.from("materials").select("*").eq("student_id", user.id).order("created_at",{ascending:false}),
+      sb.from("classes").select("*").eq("student_id", user.id).order("class_date",{ascending:true}),
+      sb.from("diagnostics").select("*").eq("student_id", user.id).order("updated_at",{ascending:false}),
+      sb.from("payments").select("*").eq("student_id", user.id).order("due_date",{ascending:false}),
+      sb.from("diagnostics").select("type,form_url,result_url").is("student_id", null)
+    ]);
+
+    materials = safeArray(m, "materials");
+    classes = safeArray(c, "classes");
+    diagnostics = safeArray(d, "diagnostics");
+    payments = safeArray(pay, "payments");
+    diagConfig = safeArray(cfg, "diagnostics config");
+
+    // Mini feedback pode estar em tabelas diferentes dependendo da versão do admin.
+    // Todas as buscas são opcionais: se uma tabela não existir, o portal continua funcionando.
+    const feedbackTables = ["student_feedbacks", "feedbacks", "lesson_feedbacks", "mini_feedbacks", "weekly_feedbacks"];
+    const feedbackResults = await Promise.allSettled(
+      feedbackTables.map(table =>
+        sb.from(table).select("*").eq("student_id", user.id).order("created_at", { ascending:false }).limit(10)
+      )
+    );
+
+    feedbacks = feedbackResults.flatMap((result, index) => {
+      if(result.status !== "fulfilled" || result.value?.error) return [];
+      return (result.value.data || []).map(item => ({ ...item, _source_table: feedbackTables[index] }));
+    }).sort((a,b) => String(b.created_at || b.updated_at || b.date || "").localeCompare(String(a.created_at || a.updated_at || a.date || "")));
+
+    console.log("PORTAL DATA", {user:user.id, profile, materials, classes, diagnostics, payments, feedbacks, diagConfig});
+  }catch(e){
+    console.error("loadData fatal", e);
+    profile = fallbackProfile;
+    materials = [];
+    classes = [];
+    diagnostics = [];
+    payments = [];
+    feedbacks = [];
+    diagConfig = [];
+    showToast("Carreguei o portal em modo seguro. Confira as permissões do Supabase.");
+  }
 }
-
 function renderAll(){
   renderProfile();
   renderDashboard();
@@ -1728,7 +1824,7 @@ function renderProfile(){
   $("studentFocus").textContent = savedFocus === "Ainda não definido" ? "trilha ativa" : savedFocus;
   $("diagBadge").textContent = diag.label;
   $("diagBadge").className = `badge ${diag.className}`;
-  $("profileSummary").innerHTML = `
+  if($("profileSummary")) $("profileSummary").innerHTML = `
     <div class="material-item"><strong>Perfil</strong><p>${esc(savedProfile)}</p></div>
     <div class="material-item"><strong>Nível</strong><p>${esc(savedLevel)}</p></div>
     <div class="material-item"><strong>Foco atual</strong><p>${esc(savedFocus)}</p></div>
@@ -1737,33 +1833,65 @@ function renderProfile(){
   $("studentCard")?.classList.remove("loading");
 }
 
+function pickText(obj, fields){
+  for(const field of fields){
+    const value = obj?.[field];
+    if(value === null || value === undefined || value === "") continue;
+    if(typeof value === "object"){
+      const nested = value.note || value.feedback || value.message || value.summary || value.text || value.content || value.observation || value.observacao;
+      if(nested) return String(nested);
+      continue;
+    }
+    return String(value);
+  }
+  return "";
+}
+
 function getLatestFeedback(){
-  const feedbackTypes = ["feedback", "summary"];
-  const byType = materials.find(m => feedbackTypes.includes((m.type || "").toLowerCase()) && m.description);
-  if(byType){
+  const feedbackFields = [
+    "feedback", "mini_feedback", "message", "note", "notes", "observation", "observacao",
+    "teacher_note", "teacher_feedback", "summary", "description", "content", "text"
+  ];
+  const focusFields = ["focus", "foco", "week_focus", "weekly_focus", "focus_of_week", "next_focus", "goal", "objective"];
+
+  const fromFeedbackTable = feedbacks.find(item => pickText(item, feedbackFields));
+  if(fromFeedbackTable){
     return {
       hasData: true,
-      note: byType.description,
-      focus: byType.focus || byType.foco || byType.week_focus || ""
+      note: pickText(fromFeedbackTable, feedbackFields),
+      focus: pickText(fromFeedbackTable, focusFields),
+      source: fromFeedbackTable._source_table || "feedbacks"
     };
   }
 
-  const classWithNotes = [...classes].reverse().find(c => c.notes);
+  const materialFeedbackTypes = ["feedback", "mini_feedback", "teacher_feedback", "summary", "lesson_summary", "weekly_feedback"];
+  const byMaterial = materials.find(m => materialFeedbackTypes.includes((m.type || "").toLowerCase()) && pickText(m, feedbackFields));
+  if(byMaterial){
+    return {
+      hasData: true,
+      note: pickText(byMaterial, feedbackFields),
+      focus: pickText(byMaterial, focusFields),
+      source: "materials"
+    };
+  }
+
+  const classWithNotes = [...classes].reverse().find(c => pickText(c, feedbackFields));
   if(classWithNotes){
     return {
       hasData: true,
-      note: classWithNotes.notes,
-      focus: classWithNotes.focus || classWithNotes.foco || ""
+      note: pickText(classWithNotes, feedbackFields),
+      focus: pickText(classWithNotes, focusFields),
+      source: "classes"
     };
   }
 
   return {
     hasData: false,
-    note: "Assim que sua professora registrar um resumo ou observação da aula, ele aparece aqui.",
-    focus: ""
+    note: "Assim que sua professora registrar um feedback no admin, ele aparece aqui.",
+    focus: "",
+    source: "empty"
   };
 }
-
 function getNextPendingDiagnostic(){
   const order = ["profile", "level", "interests"];
   const labels = { profile: "Quem é você no grupinho do inglês?", level: "Teste de nivelamento", interests: "Área de interesses" };
@@ -1931,7 +2059,7 @@ function renderDiagnostics(){
     const actionBtn = d.done
       ? `<button class="mini-btn done-btn" type="button" disabled>Concluído ✓</button>`
       : hasLink
-        ? `<button class="mini-btn" type="button" onclick="openLink('${esc(d.form_url)}')">${esc(d.actionLabel)}</button>`
+        ? `<button class="mini-btn" type="button" onclick="openDiagnosticTest('${esc(d.form_url)}', '${esc(d.type)}')">${esc(d.actionLabel)}</button>`
         : `<button class="mini-btn secondary" type="button" onclick="showToast('Teste ainda não conectado')">Em breve</button>`;
     const resultBtn = d.result_url ? `<button class="mini-btn secondary" type="button" onclick="openLink('${esc(d.result_url)}')">Ver resultado</button>` : "";
     return `
