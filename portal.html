@@ -743,6 +743,19 @@ input:focus { border-color: var(--primary); }
 .student-calendar-shell { display: grid; gap: 16px; }
 
 .calendar-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+
+.calendar-header > div:first-child {
+  display: grid;
+  gap: 4px;
+}
+
+.calendar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .calendar-header strong { font-size: 1rem; letter-spacing: -.03em; font-weight: 700; }
 .calendar-month { color: var(--muted); font-size: .86rem; font-weight: 500; }
 
@@ -1145,6 +1158,8 @@ input:focus { border-color: var(--primary); }
 
   .calendar-day              { min-height: 68px; padding: 8px; }
   .calendar-grid             { gap: 5px; }
+  .calendar-header           { flex-direction: column; }
+  .calendar-actions          { justify-content: flex-start; }
 
   .featured-checklist        { grid-template-columns: 1fr; }
   .checklist-actions         { justify-content: flex-start; }
@@ -1765,8 +1780,16 @@ body{ font-size:14px; }
           <div class="panel calendar-card">
             <div class="student-calendar-shell">
               <div class="calendar-header">
-                <strong>Calendário</strong>
-                <span class="calendar-month" id="calendarMonth">—</span>
+                <div>
+                  <strong>Calendário</strong>
+                  <span class="calendar-month" id="calendarMonth">—</span>
+                </div>
+                <div class="calendar-actions">
+                  <button class="mini-btn secondary" type="button" onclick="setCalendarView('month')">Mensal</button>
+                  <button class="mini-btn secondary" type="button" onclick="setCalendarView('week')">Semanal</button>
+                  <button class="mini-btn secondary" type="button" onclick="changeCalendarMonth(-1)">‹</button>
+                  <button class="mini-btn secondary" type="button" onclick="changeCalendarMonth(1)">›</button>
+                </div>
               </div>
               <div class="calendar-grid" id="calendarGrid"></div>
               <div class="student-calendar-list" id="studentClassList"></div>
@@ -1852,6 +1875,7 @@ const TRAIL_DAY_1_BANK = {
 let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[], feedbacks=[], diagConfig=[], trailProgress=[];
 let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth();
+let calendarView = "month";
 
 const $ = (id) => document.getElementById(id);
 const esc = (v) => String(v ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -2084,7 +2108,7 @@ function renderActivity(activity, index){
 
 function renderTrail(){
   const frame = document.querySelector(".external-trail-frame");
-  if(frame) frame.setAttribute("src", "helpdebs_trilha_portal_funcional.html");
+  if(frame) frame.setAttribute("src", "helpdebs_trilha_dynamic_lessons.html");
 }
 
 
@@ -2186,7 +2210,7 @@ async function loadData(){
 
     // Mini feedback pode estar em tabelas diferentes dependendo da versão do admin.
     // Todas as buscas são opcionais: se uma tabela não existir, o portal continua funcionando.
-    const feedbackTables = ["student_feedbacks", "feedbacks", "lesson_feedbacks", "mini_feedbacks", "weekly_feedbacks"];
+    const feedbackTables = ["student_feedback", "student_feedbacks", "feedbacks", "lesson_feedbacks", "mini_feedbacks", "weekly_feedbacks"];
     const feedbackResults = await Promise.allSettled(
       feedbackTables.map(table =>
         sb.from(table).select("*").eq("student_id", user.id).order("created_at", { ascending:false }).limit(10)
@@ -2262,10 +2286,10 @@ function pickText(obj, fields){
 
 function getLatestFeedback(){
   const feedbackFields = [
-    "feedback", "mini_feedback", "message", "note", "notes", "observation", "observacao",
+    "feedback_text", "feedback", "mini_feedback", "message", "note", "notes", "observation", "observacao",
     "teacher_note", "teacher_feedback", "summary", "description", "content", "text"
   ];
-  const focusFields = ["focus", "foco", "week_focus", "weekly_focus", "focus_of_week", "next_focus", "goal", "objective"];
+  const focusFields = ["weekly_focus", "focus", "foco", "week_focus", "focus_of_week", "next_focus", "goal", "objective"];
 
   const fromFeedbackTable = feedbacks.find(item => pickText(item, feedbackFields));
   if(fromFeedbackTable){
@@ -2640,7 +2664,72 @@ function renderMaterials(){
   }).join("");
 }
 
+function setCalendarView(view){
+  calendarView = view === "week" ? "week" : "month";
+  renderCalendar();
+}
+
+function changeCalendarMonth(direction){
+  calendarView = "month";
+  calMonth += direction;
+  if(calMonth > 11){ calMonth = 0; calYear++; }
+  if(calMonth < 0){ calMonth = 11; calYear--; }
+  renderCalendar();
+}
+
+function renderWeekCalendar(){
+  const calendarGrid = $("calendarGrid");
+  const calendarMonthEl = $("calendarMonth");
+  const classListEl = $("studentClassList");
+  if(!calendarGrid || !calendarMonthEl) return;
+
+  const today = new Date();
+  const start = new Date(today);
+  start.setDate(today.getDate() - today.getDay());
+
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+
+  calendarMonthEl.textContent = `${start.toLocaleDateString("pt-BR", {day:"2-digit", month:"short"})} — ${end.toLocaleDateString("pt-BR", {day:"2-digit", month:"short", year:"numeric"})}`;
+
+  calendarGrid.innerHTML = Array.from({length: 7}, (_, i) => {
+    const d = new Date(start);
+    d.setDate(start.getDate() + i);
+    const date = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+    const dayClasses = classes.filter(c => c.class_date === date);
+    const isToday = d.toDateString() === new Date().toDateString();
+
+    return `
+      <div class="calendar-day ${dayClasses.length ? "has-class" : ""} ${isToday ? "today" : ""}">
+        <div class="day-number">${d.toLocaleDateString("pt-BR", {weekday:"short", day:"2-digit"})}</div>
+        ${dayClasses.map(c => `<div class="mini-class">Aula • ${String(c.class_time || "").slice(0,5)}</div>`).join("")}
+      </div>
+    `;
+  }).join("");
+
+  if(classListEl){
+    const weekStart = `${start.getFullYear()}-${String(start.getMonth()+1).padStart(2,"0")}-${String(start.getDate()).padStart(2,"0")}`;
+    const weekEnd = `${end.getFullYear()}-${String(end.getMonth()+1).padStart(2,"0")}-${String(end.getDate()).padStart(2,"0")}`;
+    const weekClasses = classes
+      .filter(c => c.class_date >= weekStart && c.class_date <= weekEnd)
+      .sort((a,b) => `${a.class_date} ${a.class_time || ""}`.localeCompare(`${b.class_date} ${b.class_time || ""}`));
+
+    classListEl.innerHTML = weekClasses.length
+      ? weekClasses.map(c => `
+          <div class="student-class-card">
+            <strong>${dateBR(c.class_date)} • ${String(c.class_time || "").slice(0,5)}</strong>
+            <p>${esc(c.notes || "Aula marcada")}</p>
+          </div>`).join("")
+      : `<div class="empty">Nenhuma aula nesta semana.</div>`;
+  }
+}
+
 function renderCalendar(){
+  if(calendarView === "week"){
+    renderWeekCalendar();
+    return;
+  }
+
   const calendarGrid = $("calendarGrid");
   const calendarMonthEl = $("calendarMonth");
   const classListEl = $("studentClassList");
@@ -2936,6 +3025,10 @@ function goSection(target){
     "Outubro": "October",
     "Novembro": "November",
     "Dezembro": "December",
+    "Mensal": "Monthly",
+    "Semanal": "Weekly",
+    "Nenhuma aula nesta semana.": "No class this week.",
+    "Visualização semanal": "Weekly view",
     "Link para acessar a aula ao vivo": "Link to access the live class",
     "Abrir sala": "Open room",
     "Prompts e recursos": "Prompts and resources",
