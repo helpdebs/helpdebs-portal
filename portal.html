@@ -1426,6 +1426,22 @@ body{ font-size:14px; }
   .feedback-note{ max-height:none; }
 }
 
+
+/* ============================================================
+   I18N REAL — botão ativo + persistência visual
+   ============================================================ */
+.hd-lang-toggle.active{
+  background: linear-gradient(135deg, var(--primary), var(--primary-2)) !important;
+  color: #fff !important;
+  border-color: rgba(122,92,255,.22) !important;
+  box-shadow: 0 12px 24px rgba(122,92,255,.20) !important;
+}
+.hd-lang-toggle.active::after{
+  content: "✓";
+  font-size: .8rem;
+  opacity: .9;
+}
+
   </style>
 </head>
 <body>
@@ -2658,6 +2674,5 @@ function goSection(target){
 
 
 </script>
-  <script src="i18n.js"></script>
-</body>
+
 </html> 
