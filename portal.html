@@ -1432,6 +1432,7 @@ body{ font-size:14px; }
   <section class="login-screen" id="loginScreen">
     <div class="login-card">
       <div class="logo">hd</div>
+      <button class="btn btn-soft hd-lang-toggle" type="button" style="margin-bottom:16px;">English ON</button>
       <h1>Portal da aluna</h1>
       <p>Entre com o e-mail e senha cadastrados para ver seus materiais, aulas e próximos passos.</p>
       <input id="loginEmail" type="email" placeholder="Email" autocomplete="email" />
@@ -1456,6 +1457,7 @@ body{ font-size:14px; }
     </div>
 
     <div class="mobile-top-actions" id="mobileTopActions">
+      <button class="btn btn-soft hd-lang-toggle" type="button">English ON</button>
       <button class="btn btn-soft" onclick="goSection('materiais')">Ver materiais</button>
       <button class="btn btn-primary" onclick="openElos()">Entrar na aula ao vivo</button>
     </div>
@@ -1500,6 +1502,7 @@ body{ font-size:14px; }
         <div class="topbar">
           <div class="headline"><h1 id="pageTitle">Portal da aluna</h1></div>
           <div class="top-actions">
+            <button class="btn btn-soft hd-lang-toggle" type="button">English ON</button>
             <button class="btn btn-soft" onclick="goSection('materiais')">Ver materiais</button>
             <button class="btn btn-primary" onclick="openElos()">Entrar na aula ao vivo</button>
           </div>
@@ -2655,5 +2658,6 @@ function goSection(target){
 
 
 </script>
+  <script src="i18n.js"></script>
 </body>
 </html> 
