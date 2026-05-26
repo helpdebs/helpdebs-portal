@@ -1159,6 +1159,273 @@ input:focus { border-color: var(--primary); }
   .progress-steps { grid-template-columns: 1fr; }
   .hero-stats     { grid-template-columns: 1fr 1fr; }
 }
+  
+
+/* ============================================================
+   UX ENGINEERING PASS — dashboard mais maduro, menos inflado
+   ============================================================ */
+:root{
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px;
+  --space-5:24px; --space-6:32px; --space-7:48px; --space-8:64px;
+  --surface-main:#fff;
+  --surface-soft:rgba(122,92,255,.045);
+  --surface-highlight:linear-gradient(135deg, rgba(122,92,255,.12), rgba(219,255,102,.22));
+  --shadow-soft:0 10px 30px rgba(63,37,128,.08);
+  --shadow-hover:0 18px 38px rgba(63,37,128,.12);
+}
+body{ font-size:14px; }
+.main{ padding:24px; }
+.shell{ max-width:1280px; gap:var(--space-5); }
+.topbar{ min-height:64px; padding:0 4px; }
+.headline h1{ font-size:clamp(1.65rem, 2.4vw, 2.45rem); letter-spacing:-.05em; }
+.panel,
+.student-card,
+.lesson-card{
+  background:var(--surface-main);
+  border:1px solid rgba(122,92,255,.08);
+  box-shadow:var(--shadow-soft);
+}
+.panel,
+.quick-link,
+.mini-stat,
+.lesson-card,
+.material-item,
+.diag-item,
+.tip-item,
+.video-item,
+.live-box,
+.payment-item,
+.student-class-card{
+  transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
+}
+.quick-link:hover,
+.mini-stat:hover,
+.lesson-card:hover,
+.material-item:hover,
+.diag-item:hover,
+.payment-item.clickable-payment:hover{
+  transform:translateY(-2px);
+  border-color:rgba(122,92,255,.18);
+  box-shadow:var(--shadow-hover);
+}
+.btn-primary::before{ content:"▶"; font-size:.72rem; opacity:.85; }
+.top-actions .btn-soft::before{ content:"📄"; font-size:.8rem; }
+.btn,
+.mini-btn,
+.checklist-btn{ will-change:transform; }
+.btn:active,
+.mini-btn:active,
+.checklist-btn:active{ transform:translateY(0) scale(.985); }
+
+/* Tipografia: contraste mais claro */
+.dash-card h3,
+.section-title h3,
+.calendar-header strong{
+  font-size:1rem;
+  font-weight:650;
+  letter-spacing:-.025em;
+}
+.dash-muted,
+.feedback-note,
+.quick-link p,
+.material-item p,
+.diag-item p,
+.tip-item p,
+.video-item p,
+.live-box p,
+.payment-item p{
+  font-size:.94rem;
+  line-height:1.65;
+  color:var(--muted);
+}
+.badge,
+.mini-badge,
+.finance-pill,
+.nav-label{
+  font-weight:550;
+  letter-spacing:.01em;
+}
+.nav-label{ opacity:.75; }
+
+/* Dashboard V3 */
+.dashboard-v3{
+  display:grid;
+  gap:var(--space-5);
+  min-height:auto;
+}
+.dashboard-hero{
+  padding:var(--space-6);
+  border-radius:var(--r-lg);
+  background:
+    radial-gradient(circle at 92% 0%, rgba(219,255,102,.38), transparent 28%),
+    radial-gradient(circle at 0% 0%, rgba(122,92,255,.16), transparent 34%),
+    #fff;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:var(--space-5);
+  position:relative;
+  overflow:hidden;
+}
+.dashboard-hero::after{
+  content:"";
+  position:absolute;
+  right:-70px;
+  bottom:-90px;
+  width:220px;
+  height:220px;
+  border-radius:999px;
+  background:rgba(122,92,255,.06);
+}
+.hero-copy,
+.hero-action-group{ position:relative; z-index:1; }
+.hero-kicker{
+  display:inline-flex;
+  width:fit-content;
+  padding:7px 11px;
+  border-radius:999px;
+  background:rgba(122,92,255,.08);
+  color:var(--primary);
+  border:1px solid rgba(122,92,255,.10);
+  font-size:.78rem;
+  font-weight:650;
+  margin-bottom:var(--space-3);
+}
+.dashboard-hero h2{
+  margin:0;
+  max-width:18ch;
+  font-size:clamp(1.9rem, 3vw, 3rem);
+  line-height:.96;
+  letter-spacing:-.06em;
+  font-weight:750;
+}
+.dashboard-hero p{
+  margin:var(--space-3) 0 0;
+  max-width:62ch;
+  color:var(--muted);
+  font-size:1rem;
+  line-height:1.65;
+}
+.hero-action-group{
+  display:grid;
+  justify-items:end;
+  gap:var(--space-2);
+}
+.hero-action{ white-space:nowrap; padding:15px 22px; }
+.hero-helper{ color:var(--muted); font-size:.82rem; }
+.dashboard-row-focus{
+  display:grid;
+  grid-template-columns:.9fr 1.1fr;
+  gap:var(--space-5);
+}
+.dashboard-row-support{
+  display:grid;
+  grid-template-columns:.85fr 1fr .95fr;
+  gap:var(--space-5);
+}
+.dash-card{
+  padding:var(--space-5);
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+}
+.dash-card.compact{ min-height:0; }
+.section-title{ margin-bottom:var(--space-4); }
+.next-class-box{ display:grid; gap:var(--space-3); align-content:start; }
+.next-class-date{
+  font-size:1.35rem;
+  font-weight:750;
+  letter-spacing:-.04em;
+}
+.mini-stats{ gap:var(--space-3); }
+.mini-stat{
+  min-height:54px;
+  padding:var(--space-3) var(--space-4);
+  background:var(--surface-soft);
+  border-color:rgba(122,92,255,.08);
+}
+.mini-stat span{ font-size:.84rem; }
+.mini-stat strong{ font-size:1.08rem; }
+.quick-links{ gap:var(--space-3); }
+.quick-link{
+  min-height:62px;
+  padding:var(--space-3) var(--space-4);
+  background:rgba(255,255,255,.78);
+}
+.quick-link a{
+  padding:7px 9px;
+  border-radius:999px;
+  background:rgba(122,92,255,.07);
+}
+.feedback-card .feedback-box{
+  min-height:0;
+  height:100%;
+}
+.feedback-box{
+  background:var(--surface-soft);
+  border-color:rgba(122,92,255,.08);
+  align-content:start;
+}
+.feedback-note{
+  max-height:170px;
+  overflow:auto;
+  padding-right:4px;
+}
+.feedback-focus{ margin-top:auto; }
+.finance-status{ gap:var(--space-3); }
+.finance-row{ padding:10px 0; }
+.progress-card-wide{ padding:var(--space-5); }
+.progress-card-body{ gap:var(--space-4); }
+.progress-steps{ margin-top:var(--space-3); }
+.progress-step{ background:var(--surface-soft); }
+.progress-step.current{ box-shadow:inset 0 0 0 1px rgba(122,92,255,.08); }
+.progress-fill{ transition:width .55s cubic-bezier(.2,.8,.2,1); }
+
+/* Ritmo visual: entrada em cascata */
+.portal-section.active .dashboard-hero,
+.portal-section.active .dash-card,
+.portal-section.active .lesson-card,
+.portal-section.active .diag-item{
+  animation:cardIn .34s ease both;
+}
+.portal-section.active .dashboard-row-focus .dash-card:nth-child(1){ animation-delay:.03s; }
+.portal-section.active .dashboard-row-focus .dash-card:nth-child(2){ animation-delay:.06s; }
+.portal-section.active .dashboard-row-support .dash-card:nth-child(1){ animation-delay:.08s; }
+.portal-section.active .dashboard-row-support .dash-card:nth-child(2){ animation-delay:.11s; }
+.portal-section.active .dashboard-row-support .dash-card:nth-child(3){ animation-delay:.14s; }
+.portal-section.active .progress-card-wide{ animation-delay:.17s; }
+@keyframes cardIn{
+  from{ opacity:0; transform:translateY(8px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{ animation:none!important; transition:none!important; scroll-behavior:auto!important; }
+}
+
+/* Responsivo do novo dashboard */
+@media (max-width:1180px){
+  .dashboard-row-support{ grid-template-columns:1fr 1fr; }
+  .finance-mini-card{ grid-column:1 / -1; }
+}
+@media (max-width:900px){
+  .main{ padding:16px; }
+  .dashboard-hero,
+  .dashboard-row-focus,
+  .dashboard-row-support{ grid-template-columns:1fr; }
+  .hero-action-group{ justify-items:start; }
+  .dashboard-hero{ padding:var(--space-5); }
+  .dashboard-hero h2{ font-size:clamp(1.65rem, 8vw, 2.4rem); }
+}
+@media (max-width:768px){
+  .main{ padding:12px 14px 24px; }
+  .dashboard-v3{ gap:var(--space-4); }
+  .dash-card,
+  .progress-card-wide,
+  .dashboard-hero{ padding:var(--space-4); }
+  .mobile-top-actions .btn-primary::before{ content:"▶"; }
+  .feedback-note{ max-height:none; }
+}
+
   </style>
 </head>
 <body>
@@ -1239,69 +1506,88 @@ input:focus { border-color: var(--primary); }
         </div>
 
         <section class="portal-section active" id="section-inicio">
-          <div class="dashboard-v2">
-            <div class="dashboard-row-3">
-              <div class="panel dash-card compact">
-                <div class="section-title"><h3>Visão geral</h3></div>
-                <div class="mini-stats">
-                  <div class="mini-stat"><span>Próxima aula</span><strong id="nextClassStat">—</strong></div>
-                  <div class="mini-stat"><span>Materiais disponíveis</span><strong id="materialsStat">0</strong></div>
-                  <div class="mini-stat"><span>Diagnósticos pendentes</span><strong id="pendingDiagStat">3</strong></div>
+          <div class="dashboard-v3">
+            <div class="panel dashboard-hero" id="dashboardHero">
+              <div class="hero-copy">
+                <span class="hero-kicker" id="heroKicker">Seu próximo passo</span>
+                <h2 id="heroTitle">Continue seu diagnóstico</h2>
+                <p id="heroText">Complete as etapas iniciais para liberar uma experiência mais personalizada dentro do portal.</p>
+              </div>
+              <div class="hero-action-group">
+                <button class="btn btn-primary hero-action" id="heroAction" onclick="goSection('diagnostico')">Continuar agora</button>
+                <span class="hero-helper" id="heroHelper">Leva poucos minutos.</span>
+              </div>
+            </div>
+
+            <div class="dashboard-row-focus">
+              <div class="panel dash-card next-card">
+                <div class="section-title"><h3>Próxima aula</h3></div>
+                <div class="next-class-box">
+                  <span class="next-class-date" id="nextClassStat">—</span>
+                  <p class="dash-muted" id="nextClassHint">Quando houver uma aula futura cadastrada, ela aparece aqui.</p>
+                  <button class="mini-btn" onclick="goSection('calendario')">Ver calendário</button>
                 </div>
               </div>
-              <div class="panel dash-card compact">
-                <div class="section-title"><h3>Acesso rápido</h3></div>
-                <div class="quick-links" id="quickLinks">
-                  <div class="quick-link"><div><strong>Continuar diagnóstico</strong><p>3 pendente(s)</p></div><a href="#">acessar</a></div>
-                  <div class="quick-link"><div><strong>Material mais recente</strong><p>Checklist de vocabulário</p></div><a href="#">ver</a></div>
-                  <div class="quick-link"><div><strong>Financeiro</strong><p>Mensalidade de abril</p></div><a href="#">pagar</a></div>
-                </div>
-              </div>
-              <div class="panel dash-card compact">
+
+              <div class="panel dash-card feedback-card">
                 <div class="section-title"><h3>Mini feedback</h3></div>
                 <div class="feedback-box" id="miniFeedbackBox">
                   <strong>Observação da professora</strong>
-                  <p class="feedback-note">Você está ganhando mais velocidade para construir respostas. Agora vamos organizar melhor as ideias antes de falar.</p>
-                  <div class="feedback-focus">Foco da semana: clareza + vocabulário ativo</div>
+                  <p class="feedback-note">Assim que sua professora registrar um feedback no admin, ele aparece aqui.</p>
                 </div>
               </div>
             </div>
-            <div class="dashboard-row-2">
-              <div class="panel dash-card">
-                <div class="section-title"><h3>Progresso do diagnóstico</h3></div>
-                <div id="diagnosisProgressBox">
-                  <div class="progress-card-body">
-                    <div>
-                      <p class="dash-muted">0 de 3 etapas concluídas</p>
-                      <div class="progress-bar-wrap"><div class="progress-bar"><div class="progress-fill" style="width:0%" data-pct="0%"></div></div></div>
-                      <div class="progress-meta">
-                        <span class="badge diagnosis-red">começar diagnóstico</span>
-                        <button class="mini-btn">Começar</button>
-                      </div>
-                    </div>
-                    <div class="progress-steps">
-                      <div class="progress-step current">1. Perfil</div>
-                      <div class="progress-step">2. Nível</div>
-                      <div class="progress-step">3. Interesses</div>
-                    </div>
-                    <p class="dash-muted">Próximo passo: Quem é você no grupinho do inglês?</p>
-                  </div>
+
+            <div class="dashboard-row-support">
+              <div class="panel dash-card compact overview-card">
+                <div class="section-title"><h3>Visão geral</h3></div>
+                <div class="mini-stats">
+                  <div class="mini-stat"><span>Materiais disponíveis</span><strong id="materialsStat">0</strong></div>
+                  <div class="mini-stat"><span>Diagnósticos pendentes</span><strong id="pendingDiagStat">3</strong></div>
+                  <div class="mini-stat"><span>Status da trilha</span><strong id="trailStatusStat">—</strong></div>
                 </div>
               </div>
-              <div class="panel dash-card">
+
+              <div class="panel dash-card compact quick-card-v3">
+                <div class="section-title"><h3>Acesso rápido</h3></div>
+                <div class="quick-links" id="quickLinks">
+                  <div class="quick-link"><div><strong>Continuar diagnóstico</strong><p>3 pendente(s)</p></div><a href="#">acessar</a></div>
+                  <div class="quick-link"><div><strong>Material mais recente</strong><p>Nenhum material ainda</p></div><a href="#">ver</a></div>
+                  <div class="quick-link"><div><strong>Financeiro</strong><p>Sem cobrança ativa</p></div><a href="#">ver</a></div>
+                </div>
+              </div>
+
+              <div class="panel dash-card compact finance-mini-card">
                 <div class="section-title"><h3>Status financeiro</h3></div>
                 <div id="financeDashboardBox">
                   <div class="finance-status">
-                    <span class="finance-pill pending">pendente</span>
-                    <div>
-                      <strong>Abril 2026</strong>
-                      <div class="finance-amount">R$ 297.00</div>
-                      <p class="dash-muted">vence hoje</p>
-                    </div>
-                    <div class="finance-row"><span>Status</span><strong>Aguardando pagamento</strong></div>
+                    <span class="finance-pill empty">sem cobrança ativa</span>
+                    <p class="dash-muted">Nenhum pagamento cadastrado ainda.</p>
+                    <div class="finance-row"><span>Status</span><strong>Sem pendências</strong></div>
                     <div class="finance-row"><span>Forma</span><strong>Pix</strong></div>
-                    <button class="mini-btn">Pagar agora</button>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel dash-card progress-card-wide">
+              <div class="section-title"><h3>Progresso do diagnóstico</h3></div>
+              <div id="diagnosisProgressBox">
+                <div class="progress-card-body">
+                  <div>
+                    <p class="dash-muted">0 de 3 etapas concluídas</p>
+                    <div class="progress-bar-wrap"><div class="progress-bar"><div class="progress-fill" style="width:0%" data-pct="0%"></div></div></div>
+                    <div class="progress-meta">
+                      <span class="badge diagnosis-red">começar diagnóstico</span>
+                      <button class="mini-btn">Começar</button>
+                    </div>
+                  </div>
+                  <div class="progress-steps">
+                    <div class="progress-step current">1. Perfil</div>
+                    <div class="progress-step">2. Nível</div>
+                    <div class="progress-step">3. Interesses</div>
+                  </div>
+                  <p class="dash-muted">Próximo passo: Quem é você no grupinho do inglês?</p>
                 </div>
               </div>
             </div>
@@ -2009,13 +2295,27 @@ function renderDashboard(){
   const latest = materials[0];
   const currentPayment = getCurrentPayment();
 
-  $("nextClassStat").textContent = next ? `${dateBR(next.class_date)} • ${String(next.class_time||"").slice(0,5)}` : "—";
+  $("nextClassStat").textContent = next ? `${dateBR(next.class_date)} • ${String(next.class_time||"").slice(0,5)}` : "Nenhuma aula marcada";
+  if($("nextClassHint")) $("nextClassHint").textContent = next ? (next.notes || "Sua próxima aula já está no calendário.") : "Quando houver uma aula futura cadastrada, ela aparece aqui.";
   $("nextClassLive").textContent = next ? `${dateBR(next.class_date)} às ${String(next.class_time||"").slice(0,5)}${next.notes ? " • " + next.notes : ""}` : "Nenhuma aula futura cadastrada.";
   if($("elosText")) $("elosText").textContent = profile.elos_url || "https://elos.vc/sala/teacherdebora";
   $("materialsStat").textContent = materials.length;
   $("pendingDiagStat").textContent = diag.pending;
+  if($("trailStatusStat")) $("trailStatusStat").textContent = diag.pending ? "bloqueada" : "liberada";
   $("diagBadge").textContent = diag.label;
   $("diagBadge").className = `badge ${diag.className}`;
+
+  if($("heroTitle")){
+    const heroComplete = diag.done === diag.total;
+    $("heroKicker").textContent = heroComplete ? "Sua prática de hoje" : "Seu próximo passo";
+    $("heroTitle").textContent = heroComplete ? "Comece sua trilha personalizada" : "Continue seu diagnóstico";
+    $("heroText").textContent = heroComplete
+      ? "Sua base já foi mapeada. Agora o portal pode organizar a prática de acordo com seu perfil, nível e interesses."
+      : `Faltam ${diag.pending} etapa(s) para liberar uma experiência mais personalizada dentro do portal.`;
+    $("heroAction").textContent = heroComplete ? "Abrir trilha" : "Continuar agora";
+    $("heroAction").setAttribute("onclick", heroComplete ? "goSection('trilha')" : "goSection('diagnostico')");
+    $("heroHelper").textContent = heroComplete ? "Prática guiada em 21 dias." : "Leva poucos minutos.";
+  }
 
   $("quickLinks").innerHTML = `
     <div class="quick-link">
