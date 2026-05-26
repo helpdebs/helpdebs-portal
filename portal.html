@@ -243,7 +243,13 @@ input:focus { border-color: var(--primary); }
 .student-name  { font-size: .98rem; font-weight: 700; letter-spacing: -.02em; }
 .student-level { margin-top: 4px; color: var(--muted); font-size: .84rem; font-weight: 400; }
 
-.student-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.student-badges {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+}
 
 /* M1 FIX — skeleton de loading */
 .student-card.loading .student-name,
@@ -1478,12 +1484,43 @@ body{ font-size:14px; }
 }
 
 .student-name,
-.student-level,
-.student-badges .badge{
+.student-level{
   max-width:100%;
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap;
+}
+
+.student-badges{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:8px;
+  width:100%;
+}
+
+.student-badges .badge{
+  max-width:100%;
+}
+
+#studentFocus{
+  width:100%;
+  max-width:100%;
+  white-space:normal;
+  overflow:visible;
+  text-overflow:unset;
+  display:block;
+  line-height:1.4;
+  word-break:break-word;
+  overflow-wrap:anywhere;
+}
+
+#diagBadge{
+  width:fit-content;
+  white-space:normal;
+  overflow:visible;
+  text-overflow:unset;
+  line-height:1.35;
 }
 
   </style>
