@@ -404,6 +404,7 @@ input:focus { border-color: var(--primary); }
 
 /* ─── 12. SEÇÕES ─── */
 .portal-section { display: none; }
+.portal-section.feature-disabled { display: none !important; }
 .portal-section.active {
   display: block;
   animation: fadeIn .22s ease;
@@ -1840,6 +1841,9 @@ const LEVEL_TEST_URL = "https://helpdebs.github.io/helpdebs-portal/teste_nivelam
 const INTERESTS_TEST_URL = "https://helpdebs.github.io/helpdebs-portal/interesses.html";
 const MONTHLY_CHECKLIST_URL = "https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html";
 
+const FIXED_PORTAL_SECTIONS = ["inicio", "materiais", "ao-vivo", "financeiro"];
+const OPTIONAL_PORTAL_SECTIONS = ["diagnostico", "trilha", "calendario", "dicas", "videoaulas"];
+
 const TRAIL_TOTAL_DAYS = 21;
 const TRAIL_ACTIVITIES_PER_DAY = 5;
 const TRAIL_DAY_TITLES = [
@@ -1872,7 +1876,7 @@ const TRAIL_DAY_1_BANK = {
   ]
 };
 
-let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[], feedbacks=[], diagConfig=[], trailProgress=[];
+let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[], feedbacks=[], diagConfig=[], trailProgress=[], portalFeatures={};
 let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth();
 let calendarView = "month";
@@ -1885,6 +1889,57 @@ function dateBR(d){ if(!d)return "—"; return new Date(d+"T12:00:00").toLocaleD
 function openLink(url){
   if(!url){ showToast("⚠️ Link ainda não configurado"); return; }
   window.open(url,"_blank","noopener,noreferrer");
+}
+
+
+
+function isPortalConfigMaterial(m){
+  return ["portal_config", "portal_features"].includes(String(m?.type || "").toLowerCase());
+}
+
+function loadPortalFeatureConfigFromMaterials(){
+  const config = Object.fromEntries(OPTIONAL_PORTAL_SECTIONS.map(key => [key, true]));
+  const record = materials.find(isPortalConfigMaterial);
+  if(record?.description){
+    try{
+      const saved = JSON.parse(record.description);
+      OPTIONAL_PORTAL_SECTIONS.forEach(key => {
+        if(typeof saved[key] === "boolean") config[key] = saved[key];
+      });
+    }catch(e){
+      console.warn("Configuração do portal inválida", e);
+    }
+  }
+  portalFeatures = config;
+  materials = materials.filter(m => !isPortalConfigMaterial(m));
+}
+
+function isSectionAvailable(section){
+  if(FIXED_PORTAL_SECTIONS.includes(section)) return true;
+  if(OPTIONAL_PORTAL_SECTIONS.includes(section)) return portalFeatures?.[section] !== false;
+  return true;
+}
+
+function firstAvailableSection(preferred){
+  if(isSectionAvailable(preferred)) return preferred;
+  return ["inicio", "materiais", "ao-vivo", "financeiro"].find(isSectionAvailable) || "inicio";
+}
+
+function applyPortalFeatureVisibility(){
+  document.querySelectorAll(".nav-btn[data-section]").forEach(btn => {
+    const section = btn.dataset.section;
+    btn.style.display = isSectionAvailable(section) ? "" : "none";
+  });
+  OPTIONAL_PORTAL_SECTIONS.forEach(section => {
+    const el = $(`section-${section}`);
+    if(el) el.classList.toggle("feature-disabled", !isSectionAvailable(section));
+  });
+  document.querySelectorAll(`[onclick="goSection('calendario')"]`).forEach(el => {
+    el.style.display = isSectionAvailable("calendario") ? "" : "none";
+  });
+  document.querySelectorAll(`[onclick="goSection('diagnostico')"]`).forEach(el => {
+    if(el.id !== "heroAction") el.style.display = isSectionAvailable("diagnostico") ? "" : "none";
+  });
 }
 
 function getProfileDisplayName(){
@@ -2203,6 +2258,7 @@ async function loadData(){
     ]);
 
     materials = safeArray(m, "materials");
+    loadPortalFeatureConfigFromMaterials();
     classes = safeArray(c, "classes");
     diagnostics = safeArray(d, "diagnostics");
     payments = safeArray(pay, "payments");
@@ -2236,6 +2292,7 @@ async function loadData(){
   }
 }
 function renderAll(){
+  applyPortalFeatureVisibility();
   renderProfile();
   renderDashboard();
   renderDiagnostics();
@@ -2458,30 +2515,59 @@ function renderDashboard(){
 
   if($("heroTitle")){
     const heroComplete = diag.done === diag.total;
-    $("heroKicker").textContent = heroComplete ? "Sua prática de hoje" : "Seu próximo passo";
-    $("heroTitle").textContent = heroComplete ? "Comece sua trilha personalizada" : "Continue seu diagnóstico";
-    $("heroText").textContent = heroComplete
-      ? "Sua base já foi mapeada. Agora o portal pode organizar a prática de acordo com seu perfil, nível e interesses."
-      : `Faltam ${diag.pending} etapa(s) para liberar uma experiência mais personalizada dentro do portal.`;
-    $("heroAction").textContent = heroComplete ? "Abrir trilha" : "Continuar agora";
-    $("heroAction").setAttribute("onclick", heroComplete ? "goSection('trilha')" : "goSection('diagnostico')");
-    $("heroHelper").textContent = heroComplete ? "Prática guiada em 21 dias." : "Leva poucos minutos.";
+    const canDiagnose = isSectionAvailable("diagnostico");
+    const canTrail = isSectionAvailable("trilha");
+    let heroTarget = "materiais";
+    let heroTitle = "Acesse seus materiais";
+    let heroText = "Os materiais, a aula ao vivo e o financeiro continuam disponíveis no seu portal.";
+    let heroButton = "Ver materiais";
+    let heroHelper = "Área fixa do portal.";
+
+    if(!heroComplete && canDiagnose){
+      heroTarget = "diagnostico";
+      heroTitle = "Continue seu diagnóstico";
+      heroText = `Faltam ${diag.pending} etapa(s) para liberar uma experiência mais personalizada dentro do portal.`;
+      heroButton = "Continuar agora";
+      heroHelper = "Leva poucos minutos.";
+    }else if(canTrail){
+      heroTarget = "trilha";
+      heroTitle = "Comece sua trilha personalizada";
+      heroText = "Sua base já foi mapeada. Agora o portal pode organizar a prática de acordo com seu perfil, nível e interesses.";
+      heroButton = "Abrir trilha";
+      heroHelper = "Prática guiada em 21 dias.";
+    }
+
+    $("heroKicker").textContent = heroTarget === "materiais" ? "Área liberada" : (heroComplete ? "Sua prática de hoje" : "Seu próximo passo");
+    $("heroTitle").textContent = heroTitle;
+    $("heroText").textContent = heroText;
+    $("heroAction").textContent = heroButton;
+    $("heroAction").setAttribute("onclick", `goSection('${heroTarget}')`);
+    $("heroHelper").textContent = heroHelper;
   }
 
-  $("quickLinks").innerHTML = `
-    <div class="quick-link">
-      <div><strong>${diag.pending ? "Continuar diagnóstico" : "Começar trilha"}</strong><p>${diag.pending ? diag.pending+" pendente(s)" : "Trilha de 21 dias liberada"}</p></div>
-      <a href="#" onclick="goSection('${diag.pending ? "diagnostico" : "trilha"}');return false;">${diag.pending ? "acessar" : "abrir"}</a>
-    </div>
+  const quickItems = [];
+  if(isSectionAvailable("diagnostico") || isSectionAvailable("trilha")){
+    const target = diag.pending && isSectionAvailable("diagnostico") ? "diagnostico" : firstAvailableSection("trilha");
+    quickItems.push(`
+      <div class="quick-link">
+        <div><strong>${target === "diagnostico" ? "Continuar diagnóstico" : "Começar trilha"}</strong><p>${target === "diagnostico" ? diag.pending+" pendente(s)" : "Trilha de 21 dias liberada"}</p></div>
+        <a href="#" onclick="goSection('${target}');return false;">${target === "diagnostico" ? "acessar" : "abrir"}</a>
+      </div>
+    `);
+  }
+  quickItems.push(`
     <div class="quick-link">
       <div><strong>Material mais recente</strong><p>${latest ? esc(latest.title) : "Nenhum material ainda"}</p></div>
       <a href="#" onclick="${latest?.url ? `openLink('${latest.url}')` : `showToast('Nenhum material com link')`};return false;">ver</a>
     </div>
+  `);
+  quickItems.push(`
     <div class="quick-link">
       <div><strong>Financeiro</strong><p>${currentPayment ? esc(currentPayment.reference || "Cobrança ativa") : "Sem cobrança ativa"}</p></div>
       <a href="#" onclick="goSection('financeiro');return false;">${currentPayment?.status === "paid" ? "ver" : "pagar"}</a>
     </div>
-  `;
+  `);
+  $("quickLinks").innerHTML = quickItems.join("");
 
   renderMiniFeedback();
   renderDiagnosisProgress();
@@ -2845,6 +2931,8 @@ function openElos(){
 const sectionMeta = {inicio:"Portal da aluna",diagnostico:"Diagnóstico",trilha:"Trilha",materiais:"Materiais",calendario:"Calendário","ao-vivo":"Aula ao vivo",dicas:"Dicas",videoaulas:"Videoaulas",financeiro:"Financeiro"};
 
 function goSection(target){
+  if(!isSectionAvailable(target)){ showToast("Funcionalidade não está ativa para esta aluna."); target = "inicio"; }
+  applyPortalFeatureVisibility();
   document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.section === target));
   document.querySelectorAll(".portal-section").forEach(section => section.classList.remove("active"));
   const section = $(`section-${target}`);
