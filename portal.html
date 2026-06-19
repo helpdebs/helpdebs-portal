@@ -2108,7 +2108,7 @@ const TRAIL_DAY_1_BANK = {
   ]
 };
 
-let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[], feedbacks=[], diagConfig=[], trailProgress=[], portalFeatures={};
+let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[], feedbacks=[], diagConfig=[], trailProgress=[], portalFeatures={}, portalFeatureRecords=[];
 let featuredChecklistUrl = "";
 let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth();
@@ -2130,21 +2130,74 @@ function isPortalConfigMaterial(m){
   return ["portal_config", "portal_features"].includes(String(m?.type || "").toLowerCase());
 }
 
+function parsePortalFeaturePayload(raw){
+  if(!raw) return {};
+  try{
+    const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+    return parsed?.features && typeof parsed.features === "object" ? parsed.features : parsed;
+  }catch(e){
+    console.warn("Configuração do portal inválida", e);
+    return {};
+  }
+}
+
+function getPortalFeatureRecordForCurrentStudent(){
+  const ids = new Set([user?.id, profile?.id].filter(Boolean));
+  const email = String(user?.email || profile?.email || "").trim().toLowerCase();
+
+  return [...portalFeatureRecords, ...materials.filter(isPortalConfigMaterial)]
+    .filter(record => {
+      if(ids.has(record.student_id)) return true;
+      try{
+        const raw = typeof record.description === "string" ? JSON.parse(record.description) : record.description;
+        const savedEmail = String(raw?.student_email || "").trim().toLowerCase();
+        return email && savedEmail === email;
+      }catch(e){
+        return false;
+      }
+    })
+    .sort((a,b) => String(b.updated_at || b.created_at || "").localeCompare(String(a.updated_at || a.created_at || "")))[0] || null;
+}
+
 function loadPortalFeatureConfigFromMaterials(){
   const config = Object.fromEntries(OPTIONAL_PORTAL_SECTIONS.map(key => [key, true]));
-  const record = materials.find(isPortalConfigMaterial);
-  if(record?.description){
-    try{
-      const saved = JSON.parse(record.description);
-      OPTIONAL_PORTAL_SECTIONS.forEach(key => {
-        if(typeof saved[key] === "boolean") config[key] = saved[key];
-      });
-    }catch(e){
-      console.warn("Configuração do portal inválida", e);
-    }
-  }
+  const record = getPortalFeatureRecordForCurrentStudent();
+
+  // 1) Fonte principal: coluna JSON/JSONB no perfil da aluna.
+  const profileSaved = parsePortalFeaturePayload(profile?.portal_features || profile?.portal_config || null);
+
+  // 2) Fallback antigo: registro de configuração salvo em materials.
+  const materialSaved = parsePortalFeaturePayload(record?.description);
+
+  const saved = Object.keys(profileSaved).length ? profileSaved : materialSaved;
+
+  OPTIONAL_PORTAL_SECTIONS.forEach(key => {
+    if(typeof saved[key] === "boolean") config[key] = saved[key];
+  });
+
   portalFeatures = config;
   materials = materials.filter(m => !isPortalConfigMaterial(m));
+  console.log("PORTAL FEATURES APPLIED", {
+    source: Object.keys(profileSaved).length ? "profiles.portal_features" : (record ? "materials.portal_config" : "default_all_true"),
+    record_id: record?.id || null,
+    student_id: record?.student_id || profile?.id || user?.id || null,
+    config
+  });
+}
+
+function forceApplyPortalFeatureVisibility(){
+  applyPortalFeatureVisibility();
+  OPTIONAL_PORTAL_SECTIONS.forEach(section => {
+    const allowed = isSectionAvailable(section);
+    document.querySelectorAll(`.nav-btn[data-section="${section}"]`).forEach(btn => {
+      btn.style.setProperty("display", allowed ? "" : "none", "important");
+    });
+    const sectionEl = $(`section-${section}`);
+    if(sectionEl){
+      sectionEl.style.setProperty("display", allowed ? "" : "none", allowed ? "" : "important");
+      sectionEl.classList.toggle("feature-disabled", !allowed);
+    }
+  });
 }
 
 function isSectionAvailable(section){
@@ -2472,7 +2525,10 @@ async function startPortal(authUser){
   $("app").style.display = "grid";
   await loadData();
   renderAll();
+  setTimeout(forceApplyPortalFeatureVisibility, 80);
+  setTimeout(forceApplyPortalFeatureVisibility, 350);
 }
+
 
 async function loadData(){
   const fallbackProfile = {
@@ -2513,8 +2569,9 @@ async function loadData(){
     // foram cadastrados pelo admin usando profiles.id.
     const studentIds = [...new Set([user.id, profile?.id].filter(Boolean))];
 
-    const [m, c, d, diagnosticAnswers, pay, cfg] = await Promise.all([
+    const [m, portalCfg, c, d, diagnosticAnswers, pay, cfg] = await Promise.all([
       sb.from("materials").select("*").in("student_id", studentIds).order("created_at",{ascending:false}),
+      sb.from("materials").select("*").in("type", ["portal_config", "portal_features"]).order("created_at",{ascending:false}),
       sb.from("classes").select("*").in("student_id", studentIds).order("class_date",{ascending:true}),
       sb.from("diagnostics").select("*").in("student_id", studentIds).order("updated_at",{ascending:false}),
       sb.from("diagnostic_answers").select("*").in("student_id", studentIds).order("created_at",{ascending:false}),
@@ -2523,6 +2580,7 @@ async function loadData(){
     ]);
 
     materials = safeArray(m, "materials");
+    portalFeatureRecords = safeArray(portalCfg, "portal feature configs");
     loadPortalFeatureConfigFromMaterials();
     classes = safeArray(c, "classes");
     const legacyDiagnostics = safeArray(d, "diagnostics");
@@ -2554,12 +2612,13 @@ async function loadData(){
     diagnostics = [];
     payments = [];
     feedbacks = [];
+    portalFeatureRecords = [];
     diagConfig = [];
     showToast("Carreguei o portal em modo seguro. Confira as permissões do Supabase.");
   }
 }
 function renderAll(){
-  applyPortalFeatureVisibility();
+  forceApplyPortalFeatureVisibility();
   renderProfile();
   renderDashboard();
   renderDiagnostics();
@@ -3302,7 +3361,7 @@ const sectionMeta = {inicio:"Portal da aluna",diagnostico:"Diagnóstico",trilha:
 
 function goSection(target){
   if(!isSectionAvailable(target)){ showToast("Funcionalidade não está ativa para esta aluna."); target = "inicio"; }
-  applyPortalFeatureVisibility();
+  forceApplyPortalFeatureVisibility();
   document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.section === target));
   document.querySelectorAll(".portal-section").forEach(section => section.classList.remove("active"));
   const section = $(`section-${target}`);
