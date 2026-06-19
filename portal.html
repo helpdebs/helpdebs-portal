@@ -226,22 +226,48 @@ input:focus { border-color: var(--primary); }
 
 .student-card { padding: 16px; display: grid; gap: 12px; }
 
-.student-top { display: flex; align-items: center; gap: 12px; }
+.student-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.student-top > div:last-child {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  flex: 1;
+}
 
 .student-avatar {
-  width: 50px; height: 50px;
+  width: 56px; height: 56px;
   /* C4 FIX */
-  border-radius: var(--r-md);
+  border-radius: 18px;
   display: grid; place-items: center;
-  font-size: 1.2rem;
+  font-size: 1.35rem;
   background: linear-gradient(135deg, rgba(122,92,255,.16), rgba(219,255,102,.35));
   border: 1px solid rgba(122,92,255,.08);
   flex: 0 0 auto;
 }
 
 /* W3 FIX — nome como dado primário, level como suporte */
-.student-name  { font-size: .98rem; font-weight: 700; letter-spacing: -.02em; }
-.student-level { margin-top: 4px; color: var(--muted); font-size: .84rem; font-weight: 400; }
+.student-name  {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  line-height: 1.1;
+  margin: 0;
+  padding: 0;
+  color: var(--text);
+}
+.student-level {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: .78rem;
+  line-height: 1.2;
+  font-weight: 500;
+}
 
 .student-badges {
   display: flex;
@@ -1592,6 +1618,24 @@ body{ font-size:14px; }
 }
 .student-objective-actions{display:flex;gap:8px;flex-wrap:wrap;}
 
+
+/* AJUSTE HOME — remove visão geral/acesso rápido e coloca progresso ao lado do financeiro */
+.diagnosis-finance-row{
+  grid-template-columns: minmax(0, 1.65fr) minmax(300px, .75fr) !important;
+  align-items: stretch;
+}
+.diagnosis-side-card,
+.finance-mini-card{
+  min-height: 260px;
+}
+.diagnosis-side-card .progress-card-body{
+  min-height: 100%;
+}
+@media (max-width:1180px){
+  .diagnosis-finance-row{ grid-template-columns: 1fr !important; }
+  .finance-mini-card{ grid-column: auto !important; }
+}
+
   </style>
 </head>
 <body>
@@ -1745,22 +1789,26 @@ body{ font-size:14px; }
               </div>
             </div>
 
-            <div class="dashboard-row-support">
-              <div class="panel dash-card compact overview-card">
-                <div class="section-title"><h3>Visão geral</h3></div>
-                <div class="mini-stats">
-                  <div class="mini-stat"><span>Materiais disponíveis</span><strong id="materialsStat">0</strong></div>
-                  <div class="mini-stat"><span>Diagnósticos pendentes</span><strong id="pendingDiagStat">3</strong></div>
-                  <div class="mini-stat"><span>Status da trilha</span><strong id="trailStatusStat">—</strong></div>
-                </div>
-              </div>
-
-              <div class="panel dash-card compact quick-card-v3">
-                <div class="section-title"><h3>Acesso rápido</h3></div>
-                <div class="quick-links" id="quickLinks">
-                  <div class="quick-link"><div><strong>Continuar diagnóstico</strong><p>3 pendente(s)</p></div><a href="#">acessar</a></div>
-                  <div class="quick-link"><div><strong>Material mais recente</strong><p>Nenhum material ainda</p></div><a href="#">ver</a></div>
-                  <div class="quick-link"><div><strong>Financeiro</strong><p>Sem cobrança ativa</p></div><a href="#">ver</a></div>
+            <div class="dashboard-row-support diagnosis-finance-row">
+              <div class="panel dash-card progress-card-wide diagnosis-side-card">
+                <div class="section-title"><h3>Progresso do diagnóstico</h3></div>
+                <div id="diagnosisProgressBox">
+                  <div class="progress-card-body">
+                    <div>
+                      <p class="dash-muted">0 de 3 etapas concluídas</p>
+                      <div class="progress-bar-wrap"><div class="progress-bar"><div class="progress-fill" style="width:0%" data-pct="0%"></div></div></div>
+                      <div class="progress-meta">
+                        <span class="badge diagnosis-red">começar diagnóstico</span>
+                        <button class="mini-btn">Começar</button>
+                      </div>
+                    </div>
+                    <div class="progress-steps">
+                      <div class="progress-step current">1. Perfil</div>
+                      <div class="progress-step">2. Nível</div>
+                      <div class="progress-step">3. Interesses</div>
+                    </div>
+                    <p class="dash-muted">Próximo passo: Quem é você no grupinho do inglês?</p>
+                  </div>
                 </div>
               </div>
 
@@ -1773,28 +1821,6 @@ body{ font-size:14px; }
                     <div class="finance-row"><span>Status</span><strong>Sem pendências</strong></div>
                     <div class="finance-row"><span>Forma</span><strong>Pix</strong></div>
                   </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="panel dash-card progress-card-wide">
-              <div class="section-title"><h3>Progresso do diagnóstico</h3></div>
-              <div id="diagnosisProgressBox">
-                <div class="progress-card-body">
-                  <div>
-                    <p class="dash-muted">0 de 3 etapas concluídas</p>
-                    <div class="progress-bar-wrap"><div class="progress-bar"><div class="progress-fill" style="width:0%" data-pct="0%"></div></div></div>
-                    <div class="progress-meta">
-                      <span class="badge diagnosis-red">começar diagnóstico</span>
-                      <button class="mini-btn">Começar</button>
-                    </div>
-                  </div>
-                  <div class="progress-steps">
-                    <div class="progress-step current">1. Perfil</div>
-                    <div class="progress-step">2. Nível</div>
-                    <div class="progress-step">3. Interesses</div>
-                  </div>
-                  <p class="dash-muted">Próximo passo: Quem é você no grupinho do inglês?</p>
                 </div>
               </div>
             </div>
@@ -2610,8 +2636,8 @@ function renderDashboard(){
   if($("nextClassHint")) $("nextClassHint").textContent = next ? (next.notes || "Sua próxima aula já está no calendário.") : "Quando houver uma aula futura cadastrada, ela aparece aqui.";
   $("nextClassLive").textContent = next ? `${dateBR(next.class_date)} às ${String(next.class_time||"").slice(0,5)}${next.notes ? " • " + next.notes : ""}` : "Nenhuma aula futura cadastrada.";
   if($("elosText")) $("elosText").textContent = profile.elos_url || "https://elos.vc/sala/teacherdebora";
-  $("materialsStat").textContent = materials.length;
-  $("pendingDiagStat").textContent = diag.pending;
+  if($("materialsStat")) $("materialsStat").textContent = materials.length;
+  if($("pendingDiagStat")) $("pendingDiagStat").textContent = diag.pending;
   if($("trailStatusStat")) $("trailStatusStat").textContent = diag.pending ? "bloqueada" : "liberada";
   $("diagBadge").textContent = diag.label;
   $("diagBadge").className = `badge ${diag.className}`;
@@ -2670,7 +2696,7 @@ function renderDashboard(){
       <a href="#" onclick="goSection('financeiro');return false;">${currentPayment?.status === "paid" ? "ver" : "pagar"}</a>
     </div>
   `);
-  $("quickLinks").innerHTML = quickItems.join("");
+  if($("quickLinks")) $("quickLinks").innerHTML = quickItems.join("");
 
   renderMiniFeedback();
   renderDiagnosisProgress();
