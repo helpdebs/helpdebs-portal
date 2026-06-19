@@ -1700,6 +1700,84 @@ body{ font-size:14px; }
   word-break:normal;
 }
 
+/* ============================================================
+   UX FIX FINAL — menu lateral em 2 linhas sem quebrar palavras
+   ============================================================ */
+.nav{
+  gap:8px;
+}
+
+.nav-btn{
+  display:grid !important;
+  grid-template-columns:22px minmax(0,1fr) !important;
+  grid-template-areas:
+    "icon title"
+    "icon subtitle" !important;
+  column-gap:10px;
+  row-gap:2px;
+  align-items:center !important;
+  justify-content:stretch !important;
+  min-height:52px;
+  padding:11px 12px !important;
+}
+
+.nav-btn::before{
+  grid-area:icon;
+  align-self:center;
+  justify-self:center;
+  width:22px;
+  text-align:center;
+  line-height:1;
+}
+
+.nav-main{
+  grid-area:title;
+  display:block;
+  width:100%;
+  min-width:0;
+  font-size:.92rem;
+  line-height:1.18;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  overflow-wrap:normal !important;
+  word-break:keep-all !important;
+}
+
+.nav-sub,
+.nav-btn small{
+  grid-area:subtitle;
+  display:block;
+  width:100%;
+  max-width:none !important;
+  min-width:0;
+  margin:0 !important;
+  padding:0;
+  text-align:left !important;
+  font-size:.72rem;
+  line-height:1.2;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  overflow-wrap:normal !important;
+  word-break:keep-all !important;
+  opacity:.72;
+}
+
+.nav-btn.active{
+  box-shadow:0 10px 24px rgba(122,92,255,.10);
+}
+
+@media(max-width:900px){
+  .sidebar{
+    width:min(86vw,300px);
+  }
+
+  .nav-btn{
+    min-height:54px;
+  }
+}
+
   </style>
 </head>
 <body>
