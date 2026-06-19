@@ -1133,6 +1133,14 @@ async function saveStudentPortalFeatures(){
     }
     if(error) throw error;
 
+    // Fonte direta para o portal: salva também no perfil da aluna.
+    // Se a coluna portal_features ainda não existir no Supabase, o admin continua funcionando
+    // usando o registro em materials, mas o ideal é criar essa coluna JSONB.
+    const profileUpdate = await sb.from("profiles").update({ portal_features: config }).eq("id", sid);
+    if(profileUpdate.error){
+      console.warn("profiles.portal_features não salvo", profileUpdate.error.message);
+    }
+
     const duplicates = getPortalFeatureRecords(sid).filter(r => r.id !== record?.id);
     if(duplicates.length){
       const ids = duplicates.map(r => r.id).filter(Boolean);
