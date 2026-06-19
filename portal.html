@@ -1617,6 +1617,89 @@ body{ font-size:14px; }
   .finance-mini-card{ grid-column: auto !important; }
 }
 
+/* ============================================================
+   CORREÇÃO — quebra de linha no card da aluna, objetivo e menu
+   ============================================================ */
+.sidebar,
+.sidebar-shell,
+.student-card{
+  min-width:0;
+  overflow-x:hidden;
+}
+
+.student-top,
+.student-top > div:last-child{
+  min-width:0;
+}
+
+.student-name,
+.student-level{
+  max-width:100% !important;
+  white-space:normal !important;
+  overflow:visible !important;
+  text-overflow:unset !important;
+  overflow-wrap:break-word;
+  word-break:normal;
+}
+
+.student-objective-area{
+  width:100%;
+  min-width:0;
+}
+
+.student-objective-text{
+  max-width:100%;
+  white-space:normal !important;
+  overflow:visible !important;
+  text-overflow:unset !important;
+  overflow-wrap:break-word !important;
+  word-break:normal !important;
+  hyphens:auto;
+}
+
+.student-objective-editor{
+  width:100%;
+  min-width:0;
+}
+
+.student-objective-editor textarea{
+  width:100%;
+  max-width:100%;
+  box-sizing:border-box;
+  font-family:inherit;
+  white-space:pre-wrap;
+  overflow-wrap:break-word;
+  word-break:normal;
+}
+
+.nav-btn{
+  align-items:flex-start !important;
+  min-width:0;
+}
+
+.nav-main{
+  flex:1 1 auto;
+  min-width:0;
+  white-space:normal !important;
+  overflow:visible !important;
+  text-overflow:unset !important;
+  line-height:1.25;
+  overflow-wrap:break-word;
+}
+
+.nav-sub,
+.nav-btn small{
+  flex:0 1 92px !important;
+  max-width:92px !important;
+  white-space:normal !important;
+  overflow:visible !important;
+  text-overflow:unset !important;
+  line-height:1.25;
+  text-align:right;
+  overflow-wrap:break-word;
+  word-break:normal;
+}
+
   </style>
 </head>
 <body>
