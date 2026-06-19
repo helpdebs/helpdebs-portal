@@ -1929,7 +1929,7 @@ const SB_ANON = "sb_publishable_81NM6F08rsXXSCgjWl4iSg_v99cdVpo";
 const PERSONALITY_TEST_URL = "https://helpdebs.github.io/helpdebs-portal/teste-personalidade.html";
 const LEVEL_TEST_URL = "https://helpdebs.github.io/helpdebs-portal/teste_nivelamento.html";
 const INTERESTS_TEST_URL = "https://helpdebs.github.io/helpdebs-portal/interesses.html";
-const MONTHLY_CHECKLIST_URL = "https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html";
+const PAULA_MONTHLY_CHECKLIST_URL = "https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html";
 
 const FIXED_PORTAL_SECTIONS = ["inicio", "materiais", "ao-vivo", "financeiro"];
 const OPTIONAL_PORTAL_SECTIONS = ["diagnostico", "trilha", "calendario", "dicas", "videoaulas"];
@@ -1967,6 +1967,7 @@ const TRAIL_DAY_1_BANK = {
 };
 
 let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[], feedbacks=[], diagConfig=[], trailProgress=[], portalFeatures={};
+let featuredChecklistUrl = "";
 let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth();
 let calendarView = "month";
@@ -2743,21 +2744,70 @@ function renderDiagnostics(){
   }).join("");
 }
 
+function isPaulaStudent(){
+  const identity = [
+    profile?.full_name,
+    profile?.name,
+    profile?.email,
+    user?.email,
+    user?.user_metadata?.full_name,
+    user?.user_metadata?.name
+  ].filter(Boolean).join(" ").toLowerCase();
+  return identity.includes("paula");
+}
+
+function getFeaturedChecklistMaterial(){
+  const checklist = materials.find(m => {
+    const type = String(m?.type || "").toLowerCase();
+    const title = String(m?.title || "").toLowerCase();
+    return m?.url && (type === "checklist" || title.includes("checklist"));
+  });
+
+  if(checklist) return checklist;
+
+  // Fallback antigo: este checklist fixo é da Paula, então nunca deve aparecer para outras alunas.
+  if(isPaulaStudent()){
+    return {
+      title: "Checklist de vocabulário da aula",
+      description: "Revise as estruturas, chunks e combinações mais importantes do mês em uma página interativa feita para praticar sem ficar perdida.",
+      url: PAULA_MONTHLY_CHECKLIST_URL,
+      type: "checklist"
+    };
+  }
+
+  return null;
+}
+
 function renderFeaturedChecklist(){
   const area = $("featuredChecklistArea");
+  const embed = $("checklistEmbedArea");
   if(!area) return;
+
+  const checklist = getFeaturedChecklistMaterial();
+  if(!checklist){
+    featuredChecklistUrl = "";
+    area.innerHTML = "";
+    if(embed){ embed.classList.remove("show"); embed.innerHTML = ""; }
+    return;
+  }
+
+  featuredChecklistUrl = checklist.url || "";
+  const title = checklist.title || "Checklist de vocabulário da aula";
+  const description = checklist.description || "Revise as estruturas, chunks e combinações mais importantes em uma página interativa feita para praticar sem ficar perdida.";
+  const kicker = checklist.month ? `✨ checklist • ${checklist.month}` : "✨ checklist mensal";
+
   area.innerHTML = `
     <div class="featured-checklist">
       <div>
-        <span class="checklist-kicker">✨ checklist mensal</span>
-        <h3>Checklist de vocabulário da aula</h3>
-        <p>Revise as estruturas, chunks e combinações mais importantes do mês em uma página interativa feita para praticar sem ficar perdida.</p>
+        <span class="checklist-kicker">${esc(kicker)}</span>
+        <h3>${esc(title)}</h3>
+        <p>${esc(description)}</p>
       </div>
       <div class="checklist-actions">
-        <a class="checklist-btn" href="${MONTHLY_CHECKLIST_URL}" target="_blank" rel="noopener noreferrer"
-           onclick="event.preventDefault(); event.stopPropagation(); window.open('${MONTHLY_CHECKLIST_URL}', '_blank', 'noopener,noreferrer'); return false;">
+        <button type="button" class="checklist-btn"
+                onclick="event.preventDefault(); event.stopPropagation(); openMonthlyChecklist(); return false;">
           Abrir checklist
-        </a>
+        </button>
         <button type="button" class="checklist-btn secondary"
                 onclick="event.preventDefault(); event.stopPropagation(); toggleChecklistEmbed(); return false;">
           Ver dentro do portal
@@ -2767,14 +2817,18 @@ function renderFeaturedChecklist(){
   `;
 }
 
-function openMonthlyChecklist(){ window.open(MONTHLY_CHECKLIST_URL, "_blank", "noopener,noreferrer"); }
+function openMonthlyChecklist(){
+  if(!featuredChecklistUrl){ showToast("Checklist ainda não cadastrado para esta aluna."); return; }
+  window.open(featuredChecklistUrl, "_blank", "noopener,noreferrer");
+}
 
 function toggleChecklistEmbed(){
   const box = $("checklistEmbedArea");
   if(!box) return;
+  if(!featuredChecklistUrl){ showToast("Checklist ainda não cadastrado para esta aluna."); return; }
   const isOpen = box.classList.contains("show");
   if(isOpen){ box.classList.remove("show"); box.innerHTML = ""; return; }
-  box.innerHTML = `<iframe src="${MONTHLY_CHECKLIST_URL}" title="Checklist mensal"></iframe>`;
+  box.innerHTML = `<iframe src="${esc(featuredChecklistUrl)}" title="Checklist mensal"></iframe>`;
   box.classList.add("show");
   box.scrollIntoView({ behavior: "smooth", block: "start" });
 }
