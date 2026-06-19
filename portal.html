@@ -2263,7 +2263,7 @@ function openNewTrailFull(){
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  sb = window.supabase.createClient(SB_URL, SB_ANON);
+  sb = window.supabase.createClient(SB_URL, SB_ANON, { auth: { storageKey: 'helpdebs-portal-auth', persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
   $("loginBtn").addEventListener("click", login);
   $("loginPassword").addEventListener("keydown", e => { if(e.key === "Enter") login(); });
   $("logoutBtn").addEventListener("click", logout);
