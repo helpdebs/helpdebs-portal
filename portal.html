@@ -2508,13 +2508,17 @@ async function loadData(){
     if(!profile.email) profile.email = user.email;
     if(!profile.elos_url) profile.elos_url = "https://elos.vc/sala/teacherdebora";
 
-    // Busca principal por id da conta. Mantém tudo isolado por aluna.
+    // Busca principal isolada por aluna.
+    // Usa o UID do login e também o id do profile, porque alguns registros antigos
+    // foram cadastrados pelo admin usando profiles.id.
+    const studentIds = [...new Set([user.id, profile?.id].filter(Boolean))];
+
     const [m, c, d, diagnosticAnswers, pay, cfg] = await Promise.all([
-      sb.from("materials").select("*").eq("student_id", user.id).order("created_at",{ascending:false}),
-      sb.from("classes").select("*").eq("student_id", user.id).order("class_date",{ascending:true}),
-      sb.from("diagnostics").select("*").eq("student_id", user.id).order("updated_at",{ascending:false}),
-      sb.from("diagnostic_answers").select("*").eq("student_id", user.id).order("created_at",{ascending:false}),
-      sb.from("payments").select("*").eq("student_id", user.id).order("due_date",{ascending:false}),
+      sb.from("materials").select("*").in("student_id", studentIds).order("created_at",{ascending:false}),
+      sb.from("classes").select("*").in("student_id", studentIds).order("class_date",{ascending:true}),
+      sb.from("diagnostics").select("*").in("student_id", studentIds).order("updated_at",{ascending:false}),
+      sb.from("diagnostic_answers").select("*").in("student_id", studentIds).order("created_at",{ascending:false}),
+      sb.from("payments").select("*").in("student_id", studentIds).order("due_date",{ascending:false}),
       sb.from("diagnostics").select("type,form_url,result_url").is("student_id", null)
     ]);
 
@@ -2532,7 +2536,7 @@ async function loadData(){
     const feedbackTables = ["student_feedback", "student_feedbacks", "feedbacks", "lesson_feedbacks", "mini_feedbacks", "weekly_feedbacks"];
     const feedbackResults = await Promise.allSettled(
       feedbackTables.map(table =>
-        sb.from(table).select("*").eq("student_id", user.id).order("created_at", { ascending:false }).limit(10)
+        sb.from(table).select("*").in("student_id", [user.id, profile?.id].filter(Boolean)).order("created_at", { ascending:false }).limit(10)
       )
     );
 
@@ -2541,7 +2545,7 @@ async function loadData(){
       return (result.value.data || []).map(item => ({ ...item, _source_table: feedbackTables[index] }));
     }).sort((a,b) => String(b.created_at || b.updated_at || b.date || "").localeCompare(String(a.created_at || a.updated_at || a.date || "")));
 
-    console.log("PORTAL DATA", {user:user.id, profile, materials, classes, diagnostics, payments, feedbacks, diagConfig});
+    console.log("PORTAL DATA", {user:user.id, profile, studentIds, materials, classes, diagnostics, payments, feedbacks, diagConfig});
   }catch(e){
     console.error("loadData fatal", e);
     profile = fallbackProfile;
