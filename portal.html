@@ -2184,10 +2184,32 @@ function normalizeDiagnosticResult(value){
   if(value === null || value === undefined || value === "") return "";
   if(typeof value === "string") return value;
   if(typeof value === "number") return String(value);
+  if(Array.isArray(value)) return value.filter(Boolean).join(", ");
   if(typeof value === "object"){
-    return value.level || value.nivel || value.profile || value.perfil || value.result || value.label || value.title || value.name || "";
+    return value.level || value.nivel || value.profile || value.perfil ||
+      value.dominant_profile || value.dominantProfile || value.top_profile || value.topProfile ||
+      value.objective || value.objetivo || value.goal || value.focus || value.foco ||
+      value.result || value.label || value.title || value.name || "";
   }
   return String(value);
+}
+
+function normalizeDiagnosticAnswersForPortal(rows){
+  return (rows || []).map(row => ({
+    id: row.id,
+    student_id: row.student_id,
+    type: row.diagnostic_type || row.type,
+    status: row.status || "submitted",
+    result: row.result || {},
+    result_data: row.result || {},
+    result_json: row.answers || {},
+    answers: row.answers || {},
+    summary: row.summary || "",
+    submitted_at: row.created_at,
+    completed_at: row.created_at,
+    updated_at: row.created_at,
+    _source_table: "diagnostic_answers"
+  })).filter(item => item.type);
 }
 
 function getLatestDiagnostic(type){
@@ -2206,20 +2228,25 @@ function getDiagnosticResult(type){
 }
 
 function getSavedProfileResult(){
-  return getDiagnosticResult("profile") || profile.learning_profile || "Ainda não definido";
+  return getDiagnosticResult("profile") || "Ainda não definido";
 }
 
 function getSavedLevelResult(){
-  return getDiagnosticResult("level") || profile.nivel || profile.level || "Ainda não definido";
+  return getDiagnosticResult("level") || "Ainda não definido";
 }
 
 function getSavedFocusResult(){
   const interests = getLatestDiagnostic("interests");
+  if(!isDiagnosticDone(interests)) return "Ainda não definido";
   const raw = interests?.result_data || interests?.result_json || interests?.result || null;
   if(raw && typeof raw === "object"){
-    return raw.focus || raw.foco || raw.objective || raw.objetivo || raw.goal || raw.meta || profile.focus || profile.objetivo || "Ainda não definido";
+    return raw.focus || raw.foco || raw.objective || raw.objetivo || raw.goal || raw.meta || normalizeDiagnosticResult(raw) || "Ainda não definido";
   }
-  return profile.focus || profile.objetivo || normalizeDiagnosticResult(raw) || "Ainda não definido";
+  return normalizeDiagnosticResult(raw) || "Ainda não definido";
+}
+
+function getStudentObjectiveText(){
+  return profile.focus || profile.objetivo || "";
 }
 
 function getDiagnosisProgress(){
@@ -2404,10 +2431,11 @@ async function loadData(){
     if(!profile.elos_url) profile.elos_url = "https://elos.vc/sala/teacherdebora";
 
     // Busca principal por id da conta. Mantém tudo isolado por aluna.
-    const [m, c, d, pay, cfg] = await Promise.all([
+    const [m, c, d, diagnosticAnswers, pay, cfg] = await Promise.all([
       sb.from("materials").select("*").eq("student_id", user.id).order("created_at",{ascending:false}),
       sb.from("classes").select("*").eq("student_id", user.id).order("class_date",{ascending:true}),
       sb.from("diagnostics").select("*").eq("student_id", user.id).order("updated_at",{ascending:false}),
+      sb.from("diagnostic_answers").select("*").eq("student_id", user.id).order("created_at",{ascending:false}),
       sb.from("payments").select("*").eq("student_id", user.id).order("due_date",{ascending:false}),
       sb.from("diagnostics").select("type,form_url,result_url").is("student_id", null)
     ]);
@@ -2415,7 +2443,9 @@ async function loadData(){
     materials = safeArray(m, "materials");
     loadPortalFeatureConfigFromMaterials();
     classes = safeArray(c, "classes");
-    diagnostics = safeArray(d, "diagnostics");
+    const legacyDiagnostics = safeArray(d, "diagnostics");
+    const answerDiagnostics = normalizeDiagnosticAnswersForPortal(safeArray(diagnosticAnswers, "diagnostic_answers"));
+    diagnostics = [...answerDiagnostics, ...legacyDiagnostics];
     payments = safeArray(pay, "payments");
     diagConfig = safeArray(cfg, "diagnostics config");
 
@@ -2467,19 +2497,30 @@ function renderProfile(){
   const savedProfile = getSavedProfileResult();
   const savedLevel = getSavedLevelResult();
   const savedFocus = getSavedFocusResult();
+  const profileDone = isDiagnosticDone(getLatestDiagnostic("profile"));
+  const levelDone = isDiagnosticDone(getLatestDiagnostic("level"));
+  const interestsDone = isDiagnosticDone(getLatestDiagnostic("interests"));
+  const displayLevel = levelDone ? savedLevel : (profile.nivel || profile.level || "—");
+  const objectiveText = getStudentObjectiveText();
 
   $("studentName").textContent = first;
-  $("studentLevel").textContent = `Aulas individuais • nível ${savedLevel === "Ainda não definido" ? "—" : savedLevel}`;
-  $("studentFocus").textContent = savedFocus === "Ainda não definido" ? "trilha ativa" : savedFocus;
+  $("studentLevel").textContent = `Aulas individuais • nível ${displayLevel === "Ainda não definido" ? "—" : displayLevel}`;
+  $("studentFocus").textContent = objectiveText || "trilha ativa";
   $("diagBadge").textContent = diag.label;
   $("diagBadge").className = `badge ${diag.className}`;
-  renderStudentObjective(savedFocus);
-  if($("profileSummary")) $("profileSummary").innerHTML = `
-    <div class="material-item"><strong>Perfil</strong><p>${esc(savedProfile)}</p></div>
-    <div class="material-item"><strong>Nível</strong><p>${esc(savedLevel)}</p></div>
-    <div class="material-item"><strong>Foco atual</strong><p>${esc(savedFocus)}</p></div>
-    <div class="material-item"><strong>Diagnóstico</strong><p>${diag.done}/${diag.total} testes concluídos</p></div>
-  `;
+  renderStudentObjective(objectiveText);
+
+  const summaryEl = $("profileSummary");
+  if(summaryEl){
+    const panel = summaryEl.closest(".panel");
+    const cards = [];
+    if(profileDone) cards.push(`<div class="material-item"><strong>Perfil</strong><p>${esc(savedProfile)}</p></div>`);
+    if(levelDone) cards.push(`<div class="material-item"><strong>Nível</strong><p>${esc(savedLevel)}</p></div>`);
+    if(interestsDone) cards.push(`<div class="material-item"><strong>Foco atual</strong><p>${esc(savedFocus)}</p></div>`);
+    if(diag.done > 0) cards.push(`<div class="material-item"><strong>Diagnóstico</strong><p>${diag.done}/${diag.total} testes concluídos</p></div>`);
+    summaryEl.innerHTML = cards.join("");
+    if(panel) panel.style.display = cards.length ? "" : "none";
+  }
   $("studentCard")?.classList.remove("loading");
 }
 
