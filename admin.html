@@ -1052,23 +1052,34 @@ function isPortalConfigMaterial(m){
   return ["portal_config", "portal_features"].includes(String(m?.type || "").toLowerCase());
 }
 
+function getPortalFeatureRecords(studentId){
+  return MATERIALS
+    .filter(m => m.student_id === studentId && isPortalConfigMaterial(m))
+    .sort((a,b) => String(b.updated_at || b.created_at || "").localeCompare(String(a.updated_at || a.created_at || "")));
+}
+
 function getPortalFeatureRecord(studentId){
-  return MATERIALS.find(m => m.student_id === studentId && isPortalConfigMaterial(m)) || null;
+  return getPortalFeatureRecords(studentId)[0] || null;
+}
+
+function parsePortalFeaturePayload(raw){
+  if(!raw) return {};
+  try{
+    const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+    return parsed?.features && typeof parsed.features === "object" ? parsed.features : parsed;
+  }catch(e){
+    console.warn("Configuração do portal inválida", e);
+    return {};
+  }
 }
 
 function parsePortalFeatureConfig(studentId){
   const config = Object.fromEntries(PORTAL_OPTIONAL_FEATURES.map(f => [f.key, true]));
   const record = getPortalFeatureRecord(studentId);
-  if(record?.description){
-    try{
-      const saved = JSON.parse(record.description);
-      Object.keys(config).forEach(key => {
-        if(typeof saved[key] === "boolean") config[key] = saved[key];
-      });
-    }catch(e){
-      console.warn("Configuração do portal inválida", e);
-    }
-  }
+  const saved = parsePortalFeaturePayload(record?.description);
+  Object.keys(config).forEach(key => {
+    if(typeof saved[key] === "boolean") config[key] = saved[key];
+  });
   return { config, record };
 }
 
@@ -1094,12 +1105,21 @@ async function saveStudentPortalFeatures(){
   if(!sid){ showMsg("featureMsg", "Selecione uma aluna.", "error"); return; }
   const config = {};
   PORTAL_OPTIONAL_FEATURES.forEach(f => config[f.key] = !!$("feature_" + f.key)?.checked);
+  const student = STUDENTS.find(s => s.id === sid) || {};
   const { record } = parsePortalFeatureConfig(sid);
+  const payload = {
+    features: config,
+    student_id: sid,
+    student_email: student.email || "",
+    student_name: student.full_name || student.name || "",
+    saved_at: new Date().toISOString(),
+    source: "admin_features_panel"
+  };
   const body = {
     student_id: sid,
     type: "portal_config",
     title: "Configuração do portal da aluna",
-    description: JSON.stringify(config),
+    description: JSON.stringify(payload),
     month: "config",
     is_new: false
   };
@@ -1112,6 +1132,16 @@ async function saveStudentPortalFeatures(){
       ({ error } = await sb.from("materials").insert(body));
     }
     if(error) throw error;
+
+    const duplicates = getPortalFeatureRecords(sid).filter(r => r.id !== record?.id);
+    if(duplicates.length){
+      const ids = duplicates.map(r => r.id).filter(Boolean);
+      if(ids.length){
+        const del = await sb.from("materials").delete().in("id", ids);
+        if(del.error) console.warn("Não consegui remover configs duplicadas", del.error);
+      }
+    }
+
     showMsg("featureMsg", "Funcionalidades salvas. O portal da aluna já vai obedecer essa configuração.", "success");
     await refreshAll();
     if($("featureStudent")) $("featureStudent").value = sid;
@@ -1138,11 +1168,12 @@ function renderPortalFeatureList(){
   if(!students.length){ el.innerHTML = `<div class="empty">Nenhuma aluna cadastrada.</div>`; return; }
   el.innerHTML = students.map(s => {
     const { config, record } = parsePortalFeatureConfig(s.id);
+    const duplicateCount = getPortalFeatureRecords(s.id).length;
     const active = PORTAL_OPTIONAL_FEATURES.filter(f => config[f.key]).map(f => f.label).join(", ") || "Nenhuma opcional ativa";
     const disabled = PORTAL_OPTIONAL_FEATURES.filter(f => !config[f.key]).map(f => f.label).join(", ") || "Nenhuma opcional desativada";
     return `<div class="card" style="background:var(--panel2)">
       <b>${esc(s.full_name || s.email || "Aluna")}</b>
-      <p class="hint" style="margin:8px 0">${record ? "Configuração personalizada salva" : "Sem configuração salva: opcionais ficam ativas por padrão"}</p>
+      <p class="hint" style="margin:8px 0">${record ? "Configuração personalizada salva" : "Sem configuração salva: opcionais ficam ativas por padrão"}${duplicateCount > 1 ? ` • ${duplicateCount} configurações encontradas; salve para limpar duplicadas` : ""}</p>
       <div class="material-block"><span class="material-block-label">Ativas</span><p>${esc(active)}</p></div>
       <div class="material-block"><span class="material-block-label">Desativadas</span><p>${esc(disabled)}</p></div>
       <button class="btn-secondary" onclick="editPortalFeatures('${esc(s.id)}')">Editar funcionalidades</button>
