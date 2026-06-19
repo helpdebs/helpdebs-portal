@@ -1636,68 +1636,6 @@ body{ font-size:14px; }
   .finance-mini-card{ grid-column: auto !important; }
 }
 
-
-/* AJUSTE FINAL — quebra de linha correta no card da aluna */
-.student-card{
-  width:100%;
-  max-width:100%;
-  overflow:hidden;
-}
-
-.student-top{
-  width:100%;
-  min-width:0;
-}
-
-.student-top > div:last-child{
-  min-width:0;
-  overflow:hidden;
-}
-
-.student-name{
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.student-level{
-  white-space:normal !important;
-  overflow:visible !important;
-  text-overflow:unset !important;
-  display:block;
-  max-width:100%;
-  line-height:1.28;
-  overflow-wrap:break-word;
-  word-break:normal;
-}
-
-.student-objective-area{
-  width:100%;
-  max-width:100%;
-  min-width:0;
-  overflow:hidden;
-}
-
-.student-objective-text{
-  width:100%;
-  max-width:100%;
-  min-width:0;
-  box-sizing:border-box;
-  white-space:normal !important;
-  overflow:visible !important;
-  text-overflow:unset !important;
-  overflow-wrap:break-word;
-  word-break:normal;
-  hyphens:auto;
-}
-
-.student-objective-editor,
-.student-objective-editor textarea{
-  width:100%;
-  max-width:100%;
-  min-width:0;
-}
-
   </style>
 </head>
 <body>
@@ -3371,7 +3309,14 @@ function goSection(target){
     if(map[core]) core = map[core];
     else {
       for(const [from,to] of entries){
-        if(core.includes(from)) core = core.split(from).join(to);
+        // Evita traduzir pedaços dentro de palavras.
+        // Ex.: "Materials" não pode virar "maTueials" por causa de "ter" -> "Tue".
+        const escaped = from.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const isShortToken = from.length <= 3 || /^[a-záéíóúãõâêôç]+$/i.test(from);
+        const re = isShortToken
+          ? new RegExp(`(^|[^A-Za-zÀ-ÿ])${escaped}(?=$|[^A-Za-zÀ-ÿ])`, "g")
+          : new RegExp(escaped, "g");
+        core = core.replace(re, (match, prefix="") => prefix + to);
       }
     }
 
