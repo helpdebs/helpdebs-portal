@@ -1539,6 +1539,59 @@ body{ font-size:14px; }
   line-height:1.35;
 }
 
+
+/* AJUSTE FRONT-END — objetivo da aluna no card lateral */
+.student-objective-area{
+  display:grid;
+  gap:8px;
+  padding-top:2px;
+}
+.student-objective-btn{
+  width:fit-content;
+  border:1px solid rgba(122,92,255,.14);
+  background:rgba(122,92,255,.07);
+  color:var(--primary);
+  border-radius:999px;
+  padding:7px 12px;
+  font-size:.78rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:.18s ease;
+}
+.student-objective-btn:hover{
+  background:rgba(122,92,255,.12);
+  transform:translateY(-1px);
+}
+.student-objective-text{
+  display:none;
+  margin:0;
+  color:var(--muted);
+  font-size:.82rem;
+  line-height:1.45;
+  padding:9px 10px;
+  border-radius:var(--r-sm);
+  background:rgba(255,255,255,.62);
+  border:1px solid rgba(122,92,255,.08);
+  overflow-wrap:anywhere;
+}
+.student-objective-text.show{display:block;}
+.student-objective-editor{display:none;gap:8px;}
+.student-objective-editor.show{display:grid;}
+.student-objective-editor textarea{
+  width:100%;
+  min-height:78px;
+  resize:vertical;
+  border:1px solid rgba(122,92,255,.14);
+  background:rgba(255,255,255,.88);
+  color:var(--text);
+  border-radius:var(--r-sm);
+  padding:10px 11px;
+  font-size:.84rem;
+  line-height:1.45;
+  outline:none;
+}
+.student-objective-actions{display:flex;gap:8px;flex-wrap:wrap;}
+
   </style>
 </head>
 <body>
@@ -1589,7 +1642,18 @@ body{ font-size:14px; }
               <div class="student-level" id="studentLevel">Aulas individuais</div>
             </div>
           </div>
-          <div class="student-badges">
+          <div class="student-objective-area">
+            <button class="student-objective-btn" id="objectiveToggleBtn" type="button" onclick="toggleObjectiveEditor()">Objetivo</button>
+            <p class="student-objective-text" id="studentObjectiveText"></p>
+            <div class="student-objective-editor" id="studentObjectiveEditor">
+              <textarea id="studentObjectiveInput" placeholder="Escreva seu objetivo com o inglês..."></textarea>
+              <div class="student-objective-actions">
+                <button class="mini-btn" type="button" onclick="saveStudentObjective()">Salvar</button>
+                <button class="mini-btn secondary" type="button" onclick="toggleObjectiveEditor(false)">Cancelar</button>
+              </div>
+            </div>
+          </div>
+          <div class="student-badges" style="display:none">
             <span class="badge" id="studentFocus">trilha ativa</span>
             <span class="badge" id="diagBadge">diagnóstico</span>
           </div>
@@ -2318,6 +2382,7 @@ function renderProfile(){
   $("studentFocus").textContent = savedFocus === "Ainda não definido" ? "trilha ativa" : savedFocus;
   $("diagBadge").textContent = diag.label;
   $("diagBadge").className = `badge ${diag.className}`;
+  renderStudentObjective(savedFocus);
   if($("profileSummary")) $("profileSummary").innerHTML = `
     <div class="material-item"><strong>Perfil</strong><p>${esc(savedProfile)}</p></div>
     <div class="material-item"><strong>Nível</strong><p>${esc(savedLevel)}</p></div>
@@ -2325,6 +2390,44 @@ function renderProfile(){
     <div class="material-item"><strong>Diagnóstico</strong><p>${diag.done}/${diag.total} testes concluídos</p></div>
   `;
   $("studentCard")?.classList.remove("loading");
+}
+
+function renderStudentObjective(value){
+  const objective = value && value !== "Ainda não definido" ? String(value) : "";
+  const textEl = $("studentObjectiveText");
+  const inputEl = $("studentObjectiveInput");
+  if(inputEl) inputEl.value = objective;
+  if(!textEl) return;
+  textEl.textContent = objective ? objective : "";
+  textEl.classList.toggle("show", !!objective);
+}
+
+function toggleObjectiveEditor(force){
+  const editor = $("studentObjectiveEditor");
+  if(!editor) return;
+  const shouldOpen = typeof force === "boolean" ? force : !editor.classList.contains("show");
+  editor.classList.toggle("show", shouldOpen);
+  if(shouldOpen) $("studentObjectiveInput")?.focus();
+}
+
+async function saveStudentObjective(){
+  const value = ($("studentObjectiveInput")?.value || "").trim();
+  if(!value){ showToast("Escreva um objetivo antes de salvar."); return; }
+  try{
+    const { error } = await sb
+      .from("profiles")
+      .update({ focus:value, objetivo:value })
+      .eq("id", user.id);
+    if(error) throw error;
+    profile.focus = value;
+    profile.objetivo = value;
+    renderStudentObjective(value);
+    toggleObjectiveEditor(false);
+    showToast("Objetivo salvo no portal ✨");
+  }catch(e){
+    console.error(e);
+    showToast("Não consegui salvar o objetivo agora.");
+  }
 }
 
 function pickText(obj, fields){
