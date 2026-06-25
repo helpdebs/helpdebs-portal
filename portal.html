@@ -996,13 +996,20 @@ input:focus { border-color: var(--primary); }
   box-shadow: 0 18px 44px rgba(63,37,128,.16);
 }
 .payment-item.clickable-payment::after {
-  content: "Clique para copiar o Pix";
+  content: attr(data-action-label);
   position: absolute; right: 16px; bottom: 12px;
   font-size: .72rem; font-weight: 600; color: var(--primary); opacity: .7;
 }
 .payment-item.no-payment-action::after {
-  content: "Pagamento ainda não configurado";
-  color: #b44b67;
+  content: attr(data-action-label);
+  position: absolute; right: 16px; bottom: 12px;
+  font-size: .72rem; font-weight: 600; color: #b44b67; opacity: .78;
+}
+.payment-detail-code{
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  font-size: .82rem !important;
+  margin-top: 10px !important;
 }
 .pay-actions { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 12px; }
 .qr-preview { margin: 10px 0; }
@@ -2843,11 +2850,12 @@ function renderFinanceDashboard(){
         <span class="finance-pill empty">sem cobrança ativa</span>
         <p class="dash-muted">Nenhum pagamento cadastrado ainda.</p>
         <div class="finance-row"><span>Status</span><strong>Sem pendências</strong></div>
-        <div class="finance-row"><span>Forma</span><strong>Pix</strong></div>
+        <div class="finance-row"><span>Forma</span><strong>—</strong></div>
       </div>
     `;
     return;
   }
+
   const diff = daysUntil(p.due_date);
   let dueText = "vencimento não informado";
   if(diff !== null){
@@ -2855,8 +2863,11 @@ function renderFinanceDashboard(){
     if(diff === 0) dueText = "vence hoje";
     if(diff < 0) dueText = `vencido há ${Math.abs(diff)} dia(s)`;
   }
+
   const paid = p.status === "paid";
   const statusText = paid ? "Pagamento registrado" : "Aguardando pagamento";
+  const methodInfo = getPaymentMethodInfo(p);
+
   $("financeDashboardBox").innerHTML = `
     <div class="finance-status">
       <span class="finance-pill ${paid ? "paid" : "pending"}">${paid ? "pago" : "pendente"}</span>
@@ -2866,8 +2877,8 @@ function renderFinanceDashboard(){
         <p class="dash-muted">${paid ? "Pagamento registrado." : dueText}</p>
       </div>
       <div class="finance-row"><span>Status</span><strong>${statusText}</strong></div>
-      <div class="finance-row"><span>Forma</span><strong>${p.pix_code || p.pix_qr_url ? "Pix disponível" : "Pix ainda não configurado"}</strong></div>
-      <button class="mini-btn" onclick="goSection('financeiro')">${paid ? "Ver histórico" : "Pagar agora"}</button>
+      <div class="finance-row"><span>Forma</span><strong>${esc(methodInfo.dashboardLabel)}</strong></div>
+      <button class="mini-btn" onclick="goSection('financeiro')">${paid ? "Ver histórico" : methodInfo.dashboardButton}</button>
     </div>
   `;
 }
@@ -3311,16 +3322,142 @@ function renderVideos(){
   $("videosList").innerHTML = videos.length ? videos.map(materialCard).join("") : `<div class="empty">Nenhuma videoaula cadastrada ainda.</div>`;
 }
 
+async function copyToClipboard(text, successMessage){
+  try{
+    await navigator.clipboard.writeText(text);
+    showToast(successMessage || "Código copiado!");
+  }catch(e){
+    showToast("Não consegui copiar automaticamente.");
+  }
+}
+
 async function copyPix(code){
-  try{ await navigator.clipboard.writeText(code); showToast("Pix copiado! Abra seu banco e cole."); }
-  catch(e){ showToast("Não consegui copiar automaticamente."); }
+  await copyToClipboard(code, "Pix copiado! Abra seu banco e cole.");
+}
+
+async function copyBoleto(code){
+  await copyToClipboard(code, "Código do boleto copiado! Abra seu banco e cole.");
+}
+
+function normalizePaymentMethod(p){
+  const raw = String(p?.payment_method || "").trim().toLowerCase();
+
+  if(raw === "boleto" || raw === "bank_slip" || p?.boleto_code || p?.boleto_pdf_url) return "boleto";
+  if(raw === "kiwify" || raw === "assinatura" || raw === "subscription" || raw === "card" || raw === "cartao" || p?.kiwify_checkout_url) return "kiwify";
+  if(raw === "pix" || p?.pix_code || p?.pix_qr_url) return "pix";
+
+  return "manual";
+}
+
+function getPaymentMethodInfo(p){
+  const method = normalizePaymentMethod(p);
+  const pixCode = p?.pix_code || "";
+  const pixQr = p?.pix_qr_url || "";
+  const boletoCode = p?.boleto_code || "";
+  const boletoPdf = p?.boleto_pdf_url || "";
+  const kiwifyUrl = p?.kiwify_checkout_url || "";
+
+  if(method === "boleto"){
+    const configured = !!(boletoCode || boletoPdf);
+    return {
+      method,
+      label: "Boleto",
+      configured,
+      dashboardLabel: configured ? "Boleto disponível" : "Boleto ainda não configurado",
+      dashboardButton: configured ? "Pagar boleto" : "Ver cobrança",
+      actionLabel: configured ? (boletoCode ? "Clique para copiar o boleto" : "Clique para baixar o boleto") : "Boleto ainda não configurado"
+    };
+  }
+
+  if(method === "kiwify"){
+    const configured = !!kiwifyUrl;
+    return {
+      method,
+      label: "Kiwify",
+      configured,
+      dashboardLabel: configured ? "Kiwify disponível" : "Kiwify ainda não configurado",
+      dashboardButton: configured ? "Ativar assinatura" : "Ver cobrança",
+      actionLabel: configured ? "Clique para abrir a Kiwify" : "Kiwify ainda não configurada"
+    };
+  }
+
+  if(method === "pix"){
+    const configured = !!(pixCode || pixQr);
+    return {
+      method,
+      label: "Pix",
+      configured,
+      dashboardLabel: configured ? "Pix disponível" : "Pix ainda não configurado",
+      dashboardButton: configured ? "Pagar agora" : "Ver cobrança",
+      actionLabel: configured ? (pixCode ? "Clique para copiar o Pix" : "Clique para abrir o QR Code") : "Pix ainda não configurado"
+    };
+  }
+
+  return {
+    method,
+    label: "Manual",
+    configured: false,
+    dashboardLabel: "Forma ainda não configurada",
+    dashboardButton: "Ver cobrança",
+    actionLabel: "Pagamento ainda não configurado"
+  };
+}
+
+function getPaymentById(id){
+  return payments.find(item => String(item.id) === String(id));
+}
+
+function copyPaymentCode(id){
+  const p = getPaymentById(id);
+  if(!p){ showToast("Cobrança não encontrada."); return; }
+  const method = normalizePaymentMethod(p);
+  if(method === "boleto" && p.boleto_code){ copyBoleto(p.boleto_code); return; }
+  if(method === "pix" && p.pix_code){ copyPix(p.pix_code); return; }
+  showToast("Código ainda não configurado.");
+}
+
+function openPaymentFile(id){
+  const p = getPaymentById(id);
+  if(!p){ showToast("Cobrança não encontrada."); return; }
+  const method = normalizePaymentMethod(p);
+  if(method === "boleto" && p.boleto_pdf_url){ openLink(p.boleto_pdf_url); return; }
+  if(method === "pix" && p.pix_qr_url){ openLink(p.pix_qr_url); return; }
+  showToast("Arquivo ainda não configurado.");
+}
+
+function openPaymentCheckout(id){
+  const p = getPaymentById(id);
+  if(!p){ showToast("Cobrança não encontrada."); return; }
+  if(p.kiwify_checkout_url){ openLink(p.kiwify_checkout_url); return; }
+  showToast("Link da Kiwify ainda não configurado.");
 }
 
 function paymentAction(id){
-  const p = payments.find(item => item.id === id);
+  const p = getPaymentById(id);
   if(!p){ showToast("Cobrança não encontrada."); return; }
-  if(p.pix_code){ copyPix(p.pix_code); return; }
-  if(p.pix_qr_url){ openLink(p.pix_qr_url); return; }
+
+  const method = normalizePaymentMethod(p);
+
+  if(method === "boleto"){
+    if(p.boleto_code){ copyBoleto(p.boleto_code); return; }
+    if(p.boleto_pdf_url){ openLink(p.boleto_pdf_url); return; }
+    showToast("Boleto ainda não configurado.");
+    return;
+  }
+
+  if(method === "kiwify"){
+    if(p.kiwify_checkout_url){ openLink(p.kiwify_checkout_url); return; }
+    showToast("Link da Kiwify ainda não configurado.");
+    return;
+  }
+
+  if(method === "pix"){
+    if(p.pix_code){ copyPix(p.pix_code); return; }
+    if(p.pix_qr_url){ openLink(p.pix_qr_url); return; }
+    showToast("Pix ainda não configurado.");
+    return;
+  }
+
   showToast("Forma de pagamento ainda não configurada.");
 }
 
@@ -3328,25 +3465,51 @@ function renderPayments(){
   const list = $("paymentsList");
   if(!list) return;
   if(!payments.length){ list.innerHTML = `<div class="empty">Nenhum pagamento cadastrado ainda.</div>`; return; }
+
   list.innerHTML = payments.map(p => {
     const pixCode = p.pix_code || "";
     const pixQr = p.pix_qr_url || "";
-    const hasAction = pixCode || pixQr;
+    const boletoCode = p.boleto_code || "";
+    const boletoPdf = p.boleto_pdf_url || "";
+    const kiwifyUrl = p.kiwify_checkout_url || "";
+    const methodInfo = getPaymentMethodInfo(p);
+    const hasAction = methodInfo.configured;
+
+    const paymentDetail =
+      methodInfo.method === "pix"
+        ? `${pixQr ? `<div class="qr-preview"><img src="${esc(pixQr)}" alt="QR Code Pix"></div>` : ""}
+           ${pixCode ? `<p class="payment-detail-code"><b>Pix copia e cola:</b> ${esc(pixCode)}</p>` : ""}`
+      : methodInfo.method === "boleto"
+        ? `${boletoCode ? `<p class="payment-detail-code"><b>Código / linha digitável do boleto:</b> ${esc(boletoCode)}</p>` : ""}
+           ${boletoPdf ? `<p style="margin-top:8px">PDF do boleto disponível para baixar.</p>` : ""}`
+      : methodInfo.method === "kiwify"
+        ? `${kiwifyUrl ? `<p style="margin-top:8px">Pagamento pela Kiwify disponível para abrir.</p>` : ""}`
+      : "";
+
+    const paymentActions =
+      methodInfo.method === "pix"
+        ? `${pixCode ? `<button class="mini-btn" onclick="copyPaymentCode('${esc(p.id)}')">Copiar Pix</button>` : ""}
+           ${pixQr ? `<button class="mini-btn secondary" onclick="openPaymentFile('${esc(p.id)}')">Abrir QR Code</button>` : ""}`
+      : methodInfo.method === "boleto"
+        ? `${boletoCode ? `<button class="mini-btn" onclick="copyPaymentCode('${esc(p.id)}')">Copiar código do boleto</button>` : ""}
+           ${boletoPdf ? `<button class="mini-btn secondary" onclick="openPaymentFile('${esc(p.id)}')">Baixar boleto</button>` : ""}`
+      : methodInfo.method === "kiwify"
+        ? `${kiwifyUrl ? `<button class="mini-btn" onclick="openPaymentCheckout('${esc(p.id)}')">Abrir Kiwify</button>` : ""}`
+      : "";
+
     return `
-    <div class="payment-item ${hasAction ? "clickable-payment" : "no-payment-action"}" onclick="paymentAction('${esc(p.id)}')">
+    <div class="payment-item ${hasAction ? "clickable-payment" : "no-payment-action"}" data-action-label="${esc(methodInfo.actionLabel)}" onclick="paymentAction('${esc(p.id)}')">
       <div class="item-top">
         <div>
           <strong>${esc(p.reference || "Cobrança")}</strong>
-          <p>R$ ${Number(p.amount || 0).toFixed(2)} • vence ${dateBR(p.due_date)}</p>
+          <p>R$ ${Number(p.amount || 0).toFixed(2)} • vence ${dateBR(p.due_date)} • ${esc(methodInfo.label)}</p>
         </div>
         <span class="mini-badge ${p.status === "paid" ? "status-paid" : p.status === "overdue" ? "status-overdue" : "status-pending"}">${esc(p.status || "pending")}</span>
       </div>
       ${p.notes ? `<p>${esc(p.notes)}</p>` : ""}
-      ${pixQr ? `<div class="qr-preview"><img src="${esc(pixQr)}" alt="QR Code Pix"></div>` : ""}
-      ${pixCode ? `<p style="word-break:break-all;font-size:.82rem;margin-top:10px"><b>Pix copia e cola:</b> ${esc(pixCode)}</p>` : ""}
+      ${paymentDetail}
       <div class="pay-actions" onclick="event.stopPropagation()">
-        ${pixCode ? `<button class="mini-btn" onclick="copyPix('${esc(pixCode)}')">Copiar Pix</button>` : ""}
-        ${pixQr ? `<button class="mini-btn secondary" onclick="openLink('${esc(pixQr)}')">Abrir QR Code</button>` : ""}
+        ${paymentActions}
       </div>
     </div>`;
   }).join("");
@@ -3482,6 +3645,28 @@ function goSection(target){
     "Aguardando pagamento": "Awaiting payment",
     "Pix disponível": "Pix available",
     "Pix ainda não configurado": "Pix not configured yet",
+    "Boleto": "Bank slip",
+    "Boleto disponível": "Bank slip available",
+    "Boleto ainda não configurado": "Bank slip not configured yet",
+    "Código do boleto copiado! Abra seu banco e cole.": "Bank slip code copied! Open your bank app and paste it.",
+    "Código / linha digitável do boleto:": "Bank slip code:",
+    "Copiar código do boleto": "Copy bank slip code",
+    "Baixar boleto": "Download bank slip",
+    "PDF do boleto disponível para baixar.": "Bank slip PDF available to download.",
+    "Pagar boleto": "Pay bank slip",
+    "Clique para copiar o boleto": "Click to copy bank slip",
+    "Clique para baixar o boleto": "Click to download bank slip",
+    "Kiwify": "Kiwify",
+    "Kiwify disponível": "Kiwify available",
+    "Kiwify ainda não configurado": "Kiwify not configured yet",
+    "Kiwify ainda não configurada": "Kiwify not configured yet",
+    "Link da Kiwify ainda não configurado.": "Kiwify link not configured yet.",
+    "Pagamento pela Kiwify disponível para abrir.": "Kiwify payment available to open.",
+    "Abrir Kiwify": "Open Kiwify",
+    "Ativar assinatura": "Activate subscription",
+    "Clique para abrir a Kiwify": "Click to open Kiwify",
+    "Forma ainda não configurada": "Method not configured yet",
+    "Ver cobrança": "View charge",
     "Ver histórico": "View history",
     "Pagar agora": "Pay now",
     "pago": "paid",
