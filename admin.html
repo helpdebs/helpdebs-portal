@@ -92,6 +92,28 @@
 
 </main></section>
 <div id="classModal" class="modal-bg"><div class="modal"><h3>Marcar aula</h3><div class="field"><label>Aluna</label><select id="classStudent"></select></div><div class="grid-2"><div class="field"><label>Data</label><input id="classDate" type="date"></div><div class="field"><label>Hora</label><input id="classTime" type="time" value="19:00"></div></div><div class="field"><label>Resumo/comentário</label><textarea id="classNotes"></textarea></div><div class="btn-row"><button class="btn-primary" onclick="saveClass()">Salvar aula</button><button class="btn-secondary" onclick="closeClassModal()">Cancelar</button></div><div id="classMsg" class="msg"></div></div></div>
+<div id="repeatPixPaymentModal" class="modal-bg">
+  <div class="modal">
+    <h3>Repetir cobrança Pix</h3>
+    <p class="hint" style="margin:8px 0 14px">Confira os dados antes de criar a nova cobrança. Ela será registrada como pendente.</p>
+    <input type="hidden" id="repeatPayOriginalId">
+    <input type="hidden" id="repeatPayStudentId">
+    <div class="field"><label>Aluna</label><input id="repeatPayStudentName" disabled></div>
+    <div class="field"><label>Referência</label><input id="repeatPayRef" placeholder="Maio 2026"></div>
+    <div class="grid-2">
+      <div class="field"><label>Valor</label><input id="repeatPayAmount" type="number" step="0.01" placeholder="297.00"></div>
+      <div class="field"><label>Vencimento</label><input id="repeatPayDue" type="date"></div>
+    </div>
+    <div class="field"><label>Observações</label><textarea id="repeatPayNotes" placeholder="Ex: Pagamento mensal referente ao plano..."></textarea></div>
+    <div class="field"><label>Pix copia e cola</label><textarea id="repeatPayPixCode" placeholder="Cole ou edite o Pix copia e cola"></textarea></div>
+    <div class="field"><label>URL do QR Code Pix</label><input id="repeatPayPixQrUrl" placeholder="https://..."></div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="createRepeatedPixPayment()">Criar nova cobrança</button>
+      <button class="btn-secondary" onclick="closeRepeatPixPaymentModal()">Cancelar</button>
+    </div>
+    <div id="repeatPayMsg" class="msg"></div>
+  </div>
+</div>
   <div class="modal-backdrop" id="editMaterialModal">
     <div class="modal-card">
       <div class="modal-head">
@@ -380,6 +402,114 @@ async function addPayment(){
 
 async function copyPix(code){try{await navigator.clipboard.writeText(code);toast("Pix copiado.");}catch(e){toast("Não consegui copiar automaticamente.");}}async function copyBoletoCode(code){try{await navigator.clipboard.writeText(code);toast("Código do boleto copiado.");}catch(e){toast("Não consegui copiar automaticamente.");}}
 
+const PT_MONTH_NAMES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+const PT_MONTH_NAMES_NORM = PT_MONTH_NAMES.map(m => m.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase());
+
+function addOneMonthToISODate(dateString){
+  if(!dateString) return "";
+  const parts = String(dateString).split("-").map(Number);
+  if(parts.length !== 3 || parts.some(Number.isNaN)) return "";
+  const [year, month, day] = parts;
+  const target = new Date(year, month, 1);
+  const lastDay = new Date(target.getFullYear(), target.getMonth() + 1, 0).getDate();
+  target.setDate(Math.min(day, lastDay));
+  return `${target.getFullYear()}-${String(target.getMonth()+1).padStart(2,"0")}-${String(target.getDate()).padStart(2,"0")}`;
+}
+
+function suggestNextReference(reference){
+  const raw = String(reference || "").trim();
+  if(!raw) return "";
+  const normalized = raw.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+  const monthIndex = PT_MONTH_NAMES_NORM.findIndex(m => normalized.includes(m));
+  if(monthIndex < 0) return raw;
+
+  const nextMonthIndex = (monthIndex + 1) % 12;
+  let nextRef = raw.replace(new RegExp(PT_MONTH_NAMES[monthIndex], "i"), PT_MONTH_NAMES[nextMonthIndex]);
+
+  if(monthIndex === 11){
+    const yearMatch = nextRef.match(/\b(20\d{2}|\d{2})\b/);
+    if(yearMatch){
+      const oldYearText = yearMatch[1];
+      const oldYear = Number(oldYearText.length === 2 ? `20${oldYearText}` : oldYearText);
+      const newYear = oldYear + 1;
+      const newYearText = oldYearText.length === 2 ? String(newYear).slice(-2) : String(newYear);
+      nextRef = nextRef.replace(yearMatch[1], newYearText);
+    }
+  }
+
+  return nextRef;
+}
+
+function openRepeatPixPayment(id){
+  const payment = PAYMENTS.find(p => p.id === id);
+  if(!payment){
+    toast("Cobrança não encontrada.");
+    return;
+  }
+
+  const method = payment.payment_method || (payment.kiwify_checkout_url ? "kiwify" : payment.boleto_code || payment.boleto_pdf_url ? "boleto" : "pix");
+  if(method !== "pix"){
+    toast("A repetição automática está disponível para cobranças Pix.");
+    return;
+  }
+
+  const student = STUDENTS.find(s => s.id === payment.student_id);
+  $("repeatPayOriginalId").value = payment.id || "";
+  $("repeatPayStudentId").value = payment.student_id || "";
+  $("repeatPayStudentName").value = student?.full_name || student?.email || payment.student_id || "Aluna";
+  $("repeatPayRef").value = suggestNextReference(payment.reference || "");
+  $("repeatPayAmount").value = payment.amount ? Number(payment.amount).toFixed(2) : "";
+  $("repeatPayDue").value = addOneMonthToISODate(payment.due_date) || payment.due_date || "";
+  $("repeatPayNotes").value = payment.notes || "";
+  $("repeatPayPixCode").value = payment.pix_code || "";
+  $("repeatPayPixQrUrl").value = payment.pix_qr_url || "";
+  if($("repeatPayMsg")) $("repeatPayMsg").className = "msg";
+  $("repeatPixPaymentModal").classList.add("open");
+}
+
+function closeRepeatPixPaymentModal(){
+  $("repeatPixPaymentModal").classList.remove("open");
+}
+
+async function createRepeatedPixPayment(){
+  const body = {
+    student_id: $("repeatPayStudentId").value,
+    reference: $("repeatPayRef").value.trim(),
+    amount: Number($("repeatPayAmount").value),
+    due_date: $("repeatPayDue").value,
+    notes: $("repeatPayNotes").value.trim(),
+    payment_method: "pix",
+    pix_code: $("repeatPayPixCode").value.trim(),
+    pix_qr_url: $("repeatPayPixQrUrl").value.trim(),
+    boleto_code: "",
+    boleto_pdf_url: "",
+    kiwify_checkout_url: "",
+    status: "pending"
+  };
+
+  if(!body.student_id || !body.reference || !body.amount || !body.due_date){
+    showMsg("repeatPayMsg", "Preencha referência, valor e vencimento.", "error");
+    return;
+  }
+
+  if(!body.pix_code && !body.pix_qr_url){
+    showMsg("repeatPayMsg", "Informe o Pix copia e cola ou a URL do QR Code.", "error");
+    return;
+  }
+
+  try{
+    showMsg("repeatPayMsg", "Criando nova cobrança...", "info");
+    const { error } = await sb.from("payments").insert(body);
+    if(error) throw error;
+
+    showMsg("repeatPayMsg", "Nova cobrança Pix criada.", "success");
+    await refreshAll();
+    setTimeout(closeRepeatPixPaymentModal, 700);
+  }catch(e){
+    showMsg("repeatPayMsg", e.message || "Erro ao repetir cobrança.", "error");
+  }
+}
+
 function fillFeedbackSelect(){
   const el = $("feedbackStudent");
   if(!el) return;
@@ -561,6 +691,7 @@ function renderPayments(){
         <div class="btn-row">
           ${pixCode ? `<button class="btn-secondary" onclick="copyPix('${esc(pixCode)}')">Copiar Pix</button>` : ""}
           ${pixQr ? `<a href="${esc(pixQr)}" target="_blank" rel="noopener">Abrir QR Code</a>` : ""}
+          ${method === "pix" ? `<button class="btn-secondary" onclick="openRepeatPixPayment('${p.id}')">Repetir cobrança</button>` : ""}
           ${boletoCode ? `<button class="btn-secondary" onclick="copyBoletoCode('${esc(boletoCode)}')">Copiar boleto</button>` : ""}
           ${boletoPdfUrl ? `<a class="btn-accent" href="${esc(boletoPdfUrl)}" target="_blank" rel="noopener">Abrir PDF do boleto</a>` : ""}
           ${kiwifyUrl ? `<a class="btn-accent" href="${esc(kiwifyUrl)}" target="_blank" rel="noopener">Abrir Kiwify</a>` : ""}
