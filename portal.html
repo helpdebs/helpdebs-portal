@@ -2127,6 +2127,7 @@ const TRAIL_DAY_1_BANK = {
 
 let sb, user, profile, materials=[], classes=[], diagnostics=[], payments=[], feedbacks=[], diagConfig=[], trailProgress=[], portalFeatures={}, portalFeatureRecords=[];
 let featuredChecklistUrl = "";
+let featuredChecklistLabel = "checklist";
 let calYear = new Date().getFullYear();
 let calMonth = new Date().getMonth();
 let calendarView = "month";
@@ -3011,38 +3012,44 @@ function renderDiagnostics(){
   }).join("");
 }
 
-function isPaulaStudent(){
-  const identity = [
-    profile?.full_name,
-    profile?.name,
-    profile?.email,
-    user?.email,
-    user?.user_metadata?.full_name,
-    user?.user_metadata?.name
-  ].filter(Boolean).join(" ").toLowerCase();
-  return identity.includes("paula");
+function normalizeFeaturedActivityType(item){
+  const raw = `${item?.type || ""} ${item?.title || ""}`.toLowerCase();
+  if(raw.includes("treinamento") || raw.includes("training") || raw.includes("mission")) return "treinamento";
+  return "checklist";
+}
+
+function capitalizeFirst(text){
+  const value = String(text || "");
+  return value ? value.charAt(0).toUpperCase() + value.slice(1) : value;
+}
+
+function swapFeaturedTitleLabel(title, activityType){
+  const label = activityType === "treinamento" ? "treinamento" : "checklist";
+  const opposite = activityType === "treinamento" ? "checklist" : "treinamento";
+  const base = title || `${capitalizeFirst(label)} de vocabulário da aula`;
+  return base.replace(new RegExp(opposite, "gi"), match => {
+    const replacement = match.charAt(0) === match.charAt(0).toUpperCase()
+      ? capitalizeFirst(label)
+      : label;
+    return replacement;
+  });
+}
+
+function isFeaturedActivityMaterial(m){
+  const type = String(m?.type || "").toLowerCase();
+  const title = String(m?.title || "").toLowerCase();
+  return !!m?.url && (
+    ["checklist", "treinamento", "training"].includes(type) ||
+    title.includes("checklist") ||
+    title.includes("treinamento") ||
+    title.includes("training")
+  );
 }
 
 function getFeaturedChecklistMaterial(){
-  const checklist = materials.find(m => {
-    const type = String(m?.type || "").toLowerCase();
-    const title = String(m?.title || "").toLowerCase();
-    return m?.url && (type === "checklist" || title.includes("checklist"));
-  });
-
-  if(checklist) return checklist;
-
-  // Fallback antigo: este checklist fixo é da Paula, então nunca deve aparecer para outras alunas.
-  if(isPaulaStudent()){
-    return {
-      title: "Checklist de vocabulário da aula",
-      description: "Revise as estruturas, chunks e combinações mais importantes do mês em uma página interativa feita para praticar sem ficar perdida.",
-      url: PAULA_MONTHLY_CHECKLIST_URL,
-      type: "checklist"
-    };
-  }
-
-  return null;
+  return materials
+    .filter(isFeaturedActivityMaterial)
+    .sort((a,b) => String(b.updated_at || b.created_at || "").localeCompare(String(a.updated_at || a.created_at || "")))[0] || null;
 }
 
 function renderFeaturedChecklist(){
@@ -3050,18 +3057,23 @@ function renderFeaturedChecklist(){
   const embed = $("checklistEmbedArea");
   if(!area) return;
 
-  const checklist = getFeaturedChecklistMaterial();
-  if(!checklist){
+  const activity = getFeaturedChecklistMaterial();
+  if(!activity){
     featuredChecklistUrl = "";
+    featuredChecklistLabel = "checklist";
     area.innerHTML = "";
     if(embed){ embed.classList.remove("show"); embed.innerHTML = ""; }
     return;
   }
 
-  featuredChecklistUrl = checklist.url || "";
-  const title = checklist.title || "Checklist de vocabulário da aula";
-  const description = checklist.description || "Revise as estruturas, chunks e combinações mais importantes em uma página interativa feita para praticar sem ficar perdida.";
-  const kicker = checklist.month ? `✨ checklist • ${checklist.month}` : "✨ checklist mensal";
+  const activityType = normalizeFeaturedActivityType(activity);
+  featuredChecklistUrl = activity.url || "";
+  featuredChecklistLabel = activityType;
+
+  const label = activityType === "treinamento" ? "treinamento" : "checklist";
+  const title = swapFeaturedTitleLabel(activity.title, activityType);
+  const description = activity.description || "Revise as estruturas, chunks e combinações mais importantes do mês em uma página interativa feita para praticar sem ficar perdida.";
+  const kicker = activity.month ? `✨ ${label} • ${activity.month}` : `✨ ${label} mensal`;
 
   area.innerHTML = `
     <div class="featured-checklist">
@@ -3073,7 +3085,7 @@ function renderFeaturedChecklist(){
       <div class="checklist-actions">
         <button type="button" class="checklist-btn"
                 onclick="event.preventDefault(); event.stopPropagation(); openMonthlyChecklist(); return false;">
-          Abrir checklist
+          Abrir ${esc(label)}
         </button>
         <button type="button" class="checklist-btn secondary"
                 onclick="event.preventDefault(); event.stopPropagation(); toggleChecklistEmbed(); return false;">
@@ -3085,17 +3097,19 @@ function renderFeaturedChecklist(){
 }
 
 function openMonthlyChecklist(){
-  if(!featuredChecklistUrl){ showToast("Checklist ainda não cadastrado para esta aluna."); return; }
+  const label = featuredChecklistLabel || "checklist";
+  if(!featuredChecklistUrl){ showToast(`${capitalizeFirst(label)} ainda não cadastrado para esta aluna.`); return; }
   window.open(featuredChecklistUrl, "_blank", "noopener,noreferrer");
 }
 
 function toggleChecklistEmbed(){
   const box = $("checklistEmbedArea");
+  const label = featuredChecklistLabel || "checklist";
   if(!box) return;
-  if(!featuredChecklistUrl){ showToast("Checklist ainda não cadastrado para esta aluna."); return; }
+  if(!featuredChecklistUrl){ showToast(`${capitalizeFirst(label)} ainda não cadastrado para esta aluna.`); return; }
   const isOpen = box.classList.contains("show");
   if(isOpen){ box.classList.remove("show"); box.innerHTML = ""; return; }
-  box.innerHTML = `<iframe src="${esc(featuredChecklistUrl)}" title="Checklist mensal"></iframe>`;
+  box.innerHTML = `<iframe src="${esc(featuredChecklistUrl)}" title="${esc(capitalizeFirst(label))} mensal"></iframe>`;
   box.classList.add("show");
   box.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -3112,7 +3126,7 @@ function renderMaterials(){
 
   const visibleMaterials = materials.filter(m => {
     const type = (m.type || "").toLowerCase();
-    return ["pdf","checklist","resource","vocabulary","summary","chunks"].includes(type);
+    return ["pdf","resource","vocabulary","summary","chunks"].includes(type);
   });
 
   if(!visibleMaterials.length){
@@ -3146,7 +3160,7 @@ function renderMaterials(){
     const items = group.materials || [];
 
     // Busca registros dedicados por type
-    const pdfItem     = items.find(m => ["pdf","checklist","resource","vocabulary"].includes((m.type || "").toLowerCase())) || items.find(m => m.url);
+    const pdfItem     = items.find(m => ["pdf","resource","vocabulary"].includes((m.type || "").toLowerCase())) || items.find(m => m.url);
     const summaryItem = items.find(m => (m.type || "").toLowerCase() === "summary");
     const chunksItem  = items.find(m => (m.type || "").toLowerCase() === "chunks");
 
