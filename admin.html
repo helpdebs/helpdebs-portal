@@ -720,6 +720,67 @@ main{
 .material-block p{margin:0;white-space:pre-wrap;line-height:1.45}
 .material-file-line{margin-top:10px}
 
+
+/* ---------- payments ---------- */
+.payment-card{
+  overflow:hidden;
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,background .18s ease;
+}
+.payment-card:hover{transform:translateY(-1px)}
+.payment-card.is-paid{
+  background:linear-gradient(145deg,rgba(240,253,244,.96),rgba(220,252,231,.76) 52%,rgba(255,255,255,.78));
+  border-color:rgba(21,168,120,.32);
+  box-shadow:0 18px 46px rgba(21,168,120,.16),0 2px 10px rgba(21,168,120,.08),inset 0 1px 0 rgba(255,255,255,.82);
+}
+.payment-card.is-paid::before{
+  background:
+    linear-gradient(120deg,rgba(255,255,255,.82),rgba(255,255,255,0) 34%),
+    radial-gradient(520px 170px at 4% 0%,rgba(187,247,208,.70),transparent 58%);
+  opacity:.78;
+}
+.payment-card.is-paid::after{
+  content:"Pago";
+  position:absolute;
+  top:18px;
+  right:18px;
+  z-index:1;
+  padding:7px 11px;
+  border-radius:999px;
+  background:rgba(21,168,120,.14);
+  color:#08764f;
+  border:1px solid rgba(21,168,120,.24);
+  font-size:.72rem;
+  font-weight:950;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+.payment-card.is-pending{background:rgba(255,255,255,.72)}
+.payment-meta{
+  margin:4px 0 0;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  flex-wrap:wrap;
+  color:var(--muted);
+  font-size:.89rem;
+  line-height:1.45;
+}
+.payment-status{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:4px 9px;
+  border-radius:999px;
+  font-size:.76rem;
+  font-weight:950;
+  line-height:1;
+}
+.payment-status.is-paid{background:rgba(21,168,120,.13);color:#08764f;border:1px solid rgba(21,168,120,.22)}
+.payment-status.is-pending{background:rgba(139,92,246,.10);color:#6d5dfc;border:1px solid rgba(139,92,246,.18)}
+.payment-card.is-paid .btn-row{margin-top:14px}
+.payment-card.is-paid .btn-accent{background:rgba(21,168,120,.10);color:#08764f;border-color:rgba(21,168,120,.22)}
+.payment-card.is-paid .hint b,.payment-card.is-paid b{color:#145c43}
+
 .answer-board{display:grid;gap:16px}
 .student-dossier{
   background:var(--glass-bg);
@@ -1638,12 +1699,20 @@ function renderPayments(){
     const kiwifyUrl = p.kiwify_checkout_url || "";
     const method = p.payment_method || (kiwifyUrl ? "kiwify" : boletoCode || boletoPdfUrl ? "boleto" : "pix");
     const methodLabel = method === "kiwify" ? "Kiwify / assinatura" : method === "boleto" ? "Boleto" : "Pix manual";
+    const status = String(p.status || "pending").toLowerCase();
+    const isPaid = status === "paid" || status === "pago";
+    const statusLabel = isPaid ? "Pago" : "Pendente";
 
     return `
-      <div class="card" style="background:var(--panel2)">
+      <div class="card payment-card ${isPaid ? "is-paid" : "is-pending"}">
         <b>${esc(s?.full_name || s?.email || "—")} — ${esc(p.reference)}</b>
-        <p class="hint">R$ ${Number(p.amount).toFixed(2)} • vence ${dateBR(p.due_date)} • ${esc(p.status)} • ${esc(methodLabel)}</p>
-        ${p.notes ? `<p style="margin:8px 0">${esc(p.notes)}</p>` : ""}
+        <div class="payment-meta">
+          <span>R$ ${Number(p.amount).toFixed(2)}</span>
+          <span>• vence ${dateBR(p.due_date)}</span>
+          <span class="payment-status ${isPaid ? "is-paid" : "is-pending"}">${isPaid ? "✓" : "○"} ${statusLabel}</span>
+          <span>• ${esc(methodLabel)}</span>
+        </div>
+        ${p.notes ? `<p style="margin:12px 0 8px">${esc(p.notes)}</p>` : ""}
         ${pixQr ? `<div style="margin:10px 0"><img src="${esc(pixQr)}" alt="QR Code Pix" style="max-width:150px;border-radius:12px;border:1px solid var(--line);background:white;padding:6px"></div>` : ""}
         ${pixCode ? `<p class="hint" style="word-break:break-all;margin:8px 0"><b>Pix copia e cola:</b> ${esc(pixCode)}</p>` : ""}
         ${boletoCode ? `<p class="hint" style="word-break:break-all;margin:8px 0"><b>Código do boleto:</b> ${esc(boletoCode)}</p>` : ""}
@@ -1656,7 +1725,7 @@ function renderPayments(){
           ${boletoCode ? `<button class="btn-secondary" onclick="copyBoletoCode('${esc(boletoCode)}')">Copiar boleto</button>` : ""}
           ${boletoPdfUrl ? `<a class="btn-accent" href="${esc(boletoPdfUrl)}" target="_blank" rel="noopener">Abrir PDF do boleto</a>` : ""}
           ${kiwifyUrl ? `<a class="btn-accent" href="${esc(kiwifyUrl)}" target="_blank" rel="noopener">Abrir Kiwify</a>` : ""}
-          <button class="btn-accent" onclick="markPaid('${p.id}')">Marcar pago</button>
+          ${isPaid ? "" : `<button class="btn-accent" onclick="markPaid('${p.id}')">Marcar pago</button>`}
           <button class="btn-danger" onclick="deletePayment('${p.id}')">Excluir</button>
         </div>
       </div>
