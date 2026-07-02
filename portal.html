@@ -12,6 +12,7 @@
 </script>
   <style>
 @import url("https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css");
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap");
 
 /* ─── 1. TOKENS ─── */
 :root {
@@ -1795,6 +1796,641 @@ body{ font-size:14px; }
   word-break:normal !important;
 }
 
+
+/* ============================================================
+   LIQUID GLASS PREMIUM PASS — visual refinado sem alterar a lógica
+   ============================================================ */
+:root{
+  --lg-bg-1:#fbfaff;
+  --lg-bg-2:#eef7ff;
+  --lg-bg-3:#f6efff;
+  --lg-ink:#181225;
+  --lg-muted:#675f80;
+  --lg-glass:rgba(255,255,255,.66);
+  --lg-glass-strong:rgba(255,255,255,.82);
+  --lg-glass-text:rgba(255,255,255,.92);
+  --lg-border:rgba(255,255,255,.64);
+  --lg-border-violet:rgba(122,92,255,.18);
+  --lg-highlight:rgba(255,255,255,.88);
+  --lg-shadow:0 22px 70px rgba(51,34,104,.14);
+  --lg-shadow-soft:0 14px 40px rgba(51,34,104,.10);
+  --lg-shadow-hover:0 24px 70px rgba(51,34,104,.18);
+  --lg-blur:22px;
+  --lg-sat:145%;
+  --text:var(--lg-ink);
+  --muted:var(--lg-muted);
+  --panel:var(--lg-glass-strong);
+  --panel-strong:#fff;
+  --line:rgba(122,92,255,.12);
+  --shadow:var(--lg-shadow-soft);
+  --primary:#7657ff;
+  --primary-2:#a993ff;
+  --accent:#dbff66;
+  --success:#4e8f2d;
+}
+
+html{
+  background:#f8f6ff;
+}
+
+body{
+  position:relative;
+  isolation:isolate;
+  overflow-x:hidden;
+  font-family:"Manrope", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color:var(--lg-ink);
+  background:
+    radial-gradient(circle at 14% 8%, rgba(122,92,255,.18), transparent 28%),
+    radial-gradient(circle at 86% 4%, rgba(141,215,255,.28), transparent 26%),
+    radial-gradient(circle at 76% 72%, rgba(219,255,102,.18), transparent 24%),
+    linear-gradient(135deg, var(--lg-bg-1) 0%, var(--lg-bg-2) 46%, var(--lg-bg-3) 100%);
+}
+
+body::before,
+body::after{
+  content:"";
+  position:fixed;
+  pointer-events:none;
+  z-index:-1;
+  border-radius:999px;
+  filter:blur(22px);
+  opacity:.72;
+  transform:translateZ(0);
+}
+
+body::before{
+  width:460px;
+  height:460px;
+  left:-140px;
+  top:120px;
+  background:
+    radial-gradient(circle at 35% 35%, rgba(255,255,255,.92), transparent 18%),
+    radial-gradient(circle, rgba(122,92,255,.22), transparent 64%);
+}
+
+body::after{
+  width:520px;
+  height:520px;
+  right:-180px;
+  bottom:-120px;
+  background:
+    radial-gradient(circle at 38% 30%, rgba(255,255,255,.88), transparent 16%),
+    radial-gradient(circle, rgba(137,215,255,.26), transparent 62%);
+}
+
+.login-screen,
+.app,
+.toast{
+  position:relative;
+  z-index:1;
+}
+
+::selection{
+  background:rgba(122,92,255,.22);
+  color:var(--lg-ink);
+}
+
+/* Vidro estratégico: containers principais, não todos os blocos de texto */
+.login-card,
+.sidebar,
+.sidebar-shell,
+.mobile-topbar,
+.topbar,
+.panel,
+.student-card,
+.lesson-card,
+.featured-checklist,
+.external-trail-top,
+.external-trail-frame,
+.checklist-embed,
+.toast{
+  -webkit-backdrop-filter:blur(var(--lg-blur)) saturate(var(--lg-sat));
+  backdrop-filter:blur(var(--lg-blur)) saturate(var(--lg-sat));
+}
+
+.login-card,
+.panel,
+.student-card,
+.lesson-card,
+.featured-checklist,
+.external-trail-top{
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.86), rgba(255,255,255,.56)),
+    rgba(255,255,255,.66);
+  border:1px solid var(--lg-border);
+  box-shadow:var(--lg-shadow-soft);
+}
+
+.login-card::before,
+.panel::before,
+.student-card::before,
+.lesson-card::before,
+.featured-checklist::after,
+.external-trail-top::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  border-radius:inherit;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.82), transparent 34%),
+    linear-gradient(315deg, rgba(122,92,255,.07), transparent 42%);
+  opacity:.68;
+  mask:linear-gradient(#000, transparent 74%);
+}
+
+.login-card > *,
+.panel > *,
+.student-card > *,
+.lesson-card > *,
+.featured-checklist > *,
+.external-trail-top > *{
+  position:relative;
+  z-index:1;
+}
+
+.panel:hover,
+.lesson-card:hover,
+.material-item:hover,
+.diag-item:hover,
+.payment-item.clickable-payment:hover,
+.quick-link:hover,
+.mini-stat:hover{
+  transform:translateY(-3px);
+  border-color:rgba(122,92,255,.24);
+  box-shadow:var(--lg-shadow-hover);
+}
+
+/* Headings com personalidade, mantendo leitura confortável */
+.headline h1,
+.dashboard-hero h2,
+.hero-card h2,
+.external-trail-top h2,
+.login-card h1,
+.featured-checklist h3{
+  font-family:"Sora", "Manrope", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-weight:800;
+  letter-spacing:-.055em;
+  color:var(--lg-ink);
+}
+
+.dash-card h3,
+.section-title h3,
+.calendar-header strong,
+.material-item strong,
+.diag-item strong,
+.tip-item strong,
+.video-item strong,
+.live-box strong,
+.payment-item strong,
+.lesson-title strong{
+  color:var(--lg-ink);
+}
+
+.dash-muted,
+.feedback-note,
+.quick-link p,
+.material-item p,
+.diag-item p,
+.tip-item p,
+.video-item p,
+.live-box p,
+.payment-item p,
+.lesson-block p,
+.student-class-card p{
+  color:var(--lg-muted);
+}
+
+/* Login premium */
+.login-screen{
+  padding:28px;
+}
+
+.login-card{
+  max-width:460px;
+  padding:36px;
+  border-radius:32px;
+}
+
+.logo,
+.brand-logo,
+.mobile-brand-logo{
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(135deg, rgba(122,92,255,1), rgba(151,132,255,.92) 54%, rgba(137,215,255,.90));
+  box-shadow:0 18px 36px rgba(122,92,255,.26), inset 0 1px 0 rgba(255,255,255,.42);
+}
+
+.logo::after,
+.brand-logo::after,
+.mobile-brand-logo::after{
+  content:"";
+  position:absolute;
+  inset:4px auto auto 5px;
+  width:42%;
+  height:28%;
+  border-radius:999px;
+  background:rgba(255,255,255,.44);
+  filter:blur(3px);
+}
+
+input,
+.student-objective-editor textarea{
+  background:rgba(255,255,255,.84);
+  border:1px solid rgba(122,92,255,.14);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.82);
+  transition:border-color .2s ease, box-shadow .2s ease, background .2s ease, transform .2s ease;
+}
+
+input:focus,
+.student-objective-editor textarea:focus{
+  background:rgba(255,255,255,.96);
+  border-color:rgba(122,92,255,.52);
+  box-shadow:0 0 0 4px rgba(122,92,255,.10), inset 0 1px 0 rgba(255,255,255,.90);
+}
+
+/* Botões: translúcidos, mas com affordance clara */
+.btn,
+.mini-btn,
+.checklist-btn,
+.nav-logout,
+.student-objective-btn,
+.hamburger-btn{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.58);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55), 0 10px 24px rgba(63,37,128,.08);
+}
+
+.btn::after,
+.mini-btn::after,
+.checklist-btn::after,
+.student-objective-btn::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:linear-gradient(135deg, rgba(255,255,255,.32), transparent 45%);
+  opacity:.75;
+  transition:opacity .2s ease, transform .2s ease;
+}
+
+.btn:hover::after,
+.mini-btn:hover::after,
+.checklist-btn:hover::after,
+.student-objective-btn:hover::after{
+  opacity:1;
+  transform:translateY(-12%);
+}
+
+.btn-primary,
+.checklist-btn:not(.secondary){
+  border-color:rgba(255,255,255,.42);
+  background:
+    linear-gradient(135deg, rgba(118,87,255,.98), rgba(169,147,255,.96) 58%, rgba(137,215,255,.90));
+  box-shadow:0 18px 36px rgba(122,92,255,.24), inset 0 1px 0 rgba(255,255,255,.38);
+}
+
+.btn-soft,
+.checklist-btn.secondary,
+.mini-btn.secondary{
+  background:rgba(255,255,255,.68);
+  -webkit-backdrop-filter:blur(14px) saturate(135%);
+  backdrop-filter:blur(14px) saturate(135%);
+  color:var(--lg-ink);
+  border-color:rgba(122,92,255,.13);
+}
+
+.btn:focus-visible,
+.mini-btn:focus-visible,
+.checklist-btn:focus-visible,
+.nav-btn:focus-visible,
+.nav-logout:focus-visible,
+.hamburger-btn:focus-visible,
+.student-objective-btn:focus-visible,
+input:focus-visible,
+textarea:focus-visible{
+  outline:none;
+  box-shadow:0 0 0 4px rgba(122,92,255,.16), 0 0 0 1px rgba(122,92,255,.48), var(--lg-shadow-soft);
+}
+
+/* Sidebar glass premium */
+.sidebar{
+  background:linear-gradient(180deg, rgba(255,255,255,.44), rgba(255,255,255,.18));
+  border-right:1px solid rgba(255,255,255,.48);
+}
+
+.sidebar-shell{
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.72), rgba(255,255,255,.34)),
+    rgba(255,255,255,.40);
+  border:1px solid rgba(255,255,255,.62);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.72), 0 24px 70px rgba(63,37,128,.11);
+}
+
+.brand{
+  border-radius:20px;
+  background:rgba(255,255,255,.36);
+  border:1px solid rgba(255,255,255,.42);
+}
+
+.nav-label{
+  color:rgba(103,95,128,.82);
+}
+
+.nav-btn{
+  background:transparent;
+  border:1px solid transparent;
+  color:var(--lg-ink);
+}
+
+.nav-btn:hover{
+  background:rgba(255,255,255,.52);
+  border-color:rgba(255,255,255,.54);
+  box-shadow:0 12px 28px rgba(63,37,128,.08), inset 0 1px 0 rgba(255,255,255,.62);
+}
+
+.nav-btn.active{
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.72), rgba(122,92,255,.13)),
+    rgba(255,255,255,.54);
+  color:var(--primary);
+  border-color:rgba(122,92,255,.18);
+  box-shadow:0 14px 34px rgba(122,92,255,.13), inset 0 1px 0 rgba(255,255,255,.76);
+}
+
+.nav-btn::before{
+  opacity:.66;
+}
+
+.nav-btn.active::before{
+  opacity:1;
+}
+
+/* Topbar e mobile */
+.topbar{
+  position:sticky;
+  top:16px;
+  z-index:50;
+  padding:12px 14px;
+  border-radius:28px;
+  background:linear-gradient(135deg, rgba(255,255,255,.70), rgba(255,255,255,.36));
+  border:1px solid rgba(255,255,255,.60);
+  box-shadow:0 16px 46px rgba(63,37,128,.08), inset 0 1px 0 rgba(255,255,255,.75);
+}
+
+.mobile-topbar{
+  background:linear-gradient(135deg, rgba(255,255,255,.86), rgba(255,255,255,.56));
+  border-bottom:1px solid rgba(255,255,255,.60);
+  box-shadow:0 10px 28px rgba(63,37,128,.08);
+}
+
+/* Dashboard: vidro só onde ajuda, texto em superfícies mais sólidas */
+.dashboard-hero,
+.hero-card{
+  background:
+    radial-gradient(circle at 90% 0%, rgba(219,255,102,.32), transparent 26%),
+    radial-gradient(circle at 8% 10%, rgba(122,92,255,.17), transparent 34%),
+    linear-gradient(135deg, rgba(255,255,255,.88), rgba(255,255,255,.58));
+  border:1px solid rgba(255,255,255,.68);
+  box-shadow:var(--lg-shadow);
+}
+
+.hero-kicker,
+.badge,
+.mini-badge,
+.finance-pill,
+.checklist-kicker{
+  -webkit-backdrop-filter:blur(12px) saturate(130%);
+  backdrop-filter:blur(12px) saturate(130%);
+  background:rgba(255,255,255,.58);
+  border:1px solid rgba(122,92,255,.13);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.62);
+}
+
+.dashboard-hero p,
+.external-trail-top p,
+.featured-checklist p{
+  color:var(--lg-muted);
+}
+
+/* Cards internos: menos vidro, mais leitura */
+.mini-stat,
+.quick-link,
+.feedback-box,
+.stat,
+.material-item,
+.diag-item,
+.tip-item,
+.video-item,
+.live-box,
+.payment-item,
+.student-class-card,
+.lesson-block,
+.calendar-day,
+.progress-step,
+.pdf-thumb,
+.empty,
+.student-objective-text{
+  background:rgba(255,255,255,.78);
+  border:1px solid rgba(122,92,255,.10);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.62), 0 8px 22px rgba(63,37,128,.05);
+}
+
+.feedback-note,
+.lesson-block p,
+.payment-detail-code,
+.live-url{
+  background:rgba(255,255,255,.46);
+  border-radius:14px;
+}
+
+.feedback-note{
+  padding:4px 2px;
+}
+
+.progress-bar{
+  background:rgba(255,255,255,.58);
+  border-color:rgba(122,92,255,.13);
+  box-shadow:inset 0 1px 4px rgba(63,37,128,.08);
+}
+
+.progress-fill{
+  background:linear-gradient(90deg, #7657ff, #a993ff 58%, #87d7ff);
+  box-shadow:0 0 18px rgba(122,92,255,.26);
+}
+
+/* Checklist/treinamento em destaque */
+.featured-checklist{
+  border-color:rgba(255,255,255,.72);
+  background:
+    radial-gradient(circle at 92% 18%, rgba(219,255,102,.34), transparent 27%),
+    radial-gradient(circle at 6% 0%, rgba(122,92,255,.18), transparent 32%),
+    linear-gradient(135deg, rgba(255,255,255,.88), rgba(255,255,255,.56));
+}
+
+.checklist-embed{
+  background:rgba(255,255,255,.74);
+  border-color:rgba(255,255,255,.70);
+  box-shadow:var(--lg-shadow);
+}
+
+/* Calendário mais limpo */
+.calendar-day.has-class{
+  background:
+    linear-gradient(180deg, rgba(122,92,255,.12), rgba(255,255,255,.82));
+  border-color:rgba(122,92,255,.20);
+}
+
+.calendar-day.today{
+  outline:2px solid rgba(219,255,102,.92);
+  box-shadow:0 0 0 5px rgba(219,255,102,.16), inset 0 1px 0 rgba(255,255,255,.76);
+}
+
+.mini-class{
+  background:rgba(122,92,255,.10);
+  color:var(--primary);
+  border:1px solid rgba(122,92,255,.10);
+}
+
+/* Financeiro: pago fica visualmente verde, pendente mantém alerta suave */
+.payment-item.payment-paid,
+.payment-item:has(.status-paid){
+  background:
+    linear-gradient(135deg, rgba(239,255,230,.88), rgba(255,255,255,.76));
+  border-color:rgba(95,159,54,.24);
+}
+
+.status-paid,
+.finance-pill.paid{
+  color:#3e7c21;
+  background:rgba(219,255,102,.58);
+  border-color:rgba(95,159,54,.20);
+}
+
+.status-pending,
+.finance-pill.pending{
+  color:#a83e61;
+  background:rgba(255,120,150,.13);
+  border-color:rgba(255,120,150,.18);
+}
+
+/* Tabelas/listas dinâmicas respirando mais */
+.dashboard-v3,
+.lesson-list,
+.materials-list,
+.diag-list,
+.tips-list,
+.videos-list,
+.payments-list,
+.student-calendar-shell,
+.section-card-content{
+  gap:16px;
+}
+
+.main{
+  padding:24px clamp(18px, 2.4vw, 34px);
+}
+
+.shell{
+  max-width:1320px;
+}
+
+/* Fallback sem backdrop-filter: mantém aparência premium sem embaçar */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
+  .login-card,
+  .sidebar,
+  .sidebar-shell,
+  .mobile-topbar,
+  .topbar,
+  .panel,
+  .student-card,
+  .lesson-card,
+  .featured-checklist,
+  .external-trail-top,
+  .external-trail-frame,
+  .checklist-embed,
+  .toast{
+    background:#ffffff !important;
+    border-color:rgba(122,92,255,.14) !important;
+  }
+}
+
+/* Responsividade refinada */
+@media (max-width:1180px){
+  .topbar{
+    top:10px;
+  }
+}
+
+@media (max-width:768px){
+  body::before{
+    width:320px;
+    height:320px;
+    left:-160px;
+    top:80px;
+  }
+
+  body::after{
+    width:360px;
+    height:360px;
+    right:-190px;
+    bottom:-140px;
+  }
+
+  .sidebar{
+    background:linear-gradient(135deg, rgba(255,255,255,.92), rgba(255,255,255,.70));
+  }
+
+  .sidebar-shell,
+  .dashboard-hero,
+  .panel,
+  .lesson-card,
+  .featured-checklist{
+    border-radius:22px;
+  }
+
+  .mobile-top-actions{
+    -webkit-backdrop-filter:blur(16px) saturate(140%);
+    backdrop-filter:blur(16px) saturate(140%);
+    background:rgba(255,255,255,.62);
+    border-bottom:1px solid rgba(255,255,255,.62);
+  }
+
+  .login-card{
+    padding:28px;
+    border-radius:26px;
+  }
+
+  .main{
+    padding:12px 14px 24px;
+  }
+}
+
+@media (max-width:480px){
+  .btn,
+  .checklist-btn{
+    width:100%;
+    justify-content:center;
+  }
+
+  .checklist-actions,
+  .top-actions,
+  .pay-actions,
+  .item-actions{
+    width:100%;
+  }
+
+  .calendar-day{
+    min-height:62px;
+    border-radius:14px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -3522,7 +4158,7 @@ function renderPayments(){
       : "";
 
     return `
-    <div class="payment-item ${hasAction ? "clickable-payment" : "no-payment-action"}" data-action-label="${esc(methodInfo.actionLabel)}" onclick="paymentAction('${esc(p.id)}')">
+    <div class="payment-item ${p.status === "paid" ? "payment-paid" : ""} ${hasAction ? "clickable-payment" : "no-payment-action"}" data-action-label="${esc(methodInfo.actionLabel)}" onclick="paymentAction('${esc(p.id)}')">
       <div class="item-top">
         <div>
           <strong>${esc(p.reference || "Cobrança")}</strong>
