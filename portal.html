@@ -3268,6 +3268,76 @@ img, iframe, video, canvas, svg{
     margin-top:10px;
   }
 }
+
+
+/* ============================================================
+   MOBILE DRAWER FIX — sidebar clicável + perfil/objetivo funcional
+   Corrige stacking context: overlay não fica mais por cima do menu.
+   ============================================================ */
+.app{
+  z-index:auto !important;
+}
+
+@media (max-width:960px){
+  body.sidebar-is-open{
+    overflow:hidden;
+  }
+
+  .sidebar-overlay{
+    z-index:800 !important;
+    background:rgba(29,22,48,.42) !important;
+    -webkit-backdrop-filter:none !important;
+    backdrop-filter:none !important;
+    pointer-events:none;
+  }
+
+  .sidebar-overlay.show{
+    pointer-events:auto;
+  }
+
+  .sidebar{
+    z-index:1000 !important;
+    pointer-events:auto !important;
+    opacity:1 !important;
+    filter:none !important;
+    transform:translate3d(-105%,0,0) !important;
+    will-change:transform;
+  }
+
+  .sidebar.open{
+    transform:translate3d(0,0,0) !important;
+  }
+
+  .sidebar-shell{
+    pointer-events:auto !important;
+    overflow-y:auto !important;
+    -webkit-overflow-scrolling:touch;
+    touch-action:pan-y;
+    filter:none !important;
+  }
+
+  .sidebar.open .brand,
+  .sidebar.open .student-card,
+  .sidebar.open .student-objective-area,
+  .sidebar.open .student-objective-btn,
+  .sidebar.open .student-objective-editor,
+  .sidebar.open .student-objective-editor textarea,
+  .sidebar.open .student-objective-actions button,
+  .sidebar.open .nav,
+  .sidebar.open .nav-btn,
+  .sidebar.open .nav-logout{
+    pointer-events:auto !important;
+  }
+
+  .mobile-topbar{
+    z-index:700 !important;
+  }
+
+  .mobile-top-actions{
+    z-index:650 !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -3293,7 +3363,7 @@ img, iframe, video, canvas, svg{
         <div class="mobile-brand-logo">hd</div>
         <span class="mobile-brand-name" id="mobileSectionTitle">Portal da aluna</span>
       </div>
-      <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()" aria-label="Abrir menu">
+      <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()" aria-label="Abrir menu" aria-expanded="false" aria-controls="sidebar">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -3779,15 +3849,19 @@ function toggleSidebar(){
   else {
     sidebar.classList.add("open");
     overlay.classList.add("show");
+    document.body.classList.add("sidebar-is-open");
     btn.classList.add("active");
     btn.setAttribute("aria-label","Fechar menu");
+    btn.setAttribute("aria-expanded","true");
   }
 }
 function closeSidebar(){
   $("sidebar").classList.remove("open");
   $("sidebarOverlay").classList.remove("show");
+  document.body.classList.remove("sidebar-is-open");
   $("hamburgerBtn").classList.remove("active");
   $("hamburgerBtn").setAttribute("aria-label","Abrir menu");
+  $("hamburgerBtn").setAttribute("aria-expanded","false");
 }
 
 function isDiagnosticDone(item){
