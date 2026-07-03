@@ -2431,7 +2431,844 @@ textarea:focus-visible{
   }
 }
 
-  </style>
+
+/* ============================================================
+   PRÓXIMA AULA — POST-IT PREMIUM COMPACTO
+   Mantém o mini feedback maior e transforma a próxima aula em widget.
+   ============================================================ */
+.dashboard-row-focus{
+  grid-template-columns:minmax(260px, 318px) minmax(0, 1fr) !important;
+  gap:24px !important;
+  align-items:start !important;
+}
+
+.feedback-card{
+  min-height:310px;
+}
+
+.next-card{
+  --note-paper:rgba(255,248,214,.94);
+  --note-paper-2:rgba(255,242,190,.90);
+  --note-ink:#231b36;
+  --note-muted:#756d86;
+  align-self:start !important;
+  min-height:auto !important;
+  padding:20px !important;
+  border-radius:26px !important;
+  overflow:visible !important;
+  isolation:isolate;
+  transform:rotate(-.55deg);
+  background:
+    radial-gradient(circle at 90% 12%, rgba(255,255,255,.84), transparent 22%),
+    radial-gradient(circle at 6% 96%, rgba(219,255,102,.30), transparent 30%),
+    linear-gradient(145deg, var(--note-paper), var(--note-paper-2)) !important;
+  border:1px solid rgba(197,165,74,.22) !important;
+  box-shadow:
+    0 18px 42px rgba(98,73,24,.12),
+    0 6px 16px rgba(98,73,24,.06),
+    inset 0 1px 0 rgba(255,255,255,.78) !important;
+}
+
+.next-card:hover{
+  transform:rotate(-.25deg) translateY(-3px) !important;
+  box-shadow:
+    0 24px 54px rgba(98,73,24,.16),
+    0 8px 20px rgba(98,73,24,.08),
+    inset 0 1px 0 rgba(255,255,255,.82) !important;
+}
+
+.next-card::before{
+  content:"";
+  position:absolute;
+  z-index:3;
+  top:-12px;
+  left:50%;
+  width:92px;
+  height:25px;
+  border-radius:999px;
+  transform:translateX(-50%) rotate(-2deg);
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.72), rgba(255,255,255,.34)),
+    rgba(221,202,255,.56);
+  border:1px solid rgba(255,255,255,.70);
+  box-shadow:
+    0 8px 18px rgba(63,37,128,.10),
+    inset 0 1px 0 rgba(255,255,255,.75);
+  opacity:1;
+  pointer-events:none;
+  mask:none;
+}
+
+.next-card::after{
+  content:"";
+  position:absolute;
+  z-index:2;
+  right:22px;
+  top:32px;
+  width:8px;
+  height:8px;
+  border-radius:999px;
+  background:rgba(122,92,255,.32);
+  box-shadow:0 0 0 6px rgba(122,92,255,.06);
+  pointer-events:none;
+}
+
+.next-note-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:18px;
+}
+
+.next-note-label{
+  display:inline-flex;
+  width:fit-content;
+  align-items:center;
+  gap:7px;
+  padding:7px 10px;
+  border-radius:999px;
+  color:#6e5b16;
+  font-size:.76rem;
+  font-weight:800;
+  letter-spacing:-.01em;
+  background:rgba(255,255,255,.54);
+  border:1px solid rgba(170,130,40,.14);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.70);
+}
+
+.next-note-label::before{
+  content:"";
+  width:7px;
+  height:7px;
+  border-radius:999px;
+  background:linear-gradient(135deg, #7657ff, #a993ff);
+  box-shadow:0 0 0 4px rgba(122,92,255,.09);
+}
+
+.next-note-status{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:fit-content;
+  padding:6px 9px;
+  border-radius:999px;
+  color:#527114;
+  background:rgba(219,255,102,.42);
+  border:1px solid rgba(95,159,54,.16);
+  font-size:.72rem;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+.next-class-box{
+  display:grid;
+  gap:12px;
+}
+
+.next-class-date{
+  display:block;
+  color:var(--note-ink);
+  font-family:"Sora", "Manrope", Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size:clamp(1.15rem, 2vw, 1.55rem);
+  font-weight:800;
+  line-height:1.12;
+  letter-spacing:-.055em;
+  max-width:12ch;
+}
+
+.next-card .dash-muted{
+  color:var(--note-muted);
+  font-size:.91rem;
+  line-height:1.5;
+  max-width:24ch;
+}
+
+.next-note-footer{
+  display:grid;
+  gap:10px;
+  padding-top:4px;
+}
+
+.next-note-countdown{
+  display:inline-flex;
+  width:fit-content;
+  align-items:center;
+  gap:7px;
+  padding:7px 10px;
+  border-radius:999px;
+  color:#7657ff;
+  background:rgba(255,255,255,.58);
+  border:1px solid rgba(122,92,255,.10);
+  font-size:.78rem;
+  font-weight:800;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.74);
+}
+
+.next-note-countdown::before{
+  content:"◷";
+  font-size:.82rem;
+  opacity:.75;
+}
+
+.next-calendar-btn{
+  width:100%;
+  justify-content:center;
+  min-height:42px;
+  color:#7657ff !important;
+  background:rgba(255,255,255,.62) !important;
+  border:1px solid rgba(122,92,255,.12) !important;
+  box-shadow:
+    0 12px 24px rgba(98,73,24,.08),
+    inset 0 1px 0 rgba(255,255,255,.72) !important;
+}
+
+.next-calendar-btn:hover{
+  background:rgba(255,255,255,.82) !important;
+  border-color:rgba(122,92,255,.24) !important;
+}
+
+@media (max-width:900px){
+  .dashboard-row-focus{
+    grid-template-columns:1fr !important;
+  }
+
+  .next-card{
+    transform:none;
+    max-width:none;
+  }
+
+  .next-card:hover{
+    transform:translateY(-2px) !important;
+  }
+
+  .next-class-date,
+  .next-card .dash-muted{
+    max-width:none;
+  }
+}
+
+@media (max-width:480px){
+  .next-note-header{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .next-note-status{
+    margin-left:0;
+  }
+}
+
+
+  
+
+/* ============================================================
+   RESPONSIVE SYSTEM PASS — TABLET + MOBILE
+   Ajusta layout sem alterar a lógica, preservando desktop.
+   ============================================================ */
+img, iframe, video, canvas, svg{
+  max-width:100%;
+}
+
+.app,
+.main,
+.shell,
+.dashboard-v3,
+.dashboard-hero,
+.dashboard-row-focus,
+.dashboard-row-support,
+.grid-2,
+.live-grid,
+.lesson-body,
+.calendar-grid,
+.topbar,
+.mobile-topbar,
+.mobile-top-actions{
+  min-width:0;
+}
+
+/* Desktop médio / tablet landscape: reduz densidade sem quebrar a estrutura */
+@media (max-width:1280px) and (min-width:961px){
+  .app{
+    grid-template-columns:clamp(246px, 23vw, 284px) minmax(0,1fr);
+  }
+
+  .sidebar{
+    padding:14px;
+  }
+
+  .sidebar-shell{
+    padding:14px;
+    gap:14px;
+  }
+
+  .student-card{
+    padding:14px;
+  }
+
+  .main{
+    padding:20px clamp(16px, 2vw, 26px);
+  }
+
+  .shell{
+    max-width:1180px;
+    gap:20px;
+  }
+
+  .topbar{
+    top:12px;
+    min-height:60px;
+    gap:12px;
+    padding:10px 12px;
+  }
+
+  .headline h1{
+    font-size:clamp(1.45rem, 2.25vw, 2.05rem);
+    white-space:nowrap;
+  }
+
+  .top-actions{
+    gap:8px;
+    justify-content:flex-end;
+  }
+
+  .top-actions .btn{
+    padding:11px 13px;
+    font-size:.82rem;
+    white-space:nowrap;
+  }
+
+  .dashboard-hero{
+    grid-template-columns:minmax(0,1fr) auto;
+    padding:28px;
+    gap:20px;
+  }
+
+  .dashboard-hero h2{
+    font-size:clamp(1.75rem, 3vw, 2.55rem);
+    max-width:20ch;
+  }
+
+  .dashboard-hero p{
+    max-width:58ch;
+    font-size:.96rem;
+  }
+
+  .hero-action{
+    padding:13px 17px;
+  }
+
+  .dashboard-row-focus{
+    grid-template-columns:minmax(244px, 292px) minmax(0,1fr) !important;
+    gap:20px !important;
+  }
+
+  .next-card{
+    padding:18px !important;
+    border-radius:24px !important;
+  }
+
+  .next-class-date{
+    font-size:clamp(1.1rem, 1.8vw, 1.38rem);
+  }
+
+  .feedback-card{
+    min-height:292px;
+  }
+
+  .feedback-note{
+    max-height:190px;
+  }
+
+  .diagnosis-side-card,
+  .finance-mini-card{
+    min-height:230px;
+  }
+}
+
+/* Tablet portrait e telas pequenas: navegação vira drawer para ganhar área útil */
+@media (max-width:960px){
+  .app{
+    grid-template-columns:1fr !important;
+  }
+
+  .mobile-topbar{
+    display:flex !important;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:12px 16px 10px;
+    position:sticky;
+    top:0;
+    z-index:100;
+  }
+
+  .mobile-brand{
+    min-width:0;
+  }
+
+  .mobile-brand-name{
+    max-width:58vw;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+
+  .hamburger-btn{
+    flex:0 0 auto;
+  }
+
+  .sidebar{
+    position:fixed !important;
+    top:0;
+    left:0;
+    width:min(86vw, 320px) !important;
+    max-width:320px;
+    height:100vh;
+    z-index:200;
+    transform:translateX(-100%);
+    transition:transform .28s cubic-bezier(.4,0,.2,1);
+    padding:16px;
+    border-right:1px solid rgba(119,92,255,.12);
+    box-shadow:4px 0 32px rgba(63,37,128,.14);
+  }
+
+  .sidebar.open{
+    transform:translateX(0);
+  }
+
+  .sidebar-shell{
+    height:100%;
+    max-height:calc(100vh - 32px);
+  }
+
+  .sidebar-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:199;
+    background:rgba(29,22,48,.34);
+    -webkit-backdrop-filter:blur(4px);
+    backdrop-filter:blur(4px);
+  }
+
+  .sidebar-overlay.show{
+    display:block;
+  }
+
+  .topbar{
+    display:none !important;
+  }
+
+  .mobile-top-actions{
+    display:grid !important;
+    grid-template-columns:repeat(3, minmax(0,1fr));
+    gap:8px;
+    padding:0 16px 12px;
+    position:sticky;
+    top:56px;
+    z-index:90;
+  }
+
+  .mobile-top-actions .btn{
+    min-width:0;
+    width:100%;
+    justify-content:center;
+    text-align:center;
+    padding:10px 9px;
+    font-size:.78rem;
+    white-space:nowrap;
+  }
+
+  .main{
+    padding:16px 16px 28px !important;
+  }
+
+  .shell,
+  .dashboard-v3{
+    gap:18px;
+  }
+
+  .dashboard-hero{
+    grid-template-columns:1fr !important;
+    padding:24px !important;
+    gap:18px;
+  }
+
+  .dashboard-hero h2{
+    max-width:18ch;
+    font-size:clamp(1.65rem, 5.8vw, 2.45rem);
+  }
+
+  .dashboard-hero p{
+    max-width:100%;
+    font-size:.95rem;
+  }
+
+  .hero-action-group{
+    justify-items:start;
+    width:100%;
+  }
+
+  .hero-action{
+    width:auto;
+    max-width:100%;
+  }
+
+  .dashboard-row-focus{
+    grid-template-columns:1fr !important;
+    gap:18px !important;
+  }
+
+  .next-card{
+    width:min(100%, 380px);
+    max-width:100%;
+    transform:none !important;
+  }
+
+  .next-card:hover{
+    transform:translateY(-2px) !important;
+  }
+
+  .next-class-date,
+  .next-card .dash-muted{
+    max-width:none;
+  }
+
+  .feedback-card{
+    min-height:auto;
+  }
+
+  .feedback-card .feedback-box{
+    min-height:220px;
+  }
+
+  .feedback-note{
+    max-height:260px;
+  }
+
+  .dashboard-row-support,
+  .diagnosis-finance-row,
+  .grid-2,
+  .live-grid,
+  .lesson-body{
+    grid-template-columns:1fr !important;
+  }
+
+  .diagnosis-side-card,
+  .finance-mini-card,
+  .dash-card,
+  .dash-card.compact{
+    min-height:auto !important;
+  }
+
+  .calendar-header{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .calendar-actions{
+    width:100%;
+    justify-content:flex-start;
+  }
+
+  .calendar-actions .mini-btn{
+    flex:1 1 auto;
+  }
+
+  .lesson-head,
+  .item-top{
+    align-items:flex-start;
+  }
+
+  .external-trail-top,
+  .featured-checklist{
+    grid-template-columns:1fr !important;
+    align-items:flex-start;
+  }
+
+  .checklist-actions{
+    justify-content:flex-start;
+  }
+
+  .external-trail-frame{
+    height:76vh;
+    min-height:560px;
+  }
+}
+
+/* Mobile confortável: menos densidade, botões tocáveis e cards sem overflow */
+@media (max-width:640px){
+  body{
+    font-size:14px;
+  }
+
+  .mobile-topbar{
+    padding:11px 14px 9px;
+  }
+
+  .mobile-top-actions{
+    grid-template-columns:1fr 1fr;
+    padding:0 14px 12px;
+    top:54px;
+  }
+
+  .mobile-top-actions .btn-primary{
+    grid-column:1 / -1;
+  }
+
+  .mobile-top-actions .btn{
+    white-space:normal;
+    line-height:1.15;
+    min-height:42px;
+  }
+
+  .main{
+    padding:14px 14px 24px !important;
+  }
+
+  .dashboard-v3,
+  .shell{
+    gap:16px;
+  }
+
+  .dashboard-hero,
+  .dash-card,
+  .progress-card-wide,
+  .materials-card,
+  .diagnostic-card,
+  .tips-card,
+  .videos-card,
+  .live-card,
+  .calendar-card{
+    padding:18px !important;
+    border-radius:22px !important;
+  }
+
+  .dashboard-hero h2{
+    font-size:clamp(1.55rem, 9vw, 2.15rem);
+    letter-spacing:-.05em;
+  }
+
+  .hero-kicker,
+  .badge,
+  .mini-badge,
+  .finance-pill{
+    font-size:.72rem;
+  }
+
+  .hero-action{
+    width:100%;
+    justify-content:center;
+  }
+
+  .next-card{
+    width:100%;
+    padding:18px !important;
+  }
+
+  .next-card::before{
+    width:74px;
+    height:21px;
+    top:-10px;
+  }
+
+  .next-note-header{
+    gap:8px;
+  }
+
+  .next-note-status{
+    font-size:.68rem;
+  }
+
+  .next-class-date{
+    font-size:clamp(1.22rem, 7vw, 1.58rem);
+    max-width:100%;
+  }
+
+  .next-calendar-btn{
+    min-height:44px;
+  }
+
+  .feedback-card .feedback-box{
+    min-height:0;
+  }
+
+  .feedback-note{
+    max-height:none;
+    overflow:visible;
+  }
+
+  .progress-meta{
+    align-items:flex-start;
+  }
+
+  .progress-meta .mini-btn{
+    width:100%;
+    justify-content:center;
+  }
+
+  .progress-steps{
+    grid-template-columns:1fr !important;
+  }
+
+  .finance-row{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:4px;
+  }
+
+  .lesson-head{
+    flex-direction:column;
+  }
+
+  .lesson-head .mini-btn,
+  .pay-actions .mini-btn,
+  .item-actions .mini-btn{
+    width:100%;
+    justify-content:center;
+  }
+
+  .calendar-grid{
+    gap:4px;
+  }
+
+  .day-name{
+    padding:7px 2px;
+    font-size:.62rem;
+  }
+
+  .calendar-day{
+    min-height:58px;
+    padding:6px;
+    border-radius:13px;
+  }
+
+  .day-number{
+    font-size:.72rem;
+  }
+
+  .mini-class{
+    padding:5px;
+    font-size:.62rem;
+  }
+
+  .toast{
+    bottom:16px;
+  }
+}
+
+/* Celulares estreitos: evita qualquer scroll lateral */
+@media (max-width:420px){
+  .mobile-top-actions{
+    grid-template-columns:1fr;
+  }
+
+  .sidebar{
+    width:min(90vw, 310px) !important;
+    padding:12px;
+  }
+
+  .sidebar-shell{
+    max-height:calc(100vh - 24px);
+    padding:13px;
+    border-radius:22px;
+  }
+
+  .student-top{
+    align-items:flex-start;
+  }
+
+  .student-avatar{
+    width:46px;
+    height:46px;
+    border-radius:15px;
+  }
+
+  .nav-btn{
+    min-height:50px !important;
+    padding:10px 11px !important;
+  }
+
+  .main{
+    padding:12px 12px 22px !important;
+  }
+
+  .dashboard-hero,
+  .dash-card,
+  .progress-card-wide,
+  .materials-card,
+  .diagnostic-card,
+  .tips-card,
+  .videos-card,
+  .live-card,
+  .calendar-card,
+  .lesson-card,
+  .featured-checklist{
+    border-radius:20px !important;
+    padding:16px !important;
+  }
+
+  .dashboard-hero h2{
+    font-size:clamp(1.42rem, 10vw, 1.92rem);
+  }
+
+  .dashboard-hero p,
+  .dash-muted,
+  .material-item p,
+  .diag-item p,
+  .tip-item p,
+  .video-item p,
+  .live-box p,
+  .payment-item p{
+    font-size:.88rem;
+  }
+
+  .next-note-header{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .next-note-status{
+    margin-left:0;
+  }
+
+  .calendar-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    width:100%;
+  }
+
+  .calendar-actions .mini-btn{
+    width:100%;
+  }
+
+  .calendar-day{
+    min-height:52px;
+    padding:5px 3px;
+  }
+
+  .mini-class{
+    display:none;
+  }
+
+  .calendar-day.has-class::after{
+    content:"";
+    width:6px;
+    height:6px;
+    border-radius:999px;
+    background:var(--primary);
+    justify-self:center;
+  }
+
+  .payment-item.clickable-payment::after,
+  .payment-item.no-payment-action::after{
+    position:static;
+    display:block;
+    margin-top:10px;
+  }
+}
+</style>
 </head>
 <body>
   <section class="login-screen" id="loginScreen">
@@ -2566,12 +3403,18 @@ textarea:focus-visible{
             </div>
 
             <div class="dashboard-row-focus">
-              <div class="panel dash-card next-card">
-                <div class="section-title"><h3>Próxima aula</h3></div>
+              <div class="panel dash-card next-card" aria-labelledby="nextClassTitle">
+                <div class="next-note-header">
+                  <span class="next-note-label" id="nextClassTitle">Próxima aula</span>
+                  <span class="next-note-status" id="nextClassStatus">a definir</span>
+                </div>
                 <div class="next-class-box">
                   <span class="next-class-date" id="nextClassStat">—</span>
                   <p class="dash-muted" id="nextClassHint">Quando houver uma aula futura cadastrada, ela aparece aqui.</p>
-                  <button class="mini-btn" onclick="goSection('calendario')">Ver calendário</button>
+                  <div class="next-note-footer">
+                    <span class="next-note-countdown" id="nextClassCountdown">aguardando data</span>
+                    <button class="mini-btn next-calendar-btn" onclick="goSection('calendario')">Ver calendário</button>
+                  </div>
                 </div>
               </div>
 
@@ -3539,6 +4382,18 @@ function renderDashboard(){
 
   $("nextClassStat").textContent = next ? `${dateBR(next.class_date)} • ${String(next.class_time||"").slice(0,5)}` : "Nenhuma aula marcada";
   if($("nextClassHint")) $("nextClassHint").textContent = next ? (next.notes || "Sua próxima aula já está no calendário.") : "Quando houver uma aula futura cadastrada, ela aparece aqui.";
+  if($("nextClassStatus")) $("nextClassStatus").textContent = next ? "confirmada" : "a definir";
+  if($("nextClassCountdown")){
+    const nextDiff = next ? daysUntil(next.class_date) : null;
+    let nextCountdown = "aguardando data";
+    if(nextDiff !== null){
+      if(nextDiff > 1) nextCountdown = `em ${nextDiff} dias`;
+      if(nextDiff === 1) nextCountdown = "amanhã";
+      if(nextDiff === 0) nextCountdown = "hoje";
+      if(nextDiff < 0) nextCountdown = "revisar data";
+    }
+    $("nextClassCountdown").textContent = nextCountdown;
+  }
   $("nextClassLive").textContent = next ? `${dateBR(next.class_date)} às ${String(next.class_time||"").slice(0,5)}${next.notes ? " • " + next.notes : ""}` : "Nenhuma aula futura cadastrada.";
   if($("elosText")) $("elosText").textContent = profile.elos_url || "https://elos.vc/sala/teacherdebora";
   if($("materialsStat")) $("materialsStat").textContent = materials.length;
@@ -4270,6 +5125,12 @@ function goSection(target){
     "Quando houver uma aula futura cadastrada, ela aparece aqui.": "When an upcoming class is registered, it will appear here.",
     "Sua próxima aula já está no calendário.": "Your next class is already on the calendar.",
     "Ver calendário": "View calendar",
+    "confirmada": "confirmed",
+    "a definir": "to be set",
+    "aguardando data": "waiting for date",
+    "amanhã": "tomorrow",
+    "hoje": "today",
+    "revisar data": "review date",
     "Mini feedback": "Mini feedback",
     "Observação da professora": "Teacher's note",
     "Assim que sua professora registrar um feedback no admin, ele aparece aqui.": "As soon as your teacher adds feedback in the admin panel, it will appear here.",
@@ -4473,12 +5334,14 @@ function goSection(target){
       core = core.replace(/vencido há (\d+) day\(s\)/g, "overdue by $1 day(s)");
       core = core.replace(/R\$ ([0-9.,]+) • due/g, "R$ $1 • due");
       core = core.replace(/Aula •/g, "Class •");
+      core = core.replace(/em (\d+) dias/g, "in $1 days");
     } else {
       core = core.replace(/(\d+) pending/g, "$1 pendente(s)");
       core = core.replace(/(\d+) of (\d+) steps completed/g, "$1 de $2 etapas concluídas");
       core = core.replace(/due in (\d+) day\(s\)/g, "vence em $1 dia(s)");
       core = core.replace(/overdue by (\d+) day\(s\)/g, "vencido há $1 dia(s)");
       core = core.replace(/Class •/g, "Aula •");
+      core = core.replace(/in (\d+) days/g, "em $1 dias");
     }
 
     return leading + core + trailing;
