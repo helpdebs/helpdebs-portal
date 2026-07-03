@@ -3857,6 +3857,218 @@ img, iframe, video, canvas, svg{
   }
 }
 
+
+
+/* ============================================================
+   MOBILE MENU UX PASS — itens maiores + nav ocupa a tela
+   Logout fixo no fundo do drawer, com rolagem só na lista.
+   ============================================================ */
+@media (max-width:960px){
+  body.sidebar-is-open{
+    overflow:hidden !important;
+    touch-action:auto !important;
+  }
+
+  .sidebar{
+    width:min(92vw, 380px) !important;
+    max-width:min(92vw, 380px) !important;
+    height:100dvh !important;
+    min-height:100dvh !important;
+    padding:calc(12px + env(safe-area-inset-top, 0px)) 12px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .sidebar-shell{
+    height:100% !important;
+    max-height:none !important;
+    min-height:0 !important;
+    display:flex !important;
+    flex-direction:column !important;
+    gap:12px !important;
+    padding:14px !important;
+    overflow:hidden !important;
+    border-radius:26px !important;
+  }
+
+  .brand{
+    flex:0 0 auto !important;
+    min-height:58px !important;
+    padding:10px 12px !important;
+  }
+
+  .brand-logo{
+    width:44px !important;
+    height:44px !important;
+    border-radius:15px !important;
+  }
+
+  .brand strong{
+    font-size:1rem !important;
+    line-height:1.15 !important;
+  }
+
+  .brand span{
+    font-size:.82rem !important;
+  }
+
+  .student-card{
+    flex:0 0 auto !important;
+    padding:12px !important;
+    gap:8px !important;
+    border-radius:22px !important;
+    overflow:visible !important;
+  }
+
+  .student-top{
+    gap:10px !important;
+  }
+
+  .student-avatar{
+    width:46px !important;
+    height:46px !important;
+    border-radius:15px !important;
+    font-size:1.05rem !important;
+  }
+
+  .student-name{
+    font-size:1rem !important;
+    line-height:1.15 !important;
+  }
+
+  .student-level{
+    font-size:.76rem !important;
+    line-height:1.2 !important;
+  }
+
+  .student-objective-area{
+    display:grid !important;
+    gap:7px !important;
+  }
+
+  .student-objective-btn{
+    min-height:34px !important;
+    padding:7px 12px !important;
+    font-size:.78rem !important;
+  }
+
+  .student-objective-editor textarea{
+    min-height:72px !important;
+    font-size:.86rem !important;
+  }
+
+  .nav{
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    display:flex !important;
+    flex-direction:column !important;
+    gap:8px !important;
+    padding:2px 2px 10px !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    -webkit-overflow-scrolling:touch !important;
+    touch-action:pan-y !important;
+    overscroll-behavior:contain !important;
+  }
+
+  .nav-label{
+    flex:0 0 auto !important;
+    padding:0 12px 2px !important;
+    font-size:.74rem !important;
+  }
+
+  .nav-btn{
+    flex:0 0 auto !important;
+    min-height:62px !important;
+    padding:13px 14px !important;
+    border-radius:18px !important;
+    grid-template-columns:28px minmax(0,1fr) !important;
+    column-gap:12px !important;
+  }
+
+  .nav-btn::before{
+    width:28px !important;
+    font-size:22px !important;
+  }
+
+  .nav-main{
+    font-size:1.03rem !important;
+    line-height:1.16 !important;
+    font-weight:800 !important;
+  }
+
+  .nav-sub,
+  .nav-btn small{
+    font-size:.82rem !important;
+    line-height:1.18 !important;
+    opacity:.72 !important;
+  }
+
+  .nav-logout{
+    flex:0 0 auto !important;
+    margin-top:0 !important;
+    position:sticky !important;
+    bottom:0 !important;
+    z-index:5 !important;
+    width:100% !important;
+    min-height:50px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    padding:13px 16px !important;
+    border-radius:18px !important;
+    font-size:.95rem !important;
+    background:rgba(255,120,150,.12) !important;
+    box-shadow:0 -10px 24px rgba(255,255,255,.82), 0 12px 28px rgba(63,37,128,.08) !important;
+  }
+
+  body.sidebar-is-open .hamburger-btn{
+    top:calc(14px + env(safe-area-inset-top, 0px)) !important;
+    right:14px !important;
+  }
+}
+
+@media (max-width:420px){
+  .sidebar{
+    width:min(94vw, 360px) !important;
+    max-width:min(94vw, 360px) !important;
+    padding:calc(10px + env(safe-area-inset-top, 0px)) 10px calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .sidebar-shell{
+    padding:12px !important;
+    gap:10px !important;
+  }
+
+  .brand{
+    min-height:54px !important;
+  }
+
+  .student-card{
+    padding:10px !important;
+  }
+
+  .nav{
+    gap:7px !important;
+  }
+
+  .nav-btn{
+    min-height:59px !important;
+    padding:12px 13px !important;
+  }
+
+  .nav-main{
+    font-size:1rem !important;
+  }
+
+  .nav-sub,
+  .nav-btn small{
+    font-size:.79rem !important;
+  }
+
+  .nav-logout{
+    min-height:48px !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -6115,4 +6327,4 @@ function goSection(target){
 </script>
 
 </body>
-</html>   
+</html>  
