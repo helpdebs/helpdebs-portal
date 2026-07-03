@@ -3338,6 +3338,123 @@ img, iframe, video, canvas, svg{
   }
 }
 
+
+
+/* ============================================================
+   FIX DEFINITIVO MOBILE — drawer sem overlay por cima
+   O overlay foi removido visualmente no mobile porque em WebView/iPhone
+   o backdrop-filter estava criando uma camada acima da sidebar.
+   Resultado: menu sem blur, clicável e totalmente visível.
+   ============================================================ */
+@media (max-width:960px){
+  html,
+  body{
+    width:100%;
+    max-width:100%;
+    overflow-x:hidden !important;
+  }
+
+  body.sidebar-is-open{
+    overflow:hidden !important;
+    touch-action:none;
+  }
+
+  /* Desliga a camada que estava deixando TUDO blur e bloqueando cliques */
+  .sidebar-overlay,
+  .sidebar-overlay.show{
+    display:none !important;
+    opacity:0 !important;
+    visibility:hidden !important;
+    pointer-events:none !important;
+    -webkit-backdrop-filter:none !important;
+    backdrop-filter:none !important;
+    background:transparent !important;
+  }
+
+  /* A sidebar vira uma folha real acima da página, sem depender do overlay */
+  .sidebar{
+    position:fixed !important;
+    inset:0 auto 0 0 !important;
+    width:min(92vw, 360px) !important;
+    max-width:min(92vw, 360px) !important;
+    height:100dvh !important;
+    min-height:100dvh !important;
+    z-index:2147483000 !important;
+    transform:translate3d(-110%,0,0) !important;
+    transition:transform .26s cubic-bezier(.2,.8,.2,1) !important;
+    padding:calc(14px + env(safe-area-inset-top, 0px)) 14px calc(14px + env(safe-area-inset-bottom, 0px)) !important;
+    opacity:1 !important;
+    filter:none !important;
+    pointer-events:auto !important;
+    overflow:visible !important;
+    background:rgba(255,255,255,.94) !important;
+    -webkit-backdrop-filter:none !important;
+    backdrop-filter:none !important;
+    border-right:1px solid rgba(122,92,255,.14) !important;
+    box-shadow:18px 0 54px rgba(29,22,48,.18) !important;
+  }
+
+  .sidebar.open{
+    transform:translate3d(0,0,0) !important;
+  }
+
+  .sidebar-shell{
+    height:100% !important;
+    max-height:none !important;
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    -webkit-overflow-scrolling:touch !important;
+    pointer-events:auto !important;
+    touch-action:pan-y !important;
+    filter:none !important;
+    opacity:1 !important;
+    background:rgba(255,255,255,.88) !important;
+    -webkit-backdrop-filter:none !important;
+    backdrop-filter:none !important;
+  }
+
+  .sidebar *,
+  .sidebar.open *{
+    pointer-events:auto !important;
+    filter:none !important;
+  }
+
+  /* Botão X sempre por cima para conseguir fechar */
+  body.sidebar-is-open .hamburger-btn{
+    position:fixed !important;
+    top:calc(12px + env(safe-area-inset-top, 0px)) !important;
+    right:12px !important;
+    z-index:2147483647 !important;
+    background:rgba(255,255,255,.94) !important;
+    border-color:rgba(122,92,255,.18) !important;
+    box-shadow:0 12px 28px rgba(29,22,48,.18) !important;
+  }
+
+  body.sidebar-is-open .mobile-topbar,
+  body.sidebar-is-open .mobile-top-actions,
+  body.sidebar-is-open .main{
+    pointer-events:none !important;
+  }
+
+  body.sidebar-is-open .hamburger-btn{
+    pointer-events:auto !important;
+  }
+
+  .student-card,
+  .student-objective-area,
+  .student-objective-btn,
+  .student-objective-editor,
+  .student-objective-editor textarea,
+  .student-objective-actions,
+  .student-objective-actions button,
+  .nav,
+  .nav-btn,
+  .nav-logout{
+    opacity:1 !important;
+    visibility:visible !important;
+  }
+}
+
 </style>
 </head>
 <body>
