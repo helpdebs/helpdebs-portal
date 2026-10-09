@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jogo de revisão | help.debs</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f4ff;--panel:rgba(255,255,255,.88);--solid:#fff;--text:#1d1630;--muted:#746b92;--line:rgba(119,92,255,.14);
+  --primary:#7657ff;--primary2:#5b3fe0;--accent:#dbff66;--danger:#e2557a;--dangerbg:#ffeef3;--success:#3f8a22;--successbg:#eef8e6;
+  --shadow:0 18px 44px rgba(63,37,128,.12);--r:22px
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font:16px/1.55 Manrope,system-ui,sans-serif;color:var(--text);min-height:100vh;
+  background:radial-gradient(1200px 600px at 10% -10%,#e9e3ff 0,transparent 60%),radial-gradient(900px 500px at 110% 10%,#e3f6ff 0,transparent 55%),var(--bg)}
+h1,h2,h3{font-family:Sora,sans-serif;letter-spacing:-.02em;margin:0}
+button{font:inherit;color:inherit}
+.wrap{max-width:760px;margin:0 auto;padding:22px 16px 80px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
+.logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--primary),#a58bff);color:#fff;display:grid;place-items:center;font:800 14px Sora}
+.brand b{display:block;font-family:Sora;font-size:15px}
+.brand span{font-size:12px;color:var(--primary);font-weight:700}
+.back{font-size:14px;font-weight:700;color:var(--muted);text-decoration:none;padding:8px 14px;border-radius:999px;background:var(--panel);border:1px solid var(--line)}
+.panel{background:var(--panel);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.7);border-radius:var(--r);box-shadow:var(--shadow);padding:24px}
+.hello h1{font-size:30px;margin-bottom:4px}
+.muted{color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0 26px}
+.stat{background:var(--solid);border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+.stat b{display:block;font:700 22px Sora}
+.stat span{font-size:12.5px;color:var(--muted);font-weight:600}
+.modes{display:grid;gap:12px}
+.mode{display:flex;gap:16px;align-items:center;text-align:left;width:100%;background:var(--solid);border:1.5px solid var(--line);border-radius:20px;padding:18px;cursor:pointer;transition:.15s}
+.mode:hover:not(:disabled){border-color:var(--primary);transform:translateY(-2px);box-shadow:var(--shadow)}
+.mode:disabled{opacity:.55;cursor:default}
+.mode .ic{width:52px;height:52px;flex-shrink:0;border-radius:16px;display:grid;place-items:center;font-size:24px;background:#f1edff}
+.mode h3{font-size:18px;margin-bottom:2px}
+.mode p{margin:0;font-size:14px;color:var(--muted)}
+.mode .go{margin-left:auto;font-weight:800;color:var(--primary);white-space:nowrap;font-size:14px}
+.pill{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:#f1edff;color:var(--primary);margin-left:6px;vertical-align:2px}
+
+/* rodada */
+.hud{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.bar{flex:1;height:8px;border-radius:8px;background:rgba(118,87,255,.12);overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),#a58bff);border-radius:8px;transition:width .3s}
+.hud .pts{font:700 15px Sora;white-space:nowrap}
+.streak{font-size:13px;font-weight:800;color:#b46a00;background:#fff4dd;border-radius:999px;padding:3px 10px;white-space:nowrap}
+.kind{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--primary);margin-bottom:8px}
+.prompt{font:600 21px/1.4 Sora;margin:0 0 20px}
+.prompt .blank{display:inline-block;min-width:70px;border-bottom:3px solid var(--primary);margin:0 4px}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;background:var(--solid);border:1.5px solid var(--line);border-radius:16px;padding:14px 16px;cursor:pointer;font-weight:600;transition:.12s}
+.opt:hover:not(:disabled){border-color:var(--primary)}
+.opt.sel{border-color:var(--primary);background:#f4f1ff}
+.opt.right{border-color:var(--success);background:var(--successbg);color:var(--success)}
+.opt.wrong{border-color:var(--danger);background:var(--dangerbg);color:var(--danger)}
+.opt:disabled{cursor:default}
+.tf{grid-template-columns:1fr 1fr}
+.tf .opt{text-align:center;font-size:17px}
+input.ans{width:100%;font:600 17px Manrope;border:1.5px solid var(--line);border-radius:16px;padding:14px 16px;background:var(--solid);color:var(--text)}
+input.ans:focus{outline:none;border-color:var(--primary)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{border:1.5px solid var(--line);background:var(--solid);border-radius:999px;padding:7px 14px;font-weight:700;cursor:pointer}
+.chip:hover:not(:disabled){border-color:var(--primary)}
+.chip:disabled{opacity:.25;cursor:default}
+.built{min-height:62px;border:1.5px dashed var(--line);border-radius:16px;padding:10px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:rgba(255,255,255,.6)}
+.built .chip{border-color:var(--primary);background:#f4f1ff}
+.built:empty::before{content:"Toque nas palavras na ordem certa";color:var(--muted);font-size:14px;padding-left:4px}
+.match{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.match .col{display:grid;gap:8px;align-content:start}
+.match .opt{font-size:14.5px;padding:11px 13px}
+.match .opt.paired{opacity:.5}
+.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}
+.btn{border:none;border-radius:999px;padding:13px 26px;font-weight:800;cursor:pointer;background:var(--primary);color:#fff;transition:.12s}
+.btn:hover:not(:disabled){background:var(--primary2)}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.ghost{background:var(--solid);color:var(--text);border:1.5px solid var(--line)}
+.fb{margin-top:18px;border-radius:16px;padding:14px 16px;font-size:15px}
+.fb.ok{background:var(--successbg);color:#2d6a16}
+.fb.no{background:var(--dangerbg);color:#a32c4e}
+.fb b{display:block;font-family:Sora;margin-bottom:2px}
+.fb .exp{color:var(--text);margin-top:6px}
+.fb .ansline{margin-top:4px;color:var(--text)}
+
+/* resultado */
+.res-top{text-align:center;padding:10px 0 6px}
+.res-top .big{font:800 54px Sora;line-height:1;margin:8px 0}
+.res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}
+.miss{border-top:1px solid var(--line);padding:12px 0;font-size:14.5px}
+.miss .q{font-weight:700}
+.miss .a{color:var(--success);font-weight:700}
+.loading{text-align:center;padding:60px 0;color:var(--muted)}
+.empty{text-align:center;padding:30px 10px}
+@media(max-width:560px){.stats,.res-grid{grid-template-columns:1fr 1fr 1fr}.stat b{font-size:18px}.prompt{font-size:18px}.mode{padding:14px}.mode .go{display:none}.match{gap:6px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="brand" href="portal.html"><div class="logo">hd</div><div><b>help.debs</b><span>jogo de revisão</span></div></a>
+    <a class="back" href="portal.html" id="backLink">← Portal</a>
+  </div>
+  <main id="app"><div class="loading">Carregando…</div></main>
+</div>
+
+<script>
+const SB_URL="https://pgdanuifukzisyyummpz.supabase.co";
+const SB_ANON="sb_publishable_81NM6F08rsXXSCgjWl4iSg_v99cdVpo";
+const sb=window.supabase.createClient(SB_URL,SB_ANON,{auth:{storageKey:'helpdebs-portal-auth',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+
+const PERIODO_DIAS=30;
+const TIPO_LABEL={multiple_choice:"Multiple choice",fill_blank:"Fill in the blank",match:"Match",unscramble:"Unscramble",true_false:"True or false",translate_pt_en:"Translate",spot_the_mistake:"Spot the mistake",sounds_natural:"Which sounds natural?"};
+const G={user:null,profile:null,packs:[],acts:[],answers:[],round:null};
+const $=id=>document.getElementById(id);
+const app=()=>$("app");
+const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const norm=s=>String(s??"").toLowerCase().normalize("NFKC").replace(/[’‘`]/g,"'").replace(/[“”]/g,'"').replace(/[.,!?;:"()]/g," ").replace(/\s+/g," ").trim();
+const CONTR=[["i'm","i am"],["you're","you are"],["it's","it is"],["don't","do not"],["doesn't","does not"],["didn't","did not"],["can't","cannot"],["won't","will not"],["isn't","is not"],["aren't","are not"],["i've","i have"],["i'd","i would"],["i'll","i will"],["that's","that is"],["there's","there is"],["let's","let us"],["wasn't","was not"],["haven't","have not"],["wouldn't","would not"],["couldn't","could not"],["shouldn't","should not"]];
+const expand=s=>{let t=" "+norm(s)+" ";CONTR.forEach(([a,b])=>{t=t.split(" "+a+" ").join(" "+b+" ")});return t.trim().replace(/\bcan not\b/g,"cannot")};
+const same=(a,b)=>expand(a)===expand(b);
+
+/* ---------------- boot ---------------- */
+(async function(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){location.href="login.html";return}
+  G.user=session.user;
+  const prof=await sb.from("profiles").select("full_name,nivel,level,role").eq("id",G.user.id).maybeSingle();
+  G.profile=prof.data||{};
+  await loadData();
+  home();
+})();
+
+async function loadData(){
+  const p=await sb.from("game_packs").select("id,titulo,tema,nivel,pack,published_at").eq("student_id",G.user.id).eq("status","published").order("published_at",{ascending:false});
+  G.packs=p.data||[];
+  if(G.packs.length){
+    const a=await sb.from("game_activities").select("id,pack_id,tipo,item_ids,data").in("pack_id",G.packs.map(x=>x.id));
+    G.acts=(a.data||[]).map(r=>({...r.data,id:r.id,pack_id:r.pack_id,tipo:r.tipo,item_ids:r.item_ids||[]}));
+  }
+  const ans=await sb.from("game_answers").select("item_ids,correta,created_at").eq("student_id",G.user.id).order("created_at",{ascending:false}).limit(1000);
+  G.answers=ans.data||[];
+}
+
+/* ---------------- histórico por item ---------------- */
+function itemStats(){
+  const st={};
+  G.answers.forEach(a=>(a.item_ids||[]).forEach(id=>{
+    const k=id; st[k]=st[k]||{ok:0,err:0,last:null};
+    a.correta?st[k].ok++:st[k].err++;
+    if(!st[k].last||a.created_at>st[k].last) st[k].last=a.created_at;
+  }));
+  return st;
+}
+const key=(packId,itemId)=>packId+":"+itemId;
+function priorityIds(pack){
+  const p=pack.pack||{};
+  return new Set(["vocabulario","estruturas","expressoes"].flatMap(k=>(p[k]||[]).filter(i=>i.prioritario).map(i=>i.id)));
+}
+
+/* ---------------- home ---------------- */
+function home(){
+  const name=(G.profile.full_name||"").split(" ")[0];
+  const last=G.packs[0];
+  const since=Date.now()-PERIODO_DIAS*864e5;
+  const periodPacks=G.packs.filter(p=>new Date(p.published_at).getTime()>=since);
+  const week=G.answers.filter(a=>new Date(a.created_at).getTime()>=Date.now()-7*864e5);
+  const acc=week.length?Math.round(100*week.filter(a=>a.correta).length/week.length):null;
+  const st=itemStats();
+  const toReview=Object.values(st).filter(s=>s.err>s.ok).length;
+  app().innerHTML=`
+  <div class="hello"><h1>${name?`Hi, ${esc(name)}!`:"Hi!"}</h1><p class="muted">Pick a mode and review what we saw in class.</p></div>
+  <div class="stats">
+    <div class="stat"><b>${G.packs.length}</b><span>aulas no jogo</span></div>
+    <div class="stat"><b>${acc===null?"—":acc+"%"}</b><span>acerto (7 dias)</span></div>
+    <div class="stat"><b>${toReview}</b><span>itens a revisar</span></div>
+  </div>
+  ${!G.packs.length?`<div class="panel empty"><h3>Nada por aqui ainda</h3><p class="muted">Assim que a Teacher Debs publicar o jogo da sua aula, ele aparece aqui.</p></div>`:`
+  <div class="modes">
+    <button class="mode" onclick="start('ultima_aula')">
+      <div class="ic">⚡</div>
+      <div><h3>Última aula</h3><p>${esc(last.titulo)} · 10–12 atividades · ~6 min</p></div><span class="go">Jogar →</span>
+    </button>
+    <button class="mode" onclick="start('revisao_periodo')" ${periodPacks.length?"":"disabled"}>
+      <div class="ic">🔁</div>
+      <div><h3>Revisão do mês</h3><p>${periodPacks.length} aula${periodPacks.length===1?"":"s"} misturada${periodPacks.length===1?"":"s"} · foco no que você errou · ~10 min</p></div><span class="go">Jogar →</span>
+    </button>
+    <button class="mode" disabled>
+      <div class="ic">🔥</div>
+      <div><h3>Hard <span class="pill">em breve</span></h3><p>Research & write, diálogos e mensagens reais</p></div>
+    </button>
+  </div>`}`;
+}
+
+/* ---------------- montagem das rodadas ---------------- */
+function orderNoRepeat(list){
+  // evita mais de 2 do mesmo tipo seguidos
+  const out=[];let pool=shuffle(list);
+  while(pool.length){
+    const bad=out.length>=2&&out[out.length-1].tipo===out[out.length-2].tipo?out[out.length-1].tipo:null;
+    let i=pool.findIndex(a=>a.tipo!==bad);if(i<0)i=0;
+    out.push(pool.splice(i,1)[0]);
+  }
+  return out;
+}
+function buildUltimaAula(){
+  const pack=G.packs[0];
+  const acts=G.acts.filter(a=>a.pack_id===pack.id);
+  const n=Math.min(acts.length,12);
+  const prio=priorityIds(pack);
+  const covered=new Set(),chosen=[];
+  let pool=shuffle(acts);
+  // 1º: cobrir os prioritários; 2º: cobrir o resto; 3º: completar
+  const score=a=>a.item_ids.filter(i=>!covered.has(i)).reduce((s,i)=>s+(prio.has(i)?3:1),0)+(a.item_ids.some(i=>prio.has(i))?0.5:0);
+  while(chosen.length<n&&pool.length){
+    pool.sort((x,y)=>score(y)-score(x));
+    const a=pool.shift();chosen.push(a);a.item_ids.forEach(i=>covered.add(i));
+  }
+  return {acts:orderNoRepeat(chosen),packIds:[pack.id]};
+}
+function buildPeriodo(){
+  const since=Date.now()-PERIODO_DIAS*864e5;
+  const packs=G.packs.filter(p=>new Date(p.published_at).getTime()>=since);
+  const ids=new Set(packs.map(p=>p.id));
+  const acts=G.acts.filter(a=>ids.has(a.pack_id));
+  const n=Math.min(acts.length,Math.max(15,Math.min(20,packs.length*5)));
+  const st=itemStats();
+  const prio={};packs.forEach(p=>prio[p.id]=priorityIds(p));
+  const errScore=a=>Math.max(0,...a.item_ids.map(i=>{const s=st[key(a.pack_id,i)];return s?(s.err-s.ok*0.5):0}));
+  const ageScore=a=>Math.max(0,...a.item_ids.map(i=>{const s=st[key(a.pack_id,i)];return s?.last?(Date.now()-new Date(s.last))/864e5:999}));
+  const pick=(list,k,used)=>{const r=[];for(const a of list){if(r.length>=k)break;if(!used.has(a.id)){r.push(a);used.add(a.id)}}return r};
+  const used=new Set();
+  const byErr=shuffle(acts).filter(a=>errScore(a)>0).sort((x,y)=>errScore(y)-errScore(x));
+  const byAge=shuffle(acts).sort((x,y)=>ageScore(y)-ageScore(x)+((prio[y.pack_id]&&y.item_ids.some(i=>prio[y.pack_id].has(i)))?5:0)-((prio[x.pack_id]&&x.item_ids.some(i=>prio[x.pack_id].has(i)))?5:0));
+  let chosen=[...pick(byErr,Math.round(n*.4),used),...pick(byAge,Math.round(n*.3),used)];
+  // aleatório, garantindo pelo menos 2 atividades de cada aula do período
+  packs.forEach(p=>{const have=chosen.filter(a=>a.pack_id===p.id).length;if(have<2)chosen.push(...pick(shuffle(acts.filter(a=>a.pack_id===p.id)),2-have,used))});
+  chosen.push(...pick(shuffle(acts),n-chosen.length,used));
+  return {acts:orderNoRepeat(chosen.slice(0,n)),packIds:packs.map(p=>p.id)};
+}
+
+/* ---------------- rodada ---------------- */
+async function start(modo){
+  const r=modo==="ultima_aula"?buildUltimaAula():buildPeriodo();
+  if(!r.acts.length){alert("Este pacote ainda não tem atividades.");return}
+  G.round={modo,acts:r.acts,i:0,points:0,streak:0,best:0,right:0,misses:[],id:null,answered:false};
+  const ins=await sb.from("game_rounds").insert({student_id:G.user.id,modo,pack_ids:r.packIds,total:r.acts.length}).select("id").single();
+  if(!ins.error)G.round.id=ins.data.id;
+  $("backLink").textContent="✕ Sair";$("backLink").onclick=e=>{if(!confirm("Sair da rodada? O progresso desta partida fica salvo até aqui."))e.preventDefault()};
+  renderAct();
+}
+
+function renderAct(){
+  const R=G.round,a=R.acts[R.i];R.answered=false;R.state={};
+  const pct=Math.round(100*R.i/R.acts.length);
+  let body="";
+  const opts=(list,cls="")=>`<div class="opts ${cls}">${list.map((o,k)=>`<button class="opt" data-v="${esc(o)}" onclick="choose(this)">${esc(o)}</button>`).join("")}</div>`;
+  switch(a.tipo){
+    case "multiple_choice": body=prompt(a.enunciado)+opts(shuffle(a.opcoes||[]));break;
+    case "sounds_natural": body=prompt(a.enunciado||"Which one sounds more natural?")+opts(shuffle(a.opcoes||[]));break;
+    case "true_false": body=prompt(a.enunciado)+opts(["True","False"],"tf");break;
+    case "fill_blank":
+      body=prompt(a.enunciado,true)+`<input class="ans" id="ans" autocomplete="off" placeholder="Type the missing word(s)" onkeydown="if(event.key==='Enter')check()">`
+        +(a.banco?.length?`<div class="chips">${shuffle(a.banco).map(w=>`<button class="chip" onclick="$('ans').value='${esc(w).replace(/'/g,"\\'")}';$('ans').focus()">${esc(w)}</button>`).join("")}</div>`:"");break;
+    case "translate_pt_en":
+      body=`<p class="muted" style="margin:-8px 0 6px">Translate into English:</p>`+prompt(a.enunciado)+`<input class="ans" id="ans" autocomplete="off" placeholder="Your answer in English" onkeydown="if(event.key==='Enter')check()">`;break;
+    case "spot_the_mistake":
+      body=`<p class="muted" style="margin:-8px 0 6px">Find the mistake and rewrite the sentence:</p>`+prompt(a.enunciado)+`<input class="ans" id="ans" autocomplete="off" value="${esc(a.enunciado)}" onkeydown="if(event.key==='Enter')check()">`;break;
+    case "unscramble":{
+      R.state.words=shuffle((a.palavras&&a.palavras.length?a.palavras:String(a.resposta_correta).split(/\s+/)).map((w,k)=>({w,k})));R.state.built=[];
+      body=prompt(a.enunciado||"Put the words in order.")+`<div class="built" id="built"></div><div class="chips" id="pool"></div>`;break;}
+    case "match":{
+      const pares=(a.pares||[]).map(p=>Array.isArray(p)?p:[p.a??p.left,p.b??p.right]);
+      R.state.pares=pares;R.state.sel=null;R.state.done={};R.state.errors=0;
+      body=prompt(a.enunciado||"Match the pairs.")+`<div class="match"><div class="col">${pares.map((p,k)=>`<button class="opt" id="L${k}" onclick="mPick('L',${k})">${esc(p[0])}</button>`).join("")}</div><div class="col">${shuffle(pares.map((p,k)=>({t:p[1],k}))).map(o=>`<button class="opt" id="R${o.k}" onclick="mPick('R',${o.k})">${esc(o.t)}</button>`).join("")}</div></div>`;break;}
+    default: body=prompt(a.enunciado);
+  }
+  const needsCheck=["fill_blank","translate_pt_en","spot_the_mistake","unscramble"].includes(a.tipo);
+  app().innerHTML=`
+  <div class="hud"><div class="bar"><i style="width:${pct}%"></i></div>${R.streak>=2?`<span class="streak">🔥 ${R.streak}</span>`:""}<span class="pts">${R.points} pts</span></div>
+  <div class="panel">
+    <div class="kind">${TIPO_LABEL[a.tipo]||a.tipo} · ${R.i+1}/${R.acts.length}</div>
+    ${body}
+    <div id="fb"></div>
+    <div class="actions" id="actions">${needsCheck?`<button class="btn" id="checkBtn" onclick="check()">Check</button>`:""}</div>
+  </div>`;
+  if(a.tipo==="unscramble")paintUnscramble();
+  $("ans")?.focus();
+}
+function prompt(t,blank){
+  let h=esc(t||"");
+  if(blank)h=h.replace(/_{2,}/g,'<span class="blank"></span>');
+  return `<p class="prompt">${h}</p>`;
+}
+function choose(btn){
+  const R=G.round,a=R.acts[R.i];if(R.answered)return;
+  const v=btn.dataset.v;
+  const correct=a.tipo==="true_false"?norm(v)===norm(a.resposta_correta):same(v,a.resposta_correta);
+  document.querySelectorAll(".opt").forEach(b=>{b.disabled=true;
+    const isRight=a.tipo==="true_false"?norm(b.dataset.v)===norm(a.resposta_correta):same(b.dataset.v,a.resposta_correta);
+    if(isRight)b.classList.add("right");else if(b===btn)b.classList.add("wrong")});
+  finish(correct,v);
+}
+function check(){
+  const R=G.round,a=R.acts[R.i];if(R.answered)return;
+  let v,correct;
+  if(a.tipo==="unscramble"){
+    v=R.state.built.map(x=>x.w).join(" ");if(!v)return;
+    correct=same(v,a.resposta_correta);
+  }else{
+    v=$("ans").value.trim();if(!v){$("ans").focus();return}
+    const ok=[a.resposta_correta,...(a.respostas_aceitas||[])].filter(Boolean);
+    correct=ok.some(x=>same(v,x));
+    if(!correct&&a.tipo==="spot_the_mistake"&&same(v,a.enunciado))correct=false;
+    $("ans").disabled=true;
+  }
+  finish(correct,v);
+}
+function paintUnscramble(){
+  const S=G.round.state,used=new Set(S.built.map(x=>x.k));
+  $("built").innerHTML=S.built.map((x,i)=>`<button class="chip" onclick="unPick(${i})">${esc(x.w)}</button>`).join("");
+  $("pool").innerHTML=S.words.map(x=>`<button class="chip" ${used.has(x.k)?"disabled":""} onclick="unAdd(${x.k})">${esc(x.w)}</button>`).join("");
+}
+function unAdd(k){const S=G.round.state;if(G.round.answered)return;S.built.push(S.words.find(x=>x.k===k));paintUnscramble()}
+function unPick(i){if(G.round.answered)return;G.round.state.built.splice(i,1);paintUnscramble()}
+function mPick(side,k){
+  const R=G.round,S=R.state;if(R.answered||S.done[k]&&side==="L"||Object.values(S.done).includes(k)&&side==="R")return;
+  if(!S.sel||S.sel.side===side){
+    document.querySelectorAll(`#${side==="L"?"L":"R"}${k}`).forEach(()=>{});
+    document.querySelectorAll(".match .opt.sel").forEach(b=>b.classList.remove("sel"));
+    S.sel={side,k};$(side+k).classList.add("sel");return;
+  }
+  const l=side==="L"?k:S.sel.k,r=side==="R"?k:S.sel.k;
+  document.querySelectorAll(".match .opt.sel").forEach(b=>b.classList.remove("sel"));S.sel=null;
+  if(l===r){S.done[l]=r;$("L"+l).classList.add("right");$("R"+r).classList.add("right");$("L"+l).disabled=$("R"+r).disabled=true;}
+  else{S.errors++;[$("L"+l),$("R"+r)].forEach(b=>{b.classList.add("wrong");setTimeout(()=>b.classList.remove("wrong"),500)});}
+  if(Object.keys(S.done).length===S.pares.length)finish(S.errors===0,`${S.errors} erro(s)`,S.errors);
+}
+function finish(correct,given,matchErrors){
+  const R=G.round,a=R.acts[R.i];R.answered=true;
+  if(correct){R.streak++;R.right++;R.best=Math.max(R.best,R.streak);
+    let bonus=R.streak===3?5:R.streak===5?10:R.streak===10?20:0;R.points+=10+bonus;R.lastBonus=bonus;}
+  else{R.streak=0;R.lastBonus=0;R.misses.push(a);
+    if(a.tipo==="match"&&matchErrors<=1){R.points+=5}}
+  const answerText=a.tipo==="match"?"":a.tipo==="true_false"?(norm(a.resposta_correta)==="true"?"True":"False"):a.resposta_correta;
+  $("fb").innerHTML=`<div class="fb ${correct?"ok":"no"}"><b>${correct?(R.lastBonus?`Correct! +${R.lastBonus} streak bonus`:"Correct!"):a.tipo==="match"?`Done, with ${matchErrors} mistake${matchErrors>1?"s":""}.`:"Not quite."}</b>
+    ${!correct&&answerText?`<div class="ansline">✓ ${esc(answerText)}</div>`:""}
+    ${a.explicacao?`<div class="exp">${esc(a.explicacao)}</div>`:""}</div>`;
+  $("actions").innerHTML=`<button class="btn" id="nextBtn" onclick="next()">${R.i+1<R.acts.length?"Continue →":"See results"}</button>`;
+  $("nextBtn").focus();
+  if(R.id)sb.from("game_answers").insert({round_id:R.id,activity_id:a.id,student_id:G.user.id,item_ids:a.item_ids.map(i=>key(a.pack_id,i)),resposta:String(given??"").slice(0,500),correta:!!correct}).then(({error})=>{if(error)console.warn(error)});
+  G.answers.unshift({item_ids:a.item_ids.map(i=>key(a.pack_id,i)),correta:!!correct,created_at:new Date().toISOString()});
+}
+function next(){
+  const R=G.round;R.i++;
+  if(R.i<R.acts.length){renderAct();window.scrollTo({top:0,behavior:"smooth"});return}
+  results();
+}
+async function results(){
+  const R=G.round,acc=Math.round(100*R.right/R.acts.length);
+  if(R.id)await sb.from("game_rounds").update({score:R.points,total:R.acts.length,finished_at:new Date().toISOString()}).eq("id",R.id);
+  $("backLink").textContent="← Portal";$("backLink").onclick=null;
+  const msg=acc>=90?"Outstanding.":acc>=70?"Nice work.":acc>=50?"Good effort. Let's go again.":"This one needs another round.";
+  app().innerHTML=`
+  <div class="panel">
+    <div class="res-top"><div class="kind">${R.modo==="ultima_aula"?"Última aula":"Revisão do mês"}</div><div class="big">${acc}%</div><h2>${msg}</h2></div>
+    <div class="res-grid">
+      <div class="stat"><b>${R.right}/${R.acts.length}</b><span>acertos</span></div>
+      <div class="stat"><b>${R.points}</b><span>pontos</span></div>
+      <div class="stat"><b>${R.best}</b><span>maior sequência</span></div>
+    </div>
+    ${R.misses.length?`<h3 style="margin:8px 0 4px;font-size:16px">Para revisar</h3>${R.misses.map(a=>`<div class="miss"><div class="q">${esc(a.enunciado)}</div>${a.tipo!=="match"?`<div class="a">✓ ${esc(a.tipo==="true_false"?(norm(a.resposta_correta)==="true"?"True":"False"):a.resposta_correta)}</div>`:""}${a.explicacao?`<div class="muted">${esc(a.explicacao)}</div>`:""}</div>`).join("")}`:`<p class="muted" style="text-align:center">Nenhum erro nesta rodada.</p>`}
+    <div class="actions" style="justify-content:center"><button class="btn ghost" onclick="home()">Voltar</button><button class="btn" onclick="start('${R.modo}')">Jogar de novo</button></div>
+  </div>`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+</script>
+</body>
+</html>
