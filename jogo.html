@@ -260,8 +260,7 @@ function faceStyle(size){
   return `background-image:url(${IMG});background-size:${IMG_W*s}px ${IMG_H*s}px;background-position:${-(c.x*s-size/2)}px ${-(c.y*s-size/2)}px`;
 }
 function avatarHTML(size,cls="avatar",inner=""){
-  const st=faceStyle(size);
-  if(st)return `<div class="${cls}" style="${st}">${inner}</div>`;
+  /* avatar sempre com a inicial do nome, sem foto */
   const n=(G.profile.full_name||"?").trim()[0]||"?";
   return `<div class="${cls} letter">${esc(n.toUpperCase())}${inner}</div>`;
 }
