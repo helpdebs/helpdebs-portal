@@ -194,7 +194,13 @@ const SB_URL="https://pgdanuifukzisyyummpz.supabase.co";
 const SB_ANON="sb_publishable_81NM6F08rsXXSCgjWl4iSg_v99cdVpo";
 const sb=window.supabase.createClient(SB_URL,SB_ANON,{auth:{storageKey:'helpdebs-portal-auth',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 
-const PERIODO_DIAS=30;
+const PERIODO_DIAS=30, MIN_AULAS_MIX=4;
+/* aulas do Month mix: as dos últimos 30 dias; se forem poucas, completa com as mais recentes (até 4) */
+function mixPacks(){
+  const since=Date.now()-PERIODO_DIAS*864e5;
+  const recent=G.packs.filter(p=>new Date(p.quando).getTime()>=since);
+  return recent.length>=MIN_AULAS_MIX?recent:G.packs.slice(0,Math.max(recent.length,MIN_AULAS_MIX));
+}
 const TIPO_LABEL={multiple_choice:"Pick one",fill_blank:"Fill the gap",match:"Match it",unscramble:"Build the sentence",true_false:"True or false?",translate_pt_en:"Say it in English",spot_the_mistake:"Spot the mistake",sounds_natural:"Which sounds natural?"};
 /* personagens do teste de personalidade (rosto recortado de personagens_helpdebs.png) */
 const CHARS={
@@ -322,8 +328,7 @@ function home(){
   const st=itemStats(),toReview=Object.values(st).filter(s=>s.err>s.ok).length;
   const played=G.rounds.filter(r=>r.finished_at).length;
   const last=G.packs[0];
-  const since=Date.now()-PERIODO_DIAS*864e5;
-  const per=G.packs.filter(p=>new Date(p.quando).getTime()>=since);
+  const per=mixPacks();
   const role=G.profile.learning_profile?esc(G.profile.learning_profile):"English player";
   app().innerHTML=`
   <div class="player">
@@ -387,8 +392,7 @@ function buildUltimaAula(){
   return {acts:orderNoRepeat(chosen),packIds:[pack.id]};
 }
 function buildPeriodo(){
-  const since=Date.now()-PERIODO_DIAS*864e5;
-  const packs=G.packs.filter(p=>new Date(p.quando).getTime()>=since);
+  const packs=mixPacks();
   const ids=new Set(packs.map(p=>p.id));
   const acts=G.acts.filter(a=>ids.has(a.pack_id));
   const n=Math.min(acts.length,Math.max(15,Math.min(20,packs.length*5)));
@@ -573,4 +577,4 @@ async function results(){
 }
 </script>
 </body>
-</html>
+</html> 
