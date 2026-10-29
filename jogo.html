@@ -181,9 +181,10 @@ button{font:inherit;color:inherit;border:none;background:none;cursor:pointer}
 <body>
 <div class="wrap">
   <div class="top" id="top">
-    <a class="logo" href="portal.html">help<i>.debs</i> <span style="font-size:13px;color:var(--muted);font-family:Manrope">play</span></a>
-    <div class="topbtns"><button class="ibtn" id="sndBtn" onclick="toggleSound()" aria-label="Som">🔊</button><a class="ibtn" href="portal.html">Portal</a></div>
+    <a class="logo" href="portal.html" target="_top">help<i>.debs</i> <span style="font-size:13px;color:var(--muted);font-family:Manrope">play</span></a>
+    <div class="topbtns"><button class="ibtn" id="sndBtn" onclick="toggleSound()" aria-label="Som">🔊</button><a class="ibtn" id="portalBtn" href="portal.html" target="_top">Portal</a></div>
   </div>
+  <script>if(window.self!==window.top){document.getElementById("portalBtn").style.display="none"}</script>
   <main id="app"><div class="loading"><span>🎮</span><br>Loading…</div></main>
 </div>
 <div class="sheet" id="sheet"><div class="in" id="sheetIn"></div></div>
@@ -274,7 +275,7 @@ function confetti(n=60){
 /* ---------- boot ---------- */
 (async function(){
   const {data:{session}}=await sb.auth.getSession();
-  if(!session){location.href="login.html";return}
+  if(!session){(window.top||window).location.href="login.html";return}
   G.user=session.user;
   const prof=await sb.from("profiles").select("*").eq("id",G.user.id).maybeSingle();
   G.profile=prof.data||{};

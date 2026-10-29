@@ -4070,6 +4070,85 @@ img, iframe, video, canvas, svg{
 }
 
 </style>
+<style>
+/* ─── JOGO DE REVISÃO ─── */
+.nav-btn[data-section="jogo"]::before{ content:"\f1d2"; } /* ti-device-gamepad-2 */
+.nav-btn[data-section="jogo"]{ position:relative; }
+.nav-btn[data-section="jogo"]{ padding-right:64px !important; }
+.nav-new{
+  position:absolute; right:10px; top:50%; transform:translateY(-50%) rotate(-4deg);
+  font:800 .62rem/1 inherit; text-transform:uppercase; letter-spacing:.06em;
+  padding:5px 8px; border-radius:999px; pointer-events:none;
+  background:var(--accent); color:#1d1630;
+  box-shadow:0 2px 0 rgba(29,22,48,.18);
+}
+.nav-btn.game-locked .nav-new{ background:rgba(122,92,255,.10); color:var(--muted); box-shadow:none; transform:translateY(-50%); }
+
+.game-top .badge.game-badge,
+.hero-new-tag{
+  background:var(--accent); color:#1d1630; border-color:rgba(29,22,48,.10); font-weight:800;
+}
+.game-frame{ background:#150a2e; }
+.game-locked-box{
+  display:grid; gap:14px; justify-items:start;
+  padding:28px; border-radius:var(--r-lg);
+  background:linear-gradient(135deg, rgba(255,255,255,.96), rgba(247,244,255,.94));
+  border:1px dashed rgba(122,92,255,.28);
+}
+.game-locked-box .game-lock-ico{ font-size:2rem; line-height:1; }
+.game-locked-box h3{ margin:0; font-size:1.25rem; letter-spacing:-.03em; }
+.game-locked-box p{ margin:0; color:var(--muted); line-height:1.55; max-width:56ch; }
+
+/* hero quando o jogo está em destaque */
+.dashboard-hero.hero-game{ position:relative; overflow:hidden; }
+.dashboard-hero.hero-game::after{
+  content:"🎮"; position:absolute; right:clamp(150px,22%,260px); top:50%;
+  font-size:4.4rem; line-height:1; opacity:.16; transform:translateY(-50%) rotate(-12deg);
+  pointer-events:none;
+}
+.dashboard-hero.hero-game .hero-kicker{ background:var(--accent); color:#1d1630; }
+
+/* mensagem do jogo na aba Materiais */
+.game-promo-row{ display:flex; justify-content:flex-end; margin:0 0 14px; }
+.game-promo{
+  position:relative; display:flex; gap:12px; align-items:flex-start;
+  width:min(100%, 360px); padding:14px 40px 14px 14px;
+  border-radius:20px 20px 6px 20px;
+  background:#1d1630; color:#fff;
+  box-shadow:0 16px 36px rgba(29,22,48,.22);
+  animation:gamePromoIn .45s cubic-bezier(.2,.9,.3,1.3) both;
+}
+.game-promo-ico{
+  flex-shrink:0; width:42px; height:42px; border-radius:14px;
+  display:grid; place-items:center; font-size:1.35rem;
+  background:var(--accent); animation:gamePromoWiggle 2.8s ease-in-out 1s infinite;
+}
+.game-promo-body{ display:grid; gap:4px; }
+.game-promo-from{ font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#c9bdff; }
+.game-promo-body strong{ font-size:.98rem; line-height:1.25; }
+.game-promo-body p{ margin:0; font-size:.86rem; line-height:1.45; color:rgba(255,255,255,.78); }
+.game-promo-play{
+  justify-self:start; margin-top:6px; padding:8px 14px; border:0; border-radius:12px; cursor:pointer;
+  background:var(--accent); color:#1d1630; font:800 .84rem/1 inherit;
+  box-shadow:0 3px 0 #9fc81d; transition:transform .08s, box-shadow .08s;
+}
+.game-promo-play:active{ transform:translateY(3px); box-shadow:0 0 0 #9fc81d; }
+.game-promo-close{
+  position:absolute; top:8px; right:8px; width:26px; height:26px; border:0; border-radius:9px; cursor:pointer;
+  background:rgba(255,255,255,.08); color:rgba(255,255,255,.7); font-size:.95rem; line-height:1;
+}
+.game-promo-close:hover{ background:rgba(255,255,255,.16); color:#fff; }
+@keyframes gamePromoIn{ from{ opacity:0; transform:translate(16px,-10px) scale(.94); } to{ opacity:1; transform:none; } }
+@keyframes gamePromoWiggle{ 0%,82%,100%{ transform:rotate(0); } 86%{ transform:rotate(-12deg); } 90%{ transform:rotate(10deg); } 94%{ transform:rotate(-6deg); } }
+@media (max-width: 720px){
+  .game-promo-row{ justify-content:stretch; }
+  .game-promo{ width:100%; }
+  .dashboard-hero.hero-game::after{ display:none; }
+}
+@media (prefers-reduced-motion: reduce){
+  .game-promo, .game-promo-ico{ animation:none; }
+}
+</style>
 </head>
 <body>
   <section class="login-screen" id="loginScreen">
@@ -4140,6 +4219,11 @@ img, iframe, video, canvas, svg{
           <button class="nav-btn active" data-section="inicio">
             <span class="nav-main">Início</span>
             <small class="nav-sub">dashboard</small>
+          </button>
+          <button class="nav-btn" data-section="jogo">
+            <span class="nav-main">Jogo</span>
+            <small class="nav-sub">revisão das aulas</small>
+            <span class="nav-new" id="gameNavTag">novo</span>
           </button>
           <button class="nav-btn" data-section="diagnostico">
             <span class="nav-main">Diagnóstico</span>
@@ -4266,6 +4350,33 @@ img, iframe, video, canvas, svg{
           </div>
         </section>
 
+        <section class="portal-section" id="section-jogo">
+          <div class="external-trail-shell">
+            <div class="external-trail-top game-top">
+              <div>
+                <span class="badge game-badge">novo</span>
+                <h2>Jogo de revisão</h2>
+                <p>Rodadas rápidas com o vocabulário e as estruturas das suas aulas. Revise a última aula, misture o mês inteiro ou encare o modo hard.</p>
+              </div>
+              <button class="btn btn-primary" id="gameFullBtn" onclick="openGameFull()">Abrir em tela cheia</button>
+            </div>
+
+            <div class="game-locked-box" id="gameLockedBox" style="display:none">
+              <span class="game-lock-ico">🔒</span>
+              <h3>Seu jogo libera depois do diagnóstico</h3>
+              <p>Conclua as etapas de perfil, nível e interesses. Assim que terminar, o jogo aparece aqui com o conteúdo das suas aulas.</p>
+              <button class="btn btn-primary" onclick="goSection('diagnostico')">Concluir diagnóstico</button>
+            </div>
+
+            <iframe
+              class="external-trail-frame game-frame"
+              id="gameFrame"
+              title="Jogo de revisão help.debs"
+              loading="lazy">
+            </iframe>
+          </div>
+        </section>
+
         <section class="portal-section" id="section-diagnostico">
           <div class="grid-2">
             <div class="panel diagnostic-card"><div class="section-title"><h3>Diagnóstico</h3></div><div class="diag-list" id="diagnosticsList"></div></div>
@@ -4296,6 +4407,7 @@ img, iframe, video, canvas, svg{
         </section>
 
         <section class="portal-section" id="section-materiais">
+          <div id="gamePromoArea"></div>
           <div id="featuredChecklistArea"></div>
           <div id="checklistEmbedArea" class="checklist-embed"></div>
           <div class="panel materials-card">
@@ -4371,7 +4483,9 @@ const INTERESTS_TEST_URL = "https://helpdebs.github.io/helpdebs-portal/interesse
 const PAULA_MONTHLY_CHECKLIST_URL = "https://helpdebs.github.io/helpdebs-portal/checklist_paula_abril.html";
 
 const FIXED_PORTAL_SECTIONS = ["inicio", "materiais", "ao-vivo", "financeiro"];
-const OPTIONAL_PORTAL_SECTIONS = ["diagnostico", "trilha", "calendario", "dicas", "videoaulas"];
+const OPTIONAL_PORTAL_SECTIONS = ["jogo", "diagnostico", "trilha", "calendario", "dicas", "videoaulas"];
+const GAME_URL = "jogo.html";
+const GAME_PROMO_DISMISS_KEY = "helpdebs-game-promo-dismissed";
 
 const TRAIL_TOTAL_DAYS = 21;
 const TRAIL_ACTIVITIES_PER_DAY = 5;
@@ -4783,7 +4897,7 @@ function renderActivity(activity, index){
 }
 
 function renderTrail(){
-  const frame = document.querySelector(".external-trail-frame");
+  const frame = document.querySelector("#section-trilha .external-trail-frame");
   if(frame) frame.setAttribute("src", "helpdebs_trilha_dynamic_lessons.html");
 }
 
@@ -4791,6 +4905,69 @@ function renderTrail(){
 
 function openNewTrailFull(){
   window.location.href = "helpdebs_trilha_dynamic_lessons.html";
+}
+
+/* ─── Jogo de revisão ─── */
+function isGameUnlocked(){
+  if(!isSectionAvailable("jogo")) return false;
+  // Sem diagnóstico ativo para a aluna, o jogo fica liberado direto.
+  if(!isSectionAvailable("diagnostico")) return true;
+  return areDiagnosticsComplete();
+}
+
+function renderGame(){
+  const unlocked = isGameUnlocked();
+  const frame = $("gameFrame");
+  const locked = $("gameLockedBox");
+  const fullBtn = $("gameFullBtn");
+  if(locked) locked.style.display = unlocked ? "none" : "";
+  if(fullBtn) fullBtn.style.display = unlocked ? "" : "none";
+  if(frame){
+    frame.style.display = unlocked ? "" : "none";
+    if(unlocked && !frame.getAttribute("src")) frame.setAttribute("src", GAME_URL);
+  }
+}
+
+function renderGameNav(){
+  const btn = document.querySelector('.nav-btn[data-section="jogo"]');
+  const tag = $("gameNavTag");
+  const unlocked = isGameUnlocked();
+  if(btn) btn.classList.toggle("game-locked", !unlocked);
+  if(tag) tag.textContent = unlocked ? "novo" : "🔒";
+}
+
+function openGameFull(){
+  window.location.href = GAME_URL;
+}
+
+function isGamePromoDismissed(){
+  try{ return sessionStorage.getItem(GAME_PROMO_DISMISS_KEY) === "1"; }catch(e){ return false; }
+}
+
+function dismissGamePromo(){
+  try{ sessionStorage.setItem(GAME_PROMO_DISMISS_KEY, "1"); }catch(e){}
+  const area = $("gamePromoArea");
+  if(area) area.innerHTML = "";
+}
+
+function renderGamePromo(){
+  const area = $("gamePromoArea");
+  if(!area) return;
+  if(!isGameUnlocked() || isGamePromoDismissed()){ area.innerHTML = ""; return; }
+  area.innerHTML = `
+    <div class="game-promo-row">
+      <div class="game-promo" role="status">
+        <span class="game-promo-ico" aria-hidden="true">🎮</span>
+        <div class="game-promo-body">
+          <span class="game-promo-from">Teacher Debs</span>
+          <strong>Já viu o material? Agora joga!</strong>
+          <p>Uma rodada rápida com o conteúdo das suas aulas fixa o que você estudou aqui.</p>
+          <button class="game-promo-play" type="button" onclick="goSection('jogo')">Jogar agora</button>
+        </div>
+        <button class="game-promo-close" type="button" aria-label="Fechar mensagem" onclick="dismissGamePromo()">✕</button>
+      </div>
+    </div>
+  `;
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -4937,6 +5114,8 @@ function renderAll(){
   renderVideos();
   renderPayments();
   renderTrail();
+  renderGameNav();
+  renderGamePromo();
 }
 
 function renderProfile(){
@@ -5222,6 +5401,7 @@ function renderDashboard(){
     let heroText = "Os materiais, a aula ao vivo e o financeiro continuam disponíveis no seu portal.";
     let heroButton = "Ver materiais";
     let heroHelper = "Área fixa do portal.";
+    let heroIsGame = false;
 
     if(!heroComplete && canDiagnose){
       heroTarget = "diagnostico";
@@ -5229,6 +5409,13 @@ function renderDashboard(){
       heroText = `Faltam ${diag.pending} etapa(s) para liberar uma experiência mais personalizada dentro do portal.`;
       heroButton = "Continuar agora";
       heroHelper = "Leva poucos minutos.";
+    }else if(isGameUnlocked()){
+      heroIsGame = true;
+      heroTarget = "jogo";
+      heroTitle = "Chegou o jogo de revisão";
+      heroText = "Pratique o vocabulário e as estruturas das suas aulas em rodadas rápidas. Revise a última aula, misture o mês ou encare o modo hard.";
+      heroButton = "Jogar agora";
+      heroHelper = "Rodadas de poucos minutos.";
     }else if(canTrail){
       heroTarget = "trilha";
       heroTitle = "Comece sua trilha personalizada";
@@ -5237,7 +5424,8 @@ function renderDashboard(){
       heroHelper = "Prática guiada em 21 dias.";
     }
 
-    $("heroKicker").textContent = heroTarget === "materiais" ? "Área liberada" : (heroComplete ? "Sua prática de hoje" : "Seu próximo passo");
+    $("heroKicker").textContent = heroIsGame ? "Novo no portal" : (heroTarget === "materiais" ? "Área liberada" : (heroComplete ? "Sua prática de hoje" : "Seu próximo passo"));
+    if($("dashboardHero")) $("dashboardHero").classList.toggle("hero-game", heroIsGame);
     $("heroTitle").textContent = heroTitle;
     $("heroText").textContent = heroText;
     $("heroAction").textContent = heroButton;
@@ -5846,7 +6034,7 @@ function openElos(){
   openLink(url);
 }
 
-const sectionMeta = {inicio:"Portal da aluna",diagnostico:"Diagnóstico",trilha:"Trilha",materiais:"Materiais",calendario:"Calendário","ao-vivo":"Aula ao vivo",dicas:"Dicas",videoaulas:"Videoaulas",financeiro:"Financeiro"};
+const sectionMeta = {inicio:"Portal da aluna",jogo:"Jogo de revisão",diagnostico:"Diagnóstico",trilha:"Trilha",materiais:"Materiais",calendario:"Calendário","ao-vivo":"Aula ao vivo",dicas:"Dicas",videoaulas:"Videoaulas",financeiro:"Financeiro"};
 
 function goSection(target){
   if(!isSectionAvailable(target)){ showToast("Funcionalidade não está ativa para esta aluna."); target = "inicio"; }
@@ -5859,7 +6047,8 @@ function goSection(target){
   $("pageTitle").textContent = sectionMeta[target] || target;
   if($("mobileSectionTitle")) $("mobileSectionTitle").textContent = sectionMeta[target] || target;
   if(target === "calendario") renderCalendar();
-  if(target === "materiais"){ renderFeaturedChecklist(); renderMaterials(); }
+  if(target === "materiais"){ renderFeaturedChecklist(); renderMaterials(); renderGamePromo(); }
+  if(target === "jogo") renderGame();
   if(target === "diagnostico") renderDiagnostics();
   if(target === "financeiro") renderPayments();
   if(target === "trilha") renderTrail();
@@ -6219,6 +6408,7 @@ function goSection(target){
       },
       en: {
         inicio:["Home","dashboard"],
+        jogo:["Game","lesson review"],
         diagnostico:["Assessment","profile"],
         trilha:["Journey","21 days"],
         materiais:["Lessons","PDFs"],
