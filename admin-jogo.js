@@ -304,6 +304,9 @@ window.gmSave = async function(publish){
   // limpa itens vazios
   SECOES.forEach(s=>{ c.pack[s.key]=c.pack[s.key].filter(it=>s.fields.some(([f])=>String(it[f]||"").trim())); });
   const body={ student_id:c.student_id, material_id:c.material_id, class_id:c.class_id, titulo:c.titulo||"Aula", tema:c.tema||null, nivel:c.nivel, pack:{...c.pack,titulo:c.titulo,tema:c.tema,nivel:c.nivel}, updated_at:new Date().toISOString() };
+  // data da aula = quando o material foi enviado (é ela que ordena "última aula" e "revisão do mês")
+  const mat=c._material||(typeof MATERIALS!=="undefined"?MATERIALS:[]).find(x=>String(x.id)===c.material_id);
+  body.aula_data=mat?.created_at||c.aula_data||c.created_at||new Date().toISOString();
   if(publish){ body.status="published"; body.published_at=c.published_at||new Date().toISOString(); }
   try{
     showMsg("gmMsg","Salvando...","info");
@@ -335,4 +338,4 @@ window.gmDelete = async function(){
 };
 
 if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",injectUI); else injectUI();
-})();
+})(); 
