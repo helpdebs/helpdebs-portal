@@ -284,8 +284,10 @@ function confetti(n=60){
 })();
 
 async function loadData(){
-  const p=await sb.from("game_packs").select("id,titulo,tema,nivel,pack,published_at").eq("student_id",G.user.id).eq("status","published").order("published_at",{ascending:false});
-  G.packs=p.data||[];
+  // ordem = data de upload do material da aula (aula_data); sem ela, cai na data de publicação
+  let p=await sb.from("game_packs").select("id,titulo,tema,nivel,pack,published_at,aula_data").eq("student_id",G.user.id).eq("status","published");
+  if(p.error) p=await sb.from("game_packs").select("id,titulo,tema,nivel,pack,published_at").eq("student_id",G.user.id).eq("status","published");
+  G.packs=(p.data||[]).map(x=>({...x,quando:x.aula_data||x.published_at})).sort((a,b)=>new Date(b.quando)-new Date(a.quando));
   if(G.packs.length){
     const a=await sb.from("game_activities").select("id,pack_id,tipo,item_ids,data").in("pack_id",G.packs.map(x=>x.id));
     G.acts=(a.data||[]).map(r=>({...r.data,id:r.id,pack_id:r.pack_id,tipo:r.tipo,item_ids:r.item_ids||[]}));
@@ -321,7 +323,7 @@ function home(){
   const played=G.rounds.filter(r=>r.finished_at).length;
   const last=G.packs[0];
   const since=Date.now()-PERIODO_DIAS*864e5;
-  const per=G.packs.filter(p=>new Date(p.published_at).getTime()>=since);
+  const per=G.packs.filter(p=>new Date(p.quando).getTime()>=since);
   const role=G.profile.learning_profile?esc(G.profile.learning_profile):"English player";
   app().innerHTML=`
   <div class="player">
@@ -386,7 +388,7 @@ function buildUltimaAula(){
 }
 function buildPeriodo(){
   const since=Date.now()-PERIODO_DIAS*864e5;
-  const packs=G.packs.filter(p=>new Date(p.published_at).getTime()>=since);
+  const packs=G.packs.filter(p=>new Date(p.quando).getTime()>=since);
   const ids=new Set(packs.map(p=>p.id));
   const acts=G.acts.filter(a=>ids.has(a.pack_id));
   const n=Math.min(acts.length,Math.max(15,Math.min(20,packs.length*5)));
@@ -571,4 +573,4 @@ async function results(){
 }
 </script>
 </body>
-</html> 
+</html>
