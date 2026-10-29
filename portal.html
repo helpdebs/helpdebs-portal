@@ -4077,7 +4077,7 @@ img, iframe, video, canvas, svg{
 .nav-btn[data-section="jogo"]{ padding-right:64px !important; }
 .nav-new{
   position:absolute; right:10px; top:50%; transform:translateY(-50%) rotate(-4deg);
-  font:800 .62rem/1 inherit; text-transform:uppercase; letter-spacing:.06em;
+  font-family:inherit; font-size:.62rem; font-weight:800; line-height:1; text-transform:uppercase; letter-spacing:.06em;
   padding:5px 8px; border-radius:999px; pointer-events:none;
   background:var(--accent); color:#1d1630;
   box-shadow:0 2px 0 rgba(29,22,48,.18);
@@ -4147,6 +4147,46 @@ img, iframe, video, canvas, svg{
 }
 @media (prefers-reduced-motion: reduce){
   .game-promo, .game-promo-ico{ animation:none; }
+}
+
+/* ─── AJUSTES DE LAYOUT: nada cortado nem sobreposto ─── */
+/* menu lateral: perfil e botões não são esmagados */
+.sidebar-shell > *{ flex-shrink:0 !important; }
+.student-card{ height:auto !important; max-height:none !important; overflow:visible !important; }
+.nav-btn{ min-width:0; }
+.sidebar-shell .nav > *{ flex-shrink:0 !important; }
+/* "Sair da conta" com fundo sólido: nada aparece "atravessado" por trás dele */
+.nav-logout{ background:#fff0f4 !important; -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
+.nav-btn[data-section="jogo"]{ padding-right:70px !important; }
+/* só a lista do menu rola; perfil no topo e "Sair da conta" no rodapé ficam fixos (computador e celular) */
+.sidebar-shell{ overflow:hidden !important; display:flex !important; flex-direction:column !important; }
+.sidebar-shell > .nav{ flex:1 1 auto !important; min-height:0 !important; overflow-y:auto !important; overflow-x:hidden !important;
+  display:grid !important; grid-template-rows:none !important; grid-auto-rows:max-content !important; align-content:start !important;
+  scrollbar-width:thin; padding-bottom:12px;
+  -webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 24px),transparent); mask-image:linear-gradient(to bottom,#000 calc(100% - 24px),transparent); }
+.nav-logout{ position:static !important; margin-top:6px !important; }
+@media (min-width:961px){
+  .app > .sidebar{ width:auto !important; min-width:0 !important; max-width:100% !important; }
+  /* menu mais enxuto para caber em notebook */
+  .sidebar-shell{ gap:12px !important; }
+  .sidebar-shell .nav{ gap:2px !important; }
+  .sidebar-shell .nav-btn{ padding-top:7px !important; padding-bottom:7px !important; min-height:0 !important; }
+  .sidebar-shell .student-card{ padding:12px !important; gap:8px !important; }
+}
+/* card "Próxima aula": sem enfeites por cima do conteúdo, selos na mesma linha */
+.next-card::before, .next-card::after{ display:none !important; }
+.next-note-header{ flex-direction:row !important; flex-wrap:nowrap !important; align-items:center !important; justify-content:space-between !important; gap:8px !important; }
+.next-note-header > *{ white-space:nowrap; flex-shrink:0; }
+/* mini feedback: mostra o texto inteiro, sem caixa de rolagem cortando linhas */
+.feedback-card{ overflow:visible !important; min-height:0 !important; }
+.feedback-note{ height:auto !important; max-height:none !important; overflow:visible !important; }
+/* celular: atalhos do topo compactos (2 pequenos lado a lado + aula ao vivo) */
+@media (max-width:960px){
+  .mobile-top-actions{ display:grid !important; grid-template-columns:1fr 1fr !important; gap:8px !important; padding:4px 16px 10px !important; }
+  .mobile-top-actions .btn{ min-height:0 !important; height:auto !important; padding:9px 10px !important; font-size:.8rem !important; border-radius:12px !important; }
+  .mobile-top-actions .btn-primary{ grid-column:1 / -1; padding:11px 12px !important; }
+  /* páginas curtas não esticam o topo para preencher a tela */
+  .app{ align-content:start !important; align-items:start !important; }
 }
 </style>
 </head>
@@ -6507,4 +6547,4 @@ function goSection(target){
 </script>
 
 </body>
-</html>  
+</html> 
