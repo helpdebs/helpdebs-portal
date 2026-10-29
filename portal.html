@@ -4361,13 +4361,6 @@ img, iframe, video, canvas, svg{
               <button class="btn btn-primary" id="gameFullBtn" onclick="openGameFull()">Abrir em tela cheia</button>
             </div>
 
-            <div class="game-locked-box" id="gameLockedBox" style="display:none">
-              <span class="game-lock-ico">🔒</span>
-              <h3>Seu jogo libera depois do diagnóstico</h3>
-              <p>Conclua as etapas de perfil, nível e interesses. Assim que terminar, o jogo aparece aqui com o conteúdo das suas aulas.</p>
-              <button class="btn btn-primary" onclick="goSection('diagnostico')">Concluir diagnóstico</button>
-            </div>
-
             <iframe
               class="external-trail-frame game-frame"
               id="gameFrame"
@@ -4909,10 +4902,7 @@ function openNewTrailFull(){
 
 /* ─── Jogo de revisão ─── */
 function isGameUnlocked(){
-  if(!isSectionAvailable("jogo")) return false;
-  // Sem diagnóstico ativo para a aluna, o jogo fica liberado direto.
-  if(!isSectionAvailable("diagnostico")) return true;
-  return areDiagnosticsComplete();
+  return isSectionAvailable("jogo");
 }
 
 function renderGame(){
@@ -5403,19 +5393,19 @@ function renderDashboard(){
     let heroHelper = "Área fixa do portal.";
     let heroIsGame = false;
 
-    if(!heroComplete && canDiagnose){
-      heroTarget = "diagnostico";
-      heroTitle = "Continue seu diagnóstico";
-      heroText = `Faltam ${diag.pending} etapa(s) para liberar uma experiência mais personalizada dentro do portal.`;
-      heroButton = "Continuar agora";
-      heroHelper = "Leva poucos minutos.";
-    }else if(isGameUnlocked()){
+    if(isGameUnlocked()){
       heroIsGame = true;
       heroTarget = "jogo";
       heroTitle = "Chegou o jogo de revisão";
       heroText = "Pratique o vocabulário e as estruturas das suas aulas em rodadas rápidas. Revise a última aula, misture o mês ou encare o modo hard.";
       heroButton = "Jogar agora";
       heroHelper = "Rodadas de poucos minutos.";
+    }else if(!heroComplete && canDiagnose){
+      heroTarget = "diagnostico";
+      heroTitle = "Continue seu diagnóstico";
+      heroText = `Faltam ${diag.pending} etapa(s) para liberar uma experiência mais personalizada dentro do portal.`;
+      heroButton = "Continuar agora";
+      heroHelper = "Leva poucos minutos.";
     }else if(canTrail){
       heroTarget = "trilha";
       heroTitle = "Comece sua trilha personalizada";
